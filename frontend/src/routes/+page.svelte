@@ -55,7 +55,7 @@
 >
 	<header>
 		<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
-		<p class="mb-5 mt-1.5 text-slate-700">Your local MP4 library</p>
+		<p class="mt-1.5 mb-5 text-slate-700">Your local MP4 library</p>
 	</header>
 
 	{#if loading}
@@ -72,12 +72,14 @@
 					href={`/watch/${encodeURIComponent(video.id)}`}
 				>
 					<div
-						class="flex items-center justify-center bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl font-bold tracking-[0.08em] text-slate-50"
+						class="bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl leading-none font-bold tracking-widest text-slate-50 flex items-center"
 					>
 						MP4
 					</div>
-					<div class="px-3.5 pb-3.5 pt-3">
-						<h2 class="m-0 break-words text-[0.96rem] leading-[1.35] text-slate-900">{video.name}</h2>
+					<div class="px-3.5 pt-3 pb-3.5">
+						<h2 class="m-0 text-[0.96rem] leading-[1.35] break-words text-slate-900">
+							{video.name}
+						</h2>
 						<p class="mt-1.5 text-[0.86rem] text-slate-600">{toHumanSize(video.size)}</p>
 					</div>
 				</a>
