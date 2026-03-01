@@ -2,4 +2,16 @@ import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
-export default defineConfig({ plugins: [tailwindcss(), sveltekit()] });
+const backendOrigin = process.env.VITE_BACKEND_ORIGIN ?? 'http://localhost:42069';
+
+export default defineConfig({
+	plugins: [tailwindcss(), sveltekit()],
+	server: {
+		proxy: {
+			'/api': {
+				target: backendOrigin,
+				changeOrigin: true
+			}
+		}
+	}
+});

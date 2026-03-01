@@ -8,6 +8,7 @@ import (
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/go-svelte-template/internal/handlers/homehandler"
+	"github.com/loissascha/go-svelte-template/internal/handlers/videohandler"
 )
 
 func main() {
@@ -27,9 +28,11 @@ func main() {
 
 	// handler
 	homeH := homehandler.New(s)
+	videoH := videohandler.New(s)
 
 	// register routes
 	homeH.RegisterHandlers()
+	videoH.RegisterHandlers()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
