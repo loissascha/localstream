@@ -50,111 +50,38 @@
 	});
 </script>
 
-<main class="page">
+<main
+	class="min-h-dvh bg-[radial-gradient(circle_at_15%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_85%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-5 py-5 text-slate-900"
+>
 	<header>
-		<h1>Localstream</h1>
-		<p>Your local MP4 library</p>
+		<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
+		<p class="mb-5 mt-1.5 text-slate-700">Your local MP4 library</p>
 	</header>
 
 	{#if loading}
 		<p>Loading video library...</p>
 	{:else if errorMessage}
-		<p class="error">{errorMessage}</p>
+		<p class="text-red-700">{errorMessage}</p>
 	{:else if videos.length === 0}
 		<p>No streamable MP4 files found in your backend video directory.</p>
 	{:else}
-		<section class="grid">
+		<section class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-3.5">
 			{#each videos as video}
-				<a class="card" href={`/watch/${encodeURIComponent(video.id)}`}>
-					<div class="thumb">MP4</div>
-					<div class="meta">
-						<h2>{video.name}</h2>
-						<p>{toHumanSize(video.size)}</p>
+				<a
+					class="grid grid-rows-[8.5rem_auto] overflow-hidden rounded-xl border border-slate-900/10 bg-white/80 no-underline transition-transform duration-150 ease-out hover:-translate-y-0.5"
+					href={`/watch/${encodeURIComponent(video.id)}`}
+				>
+					<div
+						class="flex items-center justify-center bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl font-bold tracking-[0.08em] text-slate-50"
+					>
+						MP4
+					</div>
+					<div class="px-3.5 pb-3.5 pt-3">
+						<h2 class="m-0 break-words text-[0.96rem] leading-[1.35] text-slate-900">{video.name}</h2>
+						<p class="mt-1.5 text-[0.86rem] text-slate-600">{toHumanSize(video.size)}</p>
 					</div>
 				</a>
 			{/each}
 		</section>
 	{/if}
 </main>
-
-<style>
-	:global(body) {
-		margin: 0;
-		font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
-		background:
-			radial-gradient(circle at 15% 10%, #d7e8ff 0%, transparent 40%),
-			radial-gradient(circle at 85% 0%, #c8f5e9 0%, transparent 32%),
-			linear-gradient(180deg, #eef2f7 0%, #dce6f2 100%);
-		color: #0f172a;
-	}
-
-	.page {
-		padding: 1.25rem;
-		min-height: 100dvh;
-		box-sizing: border-box;
-	}
-
-	header h1 {
-		margin: 0;
-		font-size: clamp(1.6rem, 2.8vw, 2.4rem);
-	}
-
-	header p {
-		margin: 0.35rem 0 1.25rem;
-		color: #334155;
-	}
-
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-		gap: 0.9rem;
-	}
-
-	.card {
-		display: grid;
-		grid-template-rows: 8.5rem auto;
-		text-decoration: none;
-		background: rgba(255, 255, 255, 0.82);
-		border: 1px solid rgba(15, 23, 42, 0.08);
-		border-radius: 0.8rem;
-		overflow: hidden;
-		transition: transform 140ms ease;
-	}
-
-	.card:hover {
-		transform: translateY(-2px);
-	}
-
-	.thumb {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 1.2rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-		color: #f8fafc;
-		background: linear-gradient(135deg, #0f172a 0%, #0b4c6a 100%);
-	}
-
-	.meta {
-		padding: 0.7rem 0.8rem 0.85rem;
-	}
-
-	.meta h2 {
-		margin: 0;
-		font-size: 0.96rem;
-		color: #0f172a;
-		line-height: 1.35;
-		word-break: break-word;
-	}
-
-	.meta p {
-		margin: 0.35rem 0 0;
-		font-size: 0.86rem;
-		color: #475569;
-	}
-
-	.error {
-		color: #b91c1c;
-	}
-</style>
