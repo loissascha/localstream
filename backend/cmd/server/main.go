@@ -10,6 +10,7 @@ import (
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 func main() {
@@ -39,7 +40,11 @@ func main() {
 		panic(err)
 	}
 
+	// repositories
 	_ = repopostgres.NewUserRepository(db)
+
+	// services
+	libraryWatcher := service.NewLibraryWatcher()
 
 	// handler
 	videoH := handler.NewVideoHandler(s)
@@ -49,6 +54,8 @@ func main() {
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
+
+	libraryWatcher.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
 	err = s.Serve(fmt.Sprintf(":%v", port))
