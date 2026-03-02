@@ -20,16 +20,18 @@ func NewLibraryService(libraryRepo repository.LibraryRepository) *LibraryService
 	return &LibraryService{libraryRepo: libraryRepo}
 }
 
-func (s *LibraryService) Create(ctx context.Context, name, path string) (*entity.Library, error) {
+func (s *LibraryService) Create(ctx context.Context, name, path, libraryType string) (*entity.Library, error) {
 	trimmedName := strings.TrimSpace(name)
 	trimmedPath := strings.TrimSpace(path)
-	if trimmedName == "" || trimmedPath == "" {
+	normalizedLibraryType := entity.LibraryType(strings.ToLower(strings.TrimSpace(libraryType)))
+	if trimmedName == "" || trimmedPath == "" || !normalizedLibraryType.IsValid() {
 		return nil, ErrInvalidLibraryInput
 	}
 
 	library := &entity.Library{
-		Name: trimmedName,
-		Path: trimmedPath,
+		Name:        trimmedName,
+		Path:        trimmedPath,
+		LibraryType: normalizedLibraryType,
 	}
 
 	if err := s.libraryRepo.Create(ctx, library); err != nil {

@@ -22,12 +22,12 @@ func NewLibraryRepository(db *sqlx.DB) *LibraryRepository {
 
 func (r *LibraryRepository) Create(ctx context.Context, library *entity.Library) error {
 	const query = `
-		INSERT INTO libraries (name, path)
-		VALUES ($1, $2)
+		INSERT INTO libraries (name, path, library_type)
+		VALUES ($1, $2, $3)
 		RETURNING id, created_at
 	`
 
-	err := r.db.QueryRowxContext(ctx, query, library.Name, library.Path).Scan(&library.ID, &library.CreatedAt)
+	err := r.db.QueryRowxContext(ctx, query, library.Name, library.Path, library.LibraryType).Scan(&library.ID, &library.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create library: %w", err)
 	}
@@ -37,7 +37,7 @@ func (r *LibraryRepository) Create(ctx context.Context, library *entity.Library)
 
 func (r *LibraryRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Library, error) {
 	const query = `
-		SELECT id, name, path, created_at
+		SELECT id, name, path, library_type, created_at
 		FROM libraries
 		WHERE id = $1
 	`
@@ -55,7 +55,7 @@ func (r *LibraryRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.
 
 func (r *LibraryRepository) List(ctx context.Context) ([]entity.Library, error) {
 	const query = `
-		SELECT id, name, path, created_at
+		SELECT id, name, path, library_type, created_at
 		FROM libraries
 		ORDER BY created_at ASC
 	`

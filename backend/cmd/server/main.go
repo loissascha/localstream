@@ -51,7 +51,6 @@ func main() {
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
-	// libraryService.Create(context.Background(), "Lib1", "/home/sascha/localstream/lib1")
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
