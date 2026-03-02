@@ -1,4 +1,4 @@
-package service
+package background
 
 import (
 	"context"
@@ -9,16 +9,20 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/provider"
+	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	"github.com/loissascha/localstream/internal/service"
 )
 
 type LibraryWatcher struct {
-	libService *service.LibraryService
+	libService         *service.LibraryService
+	tvmetadataProvider provider.TVMetadataProvider
 }
 
 func NewLibraryWatcher(libService *service.LibraryService) *LibraryWatcher {
 	return &LibraryWatcher{
-		libService: libService,
+		libService:         libService,
+		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
 	}
 }
 
@@ -65,6 +69,7 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 			logger.Debug(nil, "Movie: {File}", result.Name)
 		case entity.LibraryTypeShows:
 			logger.Debug(nil, "Show: {File}", result.Name)
+			l.tvmetadataProvider.SearchSeries(result.Name)
 		}
 	}
 	return nil
