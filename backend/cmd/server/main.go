@@ -42,6 +42,7 @@ func main() {
 
 	// repositories
 	_ = repopostgres.NewUserRepository(db)
+	_ = repopostgres.NewLibraryRepository(db)
 
 	// services
 	libraryWatcher := service.NewLibraryWatcher()
