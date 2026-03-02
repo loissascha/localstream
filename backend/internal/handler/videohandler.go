@@ -1,4 +1,4 @@
-package videohandler
+package handler
 
 import (
 	"encoding/base64"
@@ -34,7 +34,7 @@ type VideoListResponse struct {
 	Videos []VideoListItem `json:"videos"`
 }
 
-func New(s *server.Server) *VideoHandler {
+func NewVideoHandler(s *server.Server) *VideoHandler {
 	libraryDir := os.Getenv("VIDEO_LIBRARY_DIR")
 	if strings.TrimSpace(libraryDir) == "" {
 		libraryDir = "./videos"

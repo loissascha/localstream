@@ -7,8 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
-	"github.com/loissascha/go-svelte-template/internal/handlers/homehandler"
-	"github.com/loissascha/go-svelte-template/internal/handlers/videohandler"
+	"github.com/loissascha/go-svelte-template/internal/handler"
 )
 
 func main() {
@@ -27,11 +26,9 @@ func main() {
 	}
 
 	// handler
-	homeH := homehandler.New(s)
-	videoH := videohandler.New(s)
+	videoH := handler.NewVideoHandler(s)
 
 	// register routes
-	homeH.RegisterHandlers()
 	videoH.RegisterHandlers()
 
 	// fs := http.FileServer(http.Dir("./static"))
