@@ -1,6 +1,9 @@
 package tvmaze
 
-import "github.com/loissascha/go-logger/logger"
+import (
+	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/internal/parsers"
+)
 
 type TVMazeProvider struct {
 }
@@ -9,6 +12,10 @@ func NewTVMazeProvider() *TVMazeProvider {
 	return &TVMazeProvider{}
 }
 
-func (p *TVMazeProvider) SearchSeries(name string) {
-	logger.Info(nil, "Search series {Name}", name)
+func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) {
+	if episodeInfo == nil {
+		return
+	}
+
+	logger.Info(nil, "Search series {Name}", episodeInfo)
 }

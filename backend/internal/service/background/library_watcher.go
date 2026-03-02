@@ -9,6 +9,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/parsers"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	"github.com/loissascha/localstream/internal/service"
@@ -64,12 +65,18 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	}
 	for _, result := range results {
 
+		episodeInfo, ok := parsers.ParseEpisodeFromFilename(result.Name)
+		if !ok {
+			logger.Warning(nil, "Couldn't parse file name {Name}", result.Name)
+			continue
+		}
+
 		switch library.LibraryType {
 		case entity.LibraryTypeMovies:
-			logger.Debug(nil, "Movie: {File}", result.Name)
+			logger.Debug(nil, "Movie: {File}", episodeInfo)
 		case entity.LibraryTypeShows:
-			logger.Debug(nil, "Show: {File}", result.Name)
-			l.tvmetadataProvider.SearchSeries(result.Name)
+			logger.Debug(nil, "Show: {File}", episodeInfo)
+			l.tvmetadataProvider.SearchSeries(episodeInfo)
 		}
 	}
 	return nil
