@@ -1,0 +1,160 @@
+# AGENTS Guide
+This guide is for coding agents working in this repository.
+Use it as the default operating manual for build/test/style expectations.
+
+## Repo Layout
+- `backend/`: Go API server, migrations, filesystem video streaming.
+- `frontend/`: SvelteKit 5 + TypeScript + Tailwind CSS v4 app.
+- `docs/`: milestone and architecture docs.
+- `export_types.ts`: backend-generated API type export target.
+
+## Toolchains
+- Backend Go version: `go 1.25.3` (`backend/go.mod`).
+- Frontend package manager: `bun` (lockfile present).
+- Frontend lint/format/type tools: ESLint 9, Prettier 3, `svelte-check`, strict TypeScript.
+
+## Working Directory Rules
+- Run backend commands from `backend/`.
+- Run frontend commands from `frontend/`.
+- No root-level monorepo task runner is configured.
+
+## Backend Commands (Go)
+### Setup
+- `go mod download`
+
+### Run
+- `go run ./cmd/server`
+
+### Build
+- `go build ./...`
+- Optional focused build: `go build ./cmd/server`
+
+### Lint / Static Analysis
+- `go vet ./...`
+- `gofmt -w .`
+- No `golangci-lint` config found.
+
+### Test
+- Run all tests: `go test ./...`
+- Run verbose: `go test -v ./...`
+
+### Single Backend Test (important)
+- Single test function:
+  - `go test ./internal/handler -run '^TestParseSingleRange$'`
+- Single subtest:
+  - `go test ./internal/handler -run '^TestParseSingleRange$/suffix_range$'`
+- Disable cache when iterating:
+  - `go test ./internal/handler -run '^TestParseSingleRange$' -count=1`
+
+## Frontend Commands (SvelteKit)
+### Install
+- `bun install`
+
+### Dev
+- `bun run dev`
+- API proxy target comes from `VITE_BACKEND_ORIGIN` (default `http://localhost:42069`).
+
+### Build / Preview
+- `bun run build`
+- `bun run preview`
+
+### Lint / Format / Type Check
+- Lint: `bun run lint` (Prettier check + ESLint).
+- Format: `bun run format`.
+- Type/svelte checks: `bun run check`.
+- Watch checks: `bun run check:watch`.
+
+### Test
+- No frontend test runner is currently configured in `frontend/package.json`.
+
+### Single Frontend Test (current status)
+- Not available yet (no test framework configured).
+- If Vitest is introduced, use:
+  - `bun x vitest run src/path/to/file.test.ts`
+  - `bun x vitest run src/path/to/file.test.ts -t 'case name'`
+
+## Environment
+- Copy `backend/.env.example` to `backend/.env`.
+- Required backend vars: `PORT`, `DATABASE_URL`.
+- Optional DB vars: `DB_MAX_OPEN_CONNS`, `DB_MAX_IDLE_CONNS`, `DB_CONN_MAX_LIFETIME`.
+- Video vars: `VIDEO_LIBRARY_DIR`, `VIDEO_ALLOWED_EXTENSIONS`.
+- Migrations run automatically at backend startup.
+
+## Global Coding Rules
+- Keep edits focused; avoid unrelated refactors.
+- Match existing directory structure and naming patterns.
+- Prefer small, composable functions.
+- Avoid new dependencies unless there is clear value.
+- Never commit secrets (`.env`, credentials, keys).
+
+## Backend Style (Go)
+### Imports
+- Group imports as stdlib, blank line, external/internal packages.
+- Use aliases only when needed for clarity/conflicts.
+
+### Formatting and Naming
+- Run `gofmt -w .` after editing Go files.
+- Exported identifiers: `PascalCase`.
+- Unexported identifiers: `camelCase`.
+- Receiver names should be short and consistent (`h`, `r`, `l`).
+
+### Types and Interfaces
+- Keep entity/response structs explicit with tags.
+- Keep boundary interfaces in repository/domain packages.
+- Prefer concrete types unless abstraction is clearly needed.
+
+### Error Handling
+- Wrap errors with context using `%w`.
+- Use sentinel/domain errors for expected business outcomes (for example not found).
+- Validate early and return immediately on invalid input.
+- In HTTP handlers, return stable status codes and safe error messages.
+
+### API/HTTP Patterns
+- Register routes in `RegisterHandlers` methods.
+- Keep handlers thin and move reusable logic to helpers/services.
+- Preserve byte-range streaming semantics and traversal protections.
+
+## Frontend Style (Svelte + TypeScript)
+### Formatting
+- Follow `frontend/.prettierrc` exactly:
+  - tabs enabled
+  - single quotes
+  - no trailing commas
+  - print width 100
+- Prettier plugins: Svelte and Tailwind CSS plugins.
+
+### Lint and Type Safety
+- ESLint config includes JS, TypeScript, and Svelte recommendations.
+- TypeScript strict mode is enabled; maintain strict-safe code.
+- Prefer explicit types for API payloads and state.
+
+### Svelte Conventions
+- Use Svelte 5 runes where already used (`$state`, `$derived`, `$props`).
+- Clean up timers/subscriptions with lifecycle hooks (`onDestroy`).
+- Keep route components focused; extract shared logic only when reused.
+
+### Naming and Files
+- Type aliases/interfaces: `PascalCase`.
+- Variables/functions: `camelCase`.
+- Respect SvelteKit route file conventions (`+page.svelte`, `+layout.svelte`).
+
+### Styling
+- Tailwind utilities are primary; keep global CSS minimal.
+- Preserve current visual direction unless task requests redesign.
+
+## Generated Files
+- `export_types.ts` is generated by backend server export settings.
+- Do not hand-edit generated outputs unless generation flow is being changed.
+
+## Cursor/Copilot Rules
+- Checked `.cursor/rules/`: no files found.
+- Checked `.cursorrules`: not found.
+- Checked `.github/copilot-instructions.md`: not found.
+- If any appear later, treat them as high-priority constraints and update this guide.
+
+## Agent Execution Checklist
+- Read nearby files before editing and follow local conventions.
+- For backend edits, run: `go test ./...` and `go vet ./...`.
+- For frontend edits, run: `bun run check` and `bun run lint`.
+- Prefer single-test iteration commands during development.
+- In final notes, list changed files and exact verification commands run.
