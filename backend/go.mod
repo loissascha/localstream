@@ -7,6 +7,7 @@ require github.com/loissascha/go-http-server v0.2.0
 require github.com/loissascha/go-logger v0.0.3
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.8.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
