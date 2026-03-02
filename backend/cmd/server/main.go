@@ -7,7 +7,9 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
+	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 )
 
 func main() {
@@ -24,6 +26,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	db, err := database.OpenPostgresFromEnv()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	migrationsDir := "./migrations"
+
+	if err := database.RunMigrations(db.DB, migrationsDir); err != nil {
+		panic(err)
+	}
+
+	_ = repopostgres.NewUserRepository(db)
 
 	// handler
 	videoH := handler.NewVideoHandler(s)
