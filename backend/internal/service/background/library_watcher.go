@@ -59,13 +59,18 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 		return err
 	}
 	for _, path := range paths {
-		logger.Debug(nil, "{File}", path)
+		logger.Debug(nil, "{File}", path.Name)
 	}
 	return nil
 }
 
-func getAllFilesWithPath(startPoint string, extension string) ([]string, error) {
-	result := []string{}
+type fResult struct {
+	Name string
+	Path string
+}
+
+func getAllFilesWithPath(startPoint string, extension string) ([]fResult, error) {
+	result := []fResult{}
 	err := filepath.WalkDir(startPoint, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -75,7 +80,10 @@ func getAllFilesWithPath(startPoint string, extension string) ([]string, error) 
 			// logger.Debug(nil, "DIR: {Dir}", path)
 		} else {
 			if strings.HasSuffix(path, extension) {
-				result = append(result, path)
+				result = append(result, fResult{
+					Path: path,
+					Name: d.Name(),
+				})
 			}
 		}
 		return nil
