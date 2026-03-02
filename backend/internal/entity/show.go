@@ -18,6 +18,7 @@ type FetchSource string
 const (
 	FetchSourceTMDB   FetchSource = "tmdb"
 	FetchSourceTVMaze FetchSource = "tvmaze"
+	FetchSourceNone   FetchSource = "none"
 )
 
 func (t FetchSource) IsValid() bool {
