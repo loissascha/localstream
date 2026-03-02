@@ -15,13 +15,14 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/middleware"
 )
 
 type VideoHandler struct {
 	s                 *server.Server
 	libraryDir        string
 	allowedExtensions map[string]bool
-	authMiddleware    *AuthMiddleware
+	authMiddleware    *middleware.AuthMiddleware
 }
 
 type VideoListItem struct {
@@ -35,7 +36,7 @@ type VideoListResponse struct {
 	Videos []VideoListItem `json:"videos"`
 }
 
-func NewVideoHandler(s *server.Server, authMiddleware *AuthMiddleware) *VideoHandler {
+func NewVideoHandler(s *server.Server, authMiddleware *middleware.AuthMiddleware) *VideoHandler {
 	libraryDir := os.Getenv("VIDEO_LIBRARY_DIR")
 	if strings.TrimSpace(libraryDir) == "" {
 		libraryDir = "./videos"

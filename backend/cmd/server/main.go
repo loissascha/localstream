@@ -9,6 +9,7 @@ import (
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
+	"github.com/loissascha/localstream/internal/middleware"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
 	backgroundservice "github.com/loissascha/localstream/internal/service/background"
@@ -51,7 +52,7 @@ func main() {
 	libraryWatcher := backgroundservice.NewLibraryWatcher()
 
 	// middleware
-	authMiddleware := handler.NewAuthMiddleware(authService)
+	authMiddleware := middleware.NewAuthMiddleware(authService)
 
 	// handler
 	authH := handler.NewAuthHandler(s, authService)
