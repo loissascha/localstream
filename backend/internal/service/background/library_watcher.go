@@ -77,7 +77,19 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 			logger.Debug(nil, "Movie: {File}", episodeInfo)
 		case entity.LibraryTypeShows:
 			logger.Debug(nil, "Show: {File}", episodeInfo)
-			l.tvmetadataProvider.SearchSeries(episodeInfo)
+			searchResults, err := l.tvmetadataProvider.SearchSeries(episodeInfo)
+			if err != nil {
+				logger.Error(err, "Failed searching show metadata for {Series}", episodeInfo.Series)
+				continue
+			}
+
+			if len(searchResults) == 0 {
+				logger.Info(nil, "No metadata results for {Series}", episodeInfo.Series)
+				continue
+			}
+
+			bestMatch := searchResults[0]
+			logger.Debug(nil, "Best metadata match for {Series}: {Name} ({ID}) with score {Score}", episodeInfo.Series, bestMatch.Show.Name, bestMatch.Show.ID, bestMatch.Score)
 		}
 	}
 	return nil

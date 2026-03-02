@@ -3,6 +3,7 @@ package tvmaze
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/parsers"
+	"github.com/loissascha/localstream/internal/provider"
 )
 
 type TVMazeProvider struct {
@@ -39,9 +41,9 @@ func NewTVMazeProvider() *TVMazeProvider {
 	return &TVMazeProvider{}
 }
 
-func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) {
+func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) ([]provider.ShowSearchResult, error) {
 	if episodeInfo == nil {
-		return
+		return nil, nil
 	}
 
 	logger.Info(nil, "Search series {Name}", episodeInfo)
@@ -60,7 +62,7 @@ func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
 	if err != nil {
 		logger.Error(err, "Error with http request")
-		return
+		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
@@ -68,32 +70,59 @@ func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) {
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Error(err, "Error with http request 2")
-		return
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logger.Error(err, "Error with http request 3")
-		return
+		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
-		logger.Error(nil, "Non success status code")
-		return
+		err = fmt.Errorf("tvmaze search returned status %d", resp.StatusCode)
+		logger.Error(err, "Non success status code")
+		return nil, err
 	}
 
 	var searchResults []TVMazeSearchResult
 	if err = json.Unmarshal(body, &searchResults); err != nil {
 		logger.Error(err, "Error decoding tvmaze response")
-		return
+		return nil, err
 	}
 
 	if len(searchResults) == 0 {
 		logger.Info(nil, "No series found for {Name}", episodeInfo.Series)
-		return
+		return []provider.ShowSearchResult{}, nil
 	}
 
-	firstResult := searchResults[0]
+	mappedResults := make([]provider.ShowSearchResult, 0, len(searchResults))
+	for _, result := range searchResults {
+		mappedResult := provider.ShowSearchResult{
+			Score: result.Score,
+			Show: provider.ShowMetadata{
+				ID:        result.Show.ID,
+				URL:       result.Show.URL,
+				Name:      result.Show.Name,
+				Genres:    result.Show.Genres,
+				Premiered: result.Show.Premiered,
+				Summary:   result.Show.Summary,
+			},
+		}
+
+		if result.Show.Image != nil {
+			mappedResult.Show.Image = &provider.ShowImage{
+				Medium:   result.Show.Image.Medium,
+				Original: result.Show.Image.Original,
+			}
+		}
+
+		mappedResults = append(mappedResults, mappedResult)
+	}
+
+	firstResult := mappedResults[0]
 	logger.Debug(nil, "Found {Count} results. Top match: {Name} ({ID}) with score {Score}", len(searchResults), firstResult.Show.Name, firstResult.Show.ID, firstResult.Score)
+
+	return mappedResults, nil
 }
