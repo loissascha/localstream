@@ -42,7 +42,8 @@ func (l *LibraryWatcher) RunBackground() {
 func (l *LibraryWatcher) RunOnce() error {
 	logger.Info(nil, "Library Watcher running...")
 
-	ctx, _ := context.WithTimeout(context.Background(), 1*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	defer cancel()
 
 	libraries, err := l.libService.List(ctx)
 	if err != nil {
