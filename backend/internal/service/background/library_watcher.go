@@ -54,12 +54,18 @@ func (l *LibraryWatcher) RunOnce() error {
 }
 
 func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
-	paths, err := getAllFilesWithPath(library.Path, "mp4")
+	results, err := getAllFilesWithPath(library.Path, "mp4")
 	if err != nil {
 		return err
 	}
-	for _, path := range paths {
-		logger.Debug(nil, "{File}", path.Name)
+	for _, result := range results {
+
+		switch library.LibraryType {
+		case entity.LibraryTypeMovies:
+			logger.Debug(nil, "Movie: {File}", result.Name)
+		case entity.LibraryTypeShows:
+			logger.Debug(nil, "Show: {File}", result.Name)
+		}
 	}
 	return nil
 }
