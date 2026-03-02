@@ -50,9 +50,12 @@ func main() {
 	_ = service.NewLibraryService(libraryRepo)
 	libraryWatcher := backgroundservice.NewLibraryWatcher()
 
+	// middleware
+	authMiddleware := handler.NewAuthMiddleware(authService)
+
 	// handler
 	authH := handler.NewAuthHandler(s, authService)
-	videoH := handler.NewVideoHandler(s)
+	videoH := handler.NewVideoHandler(s, authMiddleware)
 
 	// register routes
 	authH.RegisterHandlers()

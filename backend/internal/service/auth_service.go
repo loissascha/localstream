@@ -19,6 +19,7 @@ var (
 	ErrInvalidAuthInput   = errors.New("invalid auth input")
 	ErrUsernameTaken      = errors.New("username already taken")
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrInvalidToken       = errors.New("invalid token")
 )
 
 const defaultJWTSecret = "change-me-in-production"
@@ -108,6 +109,32 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (*Au
 	}
 
 	return &AuthResult{Token: token}, nil
+}
+
+func (s *AuthService) ValidateToken(tokenString string) (int64, error) {
+	trimmedToken := strings.TrimSpace(tokenString)
+	if trimmedToken == "" {
+		return 0, ErrInvalidToken
+	}
+
+	claims := &jwt.RegisteredClaims{}
+	token, err := jwt.ParseWithClaims(trimmedToken, claims, func(token *jwt.Token) (any, error) {
+		if token.Method != jwt.SigningMethodHS256 {
+			return nil, ErrInvalidToken
+		}
+
+		return s.jwtSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return 0, ErrInvalidToken
+	}
+
+	userID, err := strconv.ParseInt(claims.Subject, 10, 64)
+	if err != nil || userID <= 0 {
+		return 0, ErrInvalidToken
+	}
+
+	return userID, nil
 }
 
 func (s *AuthService) generateToken(user *entity.User) (string, error) {

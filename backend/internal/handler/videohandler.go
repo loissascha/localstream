@@ -21,6 +21,7 @@ type VideoHandler struct {
 	s                 *server.Server
 	libraryDir        string
 	allowedExtensions map[string]bool
+	authMiddleware    *AuthMiddleware
 }
 
 type VideoListItem struct {
@@ -34,7 +35,7 @@ type VideoListResponse struct {
 	Videos []VideoListItem `json:"videos"`
 }
 
-func NewVideoHandler(s *server.Server) *VideoHandler {
+func NewVideoHandler(s *server.Server, authMiddleware *AuthMiddleware) *VideoHandler {
 	libraryDir := os.Getenv("VIDEO_LIBRARY_DIR")
 	if strings.TrimSpace(libraryDir) == "" {
 		libraryDir = "./videos"
@@ -44,12 +45,20 @@ func NewVideoHandler(s *server.Server) *VideoHandler {
 		s:                 s,
 		libraryDir:        libraryDir,
 		allowedExtensions: parseAllowedExtensions(os.Getenv("VIDEO_ALLOWED_EXTENSIONS")),
+		authMiddleware:    authMiddleware,
 	}
 }
 
 func (h *VideoHandler) RegisterHandlers() {
-	h.s.GET("/api/videos", h.listVideos, server.WithExportType[VideoListResponse]())
-	h.s.GET("/api/videos/stream", h.streamVideo)
+	h.s.GET("/api/videos",
+		h.listVideos,
+		server.WithExportType[VideoListResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+	h.s.GET("/api/videos/stream",
+		h.streamVideo,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
 }
 
 func (h *VideoHandler) listVideos(w http.ResponseWriter, r *http.Request) {
