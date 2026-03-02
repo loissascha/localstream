@@ -18,6 +18,8 @@ import (
 func main() {
 	godotenv.Load()
 
+	logger.Config.ShowDebug(true)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		panic("PORT not defined. Make sure there is a .env file or a environment variable set!")
@@ -48,7 +50,7 @@ func main() {
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
-	_ = service.NewLibraryService(libraryRepo)
+	libService := service.NewLibraryService(libraryRepo)
 	// libraryService.Create(context.Background(), "Lib1", "/home/sascha/localstream/lib1")
 
 	// middleware
@@ -65,7 +67,7 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
-	libraryWatcher := backgroundservice.NewLibraryWatcher()
+	libraryWatcher := backgroundservice.NewLibraryWatcher(libService)
 	libraryWatcher.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
