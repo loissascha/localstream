@@ -1,0 +1,146 @@
+package service
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/repository"
+	"golang.org/x/crypto/bcrypt"
+)
+
+var (
+	ErrInvalidAuthInput   = errors.New("invalid auth input")
+	ErrUsernameTaken      = errors.New("username already taken")
+	ErrInvalidCredentials = errors.New("invalid credentials")
+)
+
+const defaultJWTSecret = "change-me-in-production"
+
+type AuthResult struct {
+	Token string
+}
+
+type AuthService struct {
+	userRepo  repository.UserRepository
+	jwtSecret []byte
+	tokenTTL  time.Duration
+}
+
+func NewAuthService(userRepo repository.UserRepository, jwtSecret string) *AuthService {
+	secret := strings.TrimSpace(jwtSecret)
+	if secret == "" {
+		secret = defaultJWTSecret
+	}
+
+	return &AuthService{
+		userRepo:  userRepo,
+		jwtSecret: []byte(secret),
+		tokenTTL:  24 * time.Hour,
+	}
+}
+
+func (s *AuthService) Register(ctx context.Context, username, password string) (*AuthResult, error) {
+	username, password, err := normalizeCredentials(username, password)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.userRepo.GetByUsername(ctx, username)
+	if err == nil {
+		return nil, ErrUsernameTaken
+	}
+	if !errors.Is(err, repository.ErrUserNotFound) {
+		return nil, fmt.Errorf("check existing user: %w", err)
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, fmt.Errorf("hash password: %w", err)
+	}
+
+	user := &entity.User{
+		Username:     username,
+		PasswordHash: string(hash),
+	}
+	if err := s.userRepo.Create(ctx, user); err != nil {
+		if isUniqueViolation(err) {
+			return nil, ErrUsernameTaken
+		}
+		return nil, fmt.Errorf("create user: %w", err)
+	}
+
+	token, err := s.generateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AuthResult{Token: token}, nil
+}
+
+func (s *AuthService) Login(ctx context.Context, username, password string) (*AuthResult, error) {
+	username, password, err := normalizeCredentials(username, password)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := s.userRepo.GetByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			return nil, ErrInvalidCredentials
+		}
+		return nil, fmt.Errorf("get user by username: %w", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return nil, ErrInvalidCredentials
+	}
+
+	token, err := s.generateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AuthResult{Token: token}, nil
+}
+
+func (s *AuthService) generateToken(user *entity.User) (string, error) {
+	now := time.Now().UTC()
+	claims := jwt.RegisteredClaims{
+		Subject:   strconv.FormatInt(user.ID, 10),
+		IssuedAt:  jwt.NewNumericDate(now),
+		ExpiresAt: jwt.NewNumericDate(now.Add(s.tokenTTL)),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(s.jwtSecret)
+	if err != nil {
+		return "", fmt.Errorf("sign jwt token: %w", err)
+	}
+
+	return tokenString, nil
+}
+
+func normalizeCredentials(username, password string) (string, string, error) {
+	trimmedUsername := strings.TrimSpace(username)
+	if trimmedUsername == "" || password == "" {
+		return "", "", ErrInvalidAuthInput
+	}
+
+	return trimmedUsername, password, nil
+}
+
+func isUniqueViolation(err error) bool {
+	var pgErr *pgconn.PgError
+	if !errors.As(err, &pgErr) {
+		return false
+	}
+
+	return pgErr.Code == "23505"
+}

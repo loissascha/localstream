@@ -11,6 +11,7 @@ import (
 	"github.com/loissascha/localstream/internal/handler"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
+	backgroundservice "github.com/loissascha/localstream/internal/service/background"
 )
 
 func main() {
@@ -41,16 +42,20 @@ func main() {
 	}
 
 	// repositories
-	_ = repopostgres.NewUserRepository(db)
-	_ = repopostgres.NewLibraryRepository(db)
+	userRepo := repopostgres.NewUserRepository(db)
+	libraryRepo := repopostgres.NewLibraryRepository(db)
 
 	// services
-	libraryWatcher := service.NewLibraryWatcher()
+	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
+	_ = service.NewLibraryService(libraryRepo)
+	libraryWatcher := backgroundservice.NewLibraryWatcher()
 
 	// handler
+	authH := handler.NewAuthHandler(s, authService)
 	videoH := handler.NewVideoHandler(s)
 
 	// register routes
+	authH.RegisterHandlers()
 	videoH.RegisterHandlers()
 
 	// fs := http.FileServer(http.Dir("./static"))
