@@ -1,4 +1,4 @@
-module github.com/loissascha/go-svelte-template
+module github.com/loissascha/localstream
 
 go 1.25.3
 

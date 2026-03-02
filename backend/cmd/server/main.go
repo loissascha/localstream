@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
-	"github.com/loissascha/go-svelte-template/internal/handler"
+	"github.com/loissascha/localstream/internal/handler"
 )
 
 func main() {
