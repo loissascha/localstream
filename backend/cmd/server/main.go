@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -49,7 +50,7 @@ func main() {
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	_ = service.NewLibraryService(libraryRepo)
-	libraryWatcher := backgroundservice.NewLibraryWatcher()
+	// libraryService.Create(context.Background(), "Lib1", "/home/sascha/localstream/lib1")
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -65,6 +66,7 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
+	libraryWatcher := backgroundservice.NewLibraryWatcher()
 	libraryWatcher.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
