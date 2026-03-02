@@ -45,7 +45,7 @@ func (l *LibraryWatcher) RunOnce() error {
 	}
 
 	for _, lib := range libraries {
-		err := l.runOnLibrary(lib)
+		err := l.RunLibrary(lib)
 		if err != nil {
 			return err
 		}
@@ -53,7 +53,7 @@ func (l *LibraryWatcher) RunOnce() error {
 	return nil
 }
 
-func (l *LibraryWatcher) runOnLibrary(library entity.Library) error {
+func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	paths, err := getAllFilesWithPath(library.Path, "mp4")
 	if err != nil {
 		return err
