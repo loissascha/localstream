@@ -8,6 +8,7 @@ import (
 )
 
 type EpisodeInfo struct {
+	RawName string
 	Series  string
 	Season  int
 	Episode int
@@ -74,6 +75,7 @@ func ParseEpisodeFromFilename(name string) (*EpisodeInfo, bool) {
 	}
 
 	return &EpisodeInfo{
+		RawName: name,
 		Series:  titlePart,
 		Season:  season,
 		Episode: ep,
