@@ -8,6 +8,7 @@ import (
 
 type Episode struct {
 	ID          uuid.UUID   `db:"id"`
+	SeasonID    uuid.UUID   `db:"season_id"`
 	Name        string      `db:"name"`
 	Path        string      `db:"path"`
 	CreatedAt   time.Time   `db:"created_at"`
