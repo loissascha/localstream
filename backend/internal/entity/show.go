@@ -16,9 +16,9 @@ type Show struct {
 type FetchSource string
 
 const (
+	FetchSourceNone   FetchSource = "none"
 	FetchSourceTMDB   FetchSource = "tmdb"
 	FetchSourceTVMaze FetchSource = "tvmaze"
-	FetchSourceNone   FetchSource = "none"
 )
 
 func (t FetchSource) IsValid() bool {
