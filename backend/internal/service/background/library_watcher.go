@@ -2,7 +2,6 @@ package background
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -97,7 +96,7 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	if library.LibraryType == entity.LibraryTypeShows {
 		shows := l.extractShows(library.Path, results)
 
-		for show, _ := range shows {
+		for show, seasons := range shows {
 
 			showInfo, ok := parsers.ParseShowFromName(show)
 			if !ok {
@@ -106,9 +105,29 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 			}
 
 			if showInfo.Year != nil {
-				logger.Info(nil, "Show parsed. Name: {Name} | Year: {Year}", showInfo.Series, *showInfo.Year)
+				logger.Info(nil, "Show parsed. Name: {Name} | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, *showInfo.Year, len(seasons))
 			} else {
-				logger.Info(nil, "Show parsed. Name: {Name}", showInfo.Series)
+				logger.Info(nil, "Show parsed. Name: {Name} | Amount Seasons: {Season}", showInfo.Series, len(seasons))
+			}
+
+			for season, episodes := range seasons {
+				seasonInfo, ok := parsers.ParseSeasonFromName(season)
+				if !ok {
+					logger.Error(nil, "Can't parse season name: {Season}. ParseSeasonFromName failed", season)
+					continue
+				}
+
+				logger.Info(nil, "Season parsed. Number: {Number}", seasonInfo.Season)
+
+				for _, episode := range episodes {
+					episodeInfo, ok := parsers.ParseEpisodeFromFilename(episode)
+					if !ok {
+						logger.Error(nil, "Can't parse episode name: {Episode}. ParseEpisodeFromFilename failed", episode)
+						continue
+					}
+
+					logger.Info(nil, "Episode parsed. Number: {Number}", episodeInfo.Episode)
+				}
 			}
 		}
 
