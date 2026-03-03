@@ -12,18 +12,21 @@ import (
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
+	"github.com/loissascha/localstream/internal/repository"
 	"github.com/loissascha/localstream/internal/service"
 )
 
 type LibraryWatcher struct {
 	libService         *service.LibraryService
 	tvmetadataProvider provider.TVMetadataProvider
+	showRepo           repository.ShowRepository
 }
 
-func NewLibraryWatcher(libService *service.LibraryService) *LibraryWatcher {
+func NewLibraryWatcher(libService *service.LibraryService, showRepo repository.ShowRepository) *LibraryWatcher {
 	return &LibraryWatcher{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
+		showRepo:           showRepo,
 	}
 }
 
@@ -93,6 +96,11 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	if library.LibraryType == entity.LibraryTypeShows {
 		shows := l.extractShows(library.Path, results)
 		fmt.Println(shows)
+
+		// go through each show
+		// check if the show (on that path) already exists
+		// if not -> create it
+		// if yes -> go on
 	}
 
 	// for _, result := range results {
