@@ -87,6 +87,10 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
+func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) {
+
+}
+
 func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	results, err := getAllFilesWithPath(library.Path, "mp4")
 	if err != nil {
@@ -109,6 +113,8 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 			} else {
 				logger.Info(nil, "Show parsed. Name: {Name} | Amount Seasons: {Season}", showInfo.Series, len(seasons))
 			}
+
+			l.findOrCreateShow(showInfo)
 
 			for season, episodes := range seasons {
 				seasonInfo, ok := parsers.ParseSeasonFromName(season)
