@@ -10,6 +10,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/parsers"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	"github.com/loissascha/localstream/internal/repository"
@@ -96,8 +97,19 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 	if library.LibraryType == entity.LibraryTypeShows {
 		shows := l.extractShows(library.Path, results)
 
-		for show, v := range shows {
-			fmt.Println("Show:", show, "content:", v)
+		for show, _ := range shows {
+
+			showInfo, ok := parsers.ParseShowFromName(show)
+			if !ok {
+				logger.Error(nil, "Can't parse show name: {Show}. ParseShowFromName failed", show)
+				continue
+			}
+
+			if showInfo.Year != nil {
+				logger.Info(nil, "Show parsed. Name: {Name} | Year: {Year}", showInfo.Series, *showInfo.Year)
+			} else {
+				logger.Info(nil, "Show parsed. Name: {Name}", showInfo.Series)
+			}
 		}
 
 		// go through each show
