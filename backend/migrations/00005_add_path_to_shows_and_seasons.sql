@@ -1,0 +1,13 @@
+-- +goose Up
+ALTER TABLE shows
+ADD COLUMN path TEXT NOT NULL DEFAULT '';
+
+ALTER TABLE seasons
+ADD COLUMN path TEXT NOT NULL DEFAULT '';
+
+-- +goose Down
+ALTER TABLE seasons
+DROP COLUMN IF EXISTS path;
+
+ALTER TABLE shows
+DROP COLUMN IF EXISTS path;
