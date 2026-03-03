@@ -95,7 +95,10 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 
 	if library.LibraryType == entity.LibraryTypeShows {
 		shows := l.extractShows(library.Path, results)
-		fmt.Println(shows)
+
+		for show, v := range shows {
+			fmt.Println("Show:", show, "content:", v)
+		}
 
 		// go through each show
 		// check if the show (on that path) already exists
