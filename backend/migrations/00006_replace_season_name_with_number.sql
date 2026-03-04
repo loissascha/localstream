@@ -1,0 +1,13 @@
+-- +goose Up
+ALTER TABLE seasons
+DROP COLUMN IF EXISTS name;
+
+ALTER TABLE seasons
+ADD COLUMN number INT NOT NULL DEFAULT 1;
+
+-- +goose Down
+ALTER TABLE seasons
+DROP COLUMN IF EXISTS number;
+
+ALTER TABLE seasons
+ADD COLUMN name TEXT NOT NULL DEFAULT '';

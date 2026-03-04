@@ -26,12 +26,12 @@ func (r *SeasonRepository) Create(ctx context.Context, season *entity.Season) er
 	}
 
 	const query = `
-		INSERT INTO seasons (show_id, name, path, fetch_source)
+		INSERT INTO seasons (show_id, number, path, fetch_source)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at
 	`
 
-	err := r.db.QueryRowxContext(ctx, query, season.ShowID, season.Name, season.Path, fetchSource).Scan(&season.ID, &season.CreatedAt)
+	err := r.db.QueryRowxContext(ctx, query, season.ShowID, season.Number, season.Path, fetchSource).Scan(&season.ID, &season.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create season: %w", err)
 	}
@@ -43,7 +43,7 @@ func (r *SeasonRepository) Create(ctx context.Context, season *entity.Season) er
 
 func (r *SeasonRepository) GetByPath(ctx context.Context, path string) (*entity.Season, error) {
 	const query = `
-		SELECT id, show_id, name, path, created_at, fetch_source
+		SELECT id, show_id, number, path, created_at, fetch_source
 		FROM seasons
 		WHERE path = $1
 		LIMIT 1
