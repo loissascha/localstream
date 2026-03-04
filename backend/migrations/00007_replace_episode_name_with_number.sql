@@ -1,0 +1,13 @@
+-- +goose Up
+ALTER TABLE episodes
+DROP COLUMN IF EXISTS name;
+
+ALTER TABLE episodes
+ADD COLUMN number INT NOT NULL DEFAULT 1;
+
+-- +goose Down
+ALTER TABLE episodes
+DROP COLUMN IF EXISTS number;
+
+ALTER TABLE episodes
+ADD COLUMN name TEXT NOT NULL DEFAULT '';

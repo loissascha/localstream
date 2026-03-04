@@ -109,7 +109,7 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 	episode = &entity.Episode{
 		ID:          uuid.New(),
 		SeasonID:    seasonId,
-		Name:        episodeInfo.Series,
+		Number:      episodeInfo.Episode,
 		Path:        episodeInfo.RawName,
 		FetchSource: entity.FetchSourceNone,
 	}
