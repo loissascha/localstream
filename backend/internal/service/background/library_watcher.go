@@ -92,6 +92,37 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
+func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo) (*entity.Episode, error) {
+	logger.Debug(nil, "findOrCreateEpisode {EpisodeInfo}", *episodeInfo)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	episode, err := l.episodeRepo.GetByPathAndSeasonID(ctx, episodeInfo.RawName, seasonId)
+	if err != nil {
+		logger.Error(err, "Couldn't get episode")
+		return nil, err
+	}
+	if episode != nil {
+		logger.Debug(nil, "Found episode {Episode}", *episode)
+		return episode, nil
+	}
+
+	episode = &entity.Episode{
+		ID:          uuid.New(),
+		SeasonID:    seasonId,
+		Name:        episodeInfo.Series,
+		Path:        episodeInfo.RawName,
+		FetchSource: entity.FetchSourceNone,
+	}
+	logger.Debug(nil, "Trying to create Episode {Episode}", *episode)
+
+	err = l.episodeRepo.Create(ctx, episode)
+	if err != nil {
+		logger.Error(err, "Error creating episode")
+		return nil, err
+	}
+	return episode, nil
+}
+
 func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo) (*entity.Season, error) {
 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
