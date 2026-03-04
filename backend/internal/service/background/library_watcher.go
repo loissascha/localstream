@@ -236,7 +236,12 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 						continue
 					}
 
-					logger.Info(nil, "Episode parsed. Number: {Number}", episodeInfo.Episode)
+					episode, err := l.findOrCreateEpisode(season.ID, episodeInfo)
+					if err != nil {
+						return err
+					}
+
+					logger.Info(nil, "Episode parsed. Number: {Number} (ID: {ID})", episodeInfo.Episode, episode.ID.String())
 				}
 			}
 		}

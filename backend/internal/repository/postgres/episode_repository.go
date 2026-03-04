@@ -53,7 +53,7 @@ func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path strin
 	var episode entity.Episode
 	if err := r.db.GetContext(ctx, &episode, query, path, seasonId); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &entity.Episode{}, nil
+			return nil, nil
 		}
 		return nil, fmt.Errorf("get episode by path: %w", err)
 	}
