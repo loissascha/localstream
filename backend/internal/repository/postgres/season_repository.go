@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
@@ -41,16 +42,16 @@ func (r *SeasonRepository) Create(ctx context.Context, season *entity.Season) er
 	return nil
 }
 
-func (r *SeasonRepository) GetByPath(ctx context.Context, path string) (*entity.Season, error) {
+func (r *SeasonRepository) GetByPathAndShowID(ctx context.Context, path string, showId uuid.UUID) (*entity.Season, error) {
 	const query = `
 		SELECT id, show_id, number, path, created_at, fetch_source
 		FROM seasons
-		WHERE path = $1
+		WHERE path = $1 AND show_id = $2
 		LIMIT 1
 	`
 
 	var season entity.Season
-	if err := r.db.GetContext(ctx, &season, query, path); err != nil {
+	if err := r.db.GetContext(ctx, &season, query, path, showId); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}

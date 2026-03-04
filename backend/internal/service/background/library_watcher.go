@@ -92,26 +92,37 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
-// func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo) (*entity.Season, error) {
-// 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-// 	season, err := l.seasonRepo.GetByPath(ctx, seasonInfo.RawName)
-// 	if err != nil {
-// 		logger.Error(err, "Couldn't get season")
-// 		return nil, err
-// 	}
-// 	if season != nil {
-// 		logger.Debug(nil, "Found season {Season}", *season)
-// 		return season, nil
-// 	}
-//
-// 	season = &entity.Season{
-// 		ID: uuid.New(),
-// 		ShowID: showId,
-// 		Name: seasonInfo.Season,
-// 	}
-// }
+func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo) (*entity.Season, error) {
+	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	season, err := l.seasonRepo.GetByPathAndShowID(ctx, seasonInfo.RawName, showId)
+	if err != nil {
+		logger.Error(err, "Couldn't get season")
+		return nil, err
+	}
+	if season != nil {
+		logger.Debug(nil, "Found season {Season}", *season)
+		return season, nil
+	}
+
+	season = &entity.Season{
+		ID:          uuid.New(),
+		ShowID:      showId,
+		Number:      seasonInfo.Season,
+		Path:        seasonInfo.RawName,
+		FetchSource: entity.FetchSourceNone,
+	}
+
+	logger.Debug(nil, "Trying to create season {Season}", *season)
+
+	err = l.seasonRepo.Create(ctx, season)
+	if err != nil {
+		logger.Error(err, "Error creating season")
+		return nil, err
+	}
+	return season, nil
+}
 
 func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) (*entity.Show, error) {
 	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
@@ -180,7 +191,12 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 					continue
 				}
 
-				logger.Info(nil, "Season parsed. Number: {Number}", seasonInfo.Season)
+				season, err := l.findOrCreateSeason(show.ID, seasonInfo)
+				if err != nil {
+					return err
+				}
+
+				logger.Info(nil, "Season parsed. Number: {Number} (ID: {ID})", season.Number, season.ID.String())
 
 				for _, episode := range episodes {
 					episodeInfo, ok := parsers.ParseEpisodeFromFilename(episode)
