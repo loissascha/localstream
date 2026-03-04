@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/parsers"
@@ -87,8 +88,36 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
-func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) {
+func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) (*entity.Show, error) {
+	logger.Debug(nil, "findOrCreateShow {ShowInfo}", showInfo)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	show, err := l.showRepo.GetByPath(ctx, showInfo.RawName)
+	if err != nil {
+		logger.Error(err, "Couldn't get show by path")
+		return nil, err
+	}
+	if show != nil {
+		logger.Debug(nil, "Found show {Show}", *show)
+		return show, nil
+	}
 
+	show = &entity.Show{
+		ID:          uuid.New(),
+		Name:        showInfo.Series,
+		Path:        showInfo.RawName,
+		FetchSource: entity.FetchSourceNone,
+	}
+
+	logger.Debug(nil, "Trying to create show {Show}", *show)
+
+	err = l.showRepo.Create(ctx, show)
+	if err != nil {
+		logger.Error(err, "Error creating show")
+		return nil, err
+	}
+
+	return show, nil
 }
 
 func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
@@ -108,13 +137,16 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 				continue
 			}
 
-			if showInfo.Year != nil {
-				logger.Info(nil, "Show parsed. Name: {Name} | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, *showInfo.Year, len(seasons))
-			} else {
-				logger.Info(nil, "Show parsed. Name: {Name} | Amount Seasons: {Season}", showInfo.Series, len(seasons))
+			show, err := l.findOrCreateShow(showInfo)
+			if err != nil {
+				return err
 			}
 
-			l.findOrCreateShow(showInfo)
+			if showInfo.Year != nil {
+				logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, show.ID.String(), *showInfo.Year, len(seasons))
+			} else {
+				logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Amount Seasons: {Season}", showInfo.Series, show.ID.String(), len(seasons))
+			}
 
 			for season, episodes := range seasons {
 				seasonInfo, ok := parsers.ParseSeasonFromName(season)

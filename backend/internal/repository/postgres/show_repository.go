@@ -52,7 +52,7 @@ func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Sh
 	var show entity.Show
 	if err := r.db.GetContext(ctx, &show, query, path); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &entity.Show{}, nil
+			return nil, nil
 		}
 		return nil, fmt.Errorf("get show by path: %w", err)
 	}
