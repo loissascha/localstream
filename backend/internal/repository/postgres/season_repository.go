@@ -52,7 +52,7 @@ func (r *SeasonRepository) GetByPath(ctx context.Context, path string) (*entity.
 	var season entity.Season
 	if err := r.db.GetContext(ctx, &season, query, path); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &entity.Season{}, nil
+			return nil, nil
 		}
 		return nil, fmt.Errorf("get season by path: %w", err)
 	}
