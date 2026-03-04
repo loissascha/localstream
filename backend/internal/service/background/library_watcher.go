@@ -21,13 +21,17 @@ type LibraryWatcher struct {
 	libService         *service.LibraryService
 	tvmetadataProvider provider.TVMetadataProvider
 	showRepo           repository.ShowRepository
+	seasonRepo         repository.SeasonRepository
+	episodeRepo        repository.EpisodeRepository
 }
 
-func NewLibraryWatcher(libService *service.LibraryService, showRepo repository.ShowRepository) *LibraryWatcher {
+func NewLibraryWatcher(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository) *LibraryWatcher {
 	return &LibraryWatcher{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
 		showRepo:           showRepo,
+		seasonRepo:         seasonRepo,
+		episodeRepo:        episodeRepo,
 	}
 }
 
@@ -88,8 +92,29 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
+// func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo) (*entity.Season, error) {
+// 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
+// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 	defer cancel()
+// 	season, err := l.seasonRepo.GetByPath(ctx, seasonInfo.RawName)
+// 	if err != nil {
+// 		logger.Error(err, "Couldn't get season")
+// 		return nil, err
+// 	}
+// 	if season != nil {
+// 		logger.Debug(nil, "Found season {Season}", *season)
+// 		return season, nil
+// 	}
+//
+// 	season = &entity.Season{
+// 		ID: uuid.New(),
+// 		ShowID: showId,
+// 		Name: seasonInfo.Season,
+// 	}
+// }
+
 func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) (*entity.Show, error) {
-	logger.Debug(nil, "findOrCreateShow {ShowInfo}", showInfo)
+	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	show, err := l.showRepo.GetByPath(ctx, showInfo.RawName)

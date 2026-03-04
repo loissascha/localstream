@@ -48,6 +48,8 @@ func main() {
 	userRepo := repopostgres.NewUserRepository(db)
 	libraryRepo := repopostgres.NewLibraryRepository(db)
 	showRepo := repopostgres.NewShowRepository(db)
+	seasonRepo := repopostgres.NewSeasonRepository(db)
+	episodeRepo := repopostgres.NewEpisodeRepository(db)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -67,7 +69,7 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
-	libraryWatcher := backgroundservice.NewLibraryWatcher(libService, showRepo)
+	libraryWatcher := backgroundservice.NewLibraryWatcher(libService, showRepo, seasonRepo, episodeRepo)
 	libraryWatcher.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
