@@ -1,11 +1,31 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { API_URL } from '$lib/consts';
 
 	let username = $state('');
 	let loading = $state(false);
+	let error: string | null = null;
 
 	async function submit() {
 		loading = true;
+
+		try {
+			const res = await fetch(API_URL + '/auth/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ username: username })
+			});
+
+			if (!res.ok) {
+				throw new Error('Request failed');
+			}
+
+			resolve('/(auth)/login');
+		} catch (e) {
+			error = (e as Error).message;
+		} finally {
+			loading = false;
+		}
 	}
 </script>
 
