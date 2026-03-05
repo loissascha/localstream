@@ -2,7 +2,7 @@ module github.com/loissascha/localstream
 
 go 1.25.3
 
-require github.com/loissascha/go-http-server v0.2.2
+require github.com/loissascha/go-http-server v0.2.3
 
 require github.com/loissascha/go-logger v0.0.3
 
