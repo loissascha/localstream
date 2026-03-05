@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
-	import { onMount } from 'svelte';
+	import type { AuthUserResponse } from '$lib/types/export_types';
 
-	let loading = true;
-	let data: any = null;
-	let error: string | null = null;
+	let loading = $state(true);
+	let data: AuthUserResponse[] = $state([]);
+	let error: string | null = $state(null);
 
-	onMount(async () => {
+	async function load() {
 		try {
 			const res = await fetch(API_URL + '/auth/users/list');
 
@@ -22,6 +22,10 @@
 		} finally {
 			loading = false;
 		}
+	}
+
+	$effect(() => {
+		load();
 	});
 </script>
 
@@ -37,7 +41,7 @@
 		{:else if error}
 			<p>Error: {error}</p>
 		{:else}
-			<div class="my-8 flex gap-2 items-center justify-center">
+			<div class="my-8 flex items-center justify-center gap-2">
 				{#each data as item}
 					<div
 						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-300 bg-neutral-200 text-center shadow"

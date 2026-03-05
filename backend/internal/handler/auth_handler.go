@@ -23,7 +23,8 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
-type AuthUserResposne struct {
+type AuthUserResponse struct {
+	ID       int64  `json:"id"`
 	Username string `json:"username"`
 }
 
@@ -35,7 +36,7 @@ func NewAuthHandler(s *server.Server, authService *service.AuthService) *AuthHan
 }
 
 func (h *AuthHandler) RegisterHandlers() {
-	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResposne]())
+	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResponse]())
 	h.s.POSTI("/auth/register", h.register, server.WithExportType[AuthResponse]())
 	h.s.POSTI("/auth/login", h.login, server.WithExportType[AuthResponse]())
 }
@@ -47,9 +48,10 @@ func (h *AuthHandler) listUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := []AuthUserResposne{}
+	result := []AuthUserResponse{}
 	for _, u := range users {
-		result = append(result, AuthUserResposne{
+		result = append(result, AuthUserResponse{
+			ID:       u.ID,
 			Username: u.Username,
 		})
 	}

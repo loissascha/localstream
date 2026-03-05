@@ -1,4 +1,5 @@
-export interface AuthUserResposne {
+export interface AuthUserResponse {
+  id: number;
   username: string;
 }
 export interface AuthResponse {

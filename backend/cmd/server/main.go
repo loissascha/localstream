@@ -26,7 +26,7 @@ func main() {
 	}
 
 	s, err := server.NewServer(
-		server.SetExportTypesLocation("../export_types.ts"),
+		server.SetExportTypesLocation("../frontend/src/lib/types/export_types.ts"),
 	)
 	if err != nil {
 		panic(err)
