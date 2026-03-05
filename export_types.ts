@@ -1,3 +1,6 @@
+export interface AuthUserResposne {
+  username: string;
+}
 export interface AuthResponse {
   token: string;
 }
