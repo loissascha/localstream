@@ -12,7 +12,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -47,8 +46,8 @@ func NewAuthService(userRepo repository.UserRepository, jwtSecret string) *AuthS
 	}
 }
 
-func (s *AuthService) Register(ctx context.Context, username, password string) (*AuthResult, error) {
-	username, password, err := normalizeCredentials(username, password)
+func (s *AuthService) Register(ctx context.Context, username string) (*AuthResult, error) {
+	username, err := normalizeCredentials(username)
 	if err != nil {
 		return nil, err
 	}
@@ -61,14 +60,13 @@ func (s *AuthService) Register(ctx context.Context, username, password string) (
 		return nil, fmt.Errorf("check existing user: %w", err)
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, fmt.Errorf("hash password: %w", err)
-	}
+	// hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("hash password: %w", err)
+	// }
 
 	user := &entity.User{
-		Username:     username,
-		PasswordHash: string(hash),
+		Username: username,
 	}
 	if err := s.userRepo.Create(ctx, user); err != nil {
 		if isUniqueViolation(err) {
@@ -85,8 +83,8 @@ func (s *AuthService) Register(ctx context.Context, username, password string) (
 	return &AuthResult{Token: token}, nil
 }
 
-func (s *AuthService) Login(ctx context.Context, username, password string) (*AuthResult, error) {
-	username, password, err := normalizeCredentials(username, password)
+func (s *AuthService) Login(ctx context.Context, username string) (*AuthResult, error) {
+	username, err := normalizeCredentials(username)
 	if err != nil {
 		return nil, err
 	}
@@ -99,9 +97,9 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (*Au
 		return nil, fmt.Errorf("get user by username: %w", err)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
-		return nil, ErrInvalidCredentials
-	}
+	// if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+	// 	return nil, ErrInvalidCredentials
+	// }
 
 	token, err := s.generateToken(user)
 	if err != nil {
@@ -109,6 +107,10 @@ func (s *AuthService) Login(ctx context.Context, username, password string) (*Au
 	}
 
 	return &AuthResult{Token: token}, nil
+}
+
+func (s *AuthService) List(ctx context.Context) ([]entity.User, error) {
+	return s.userRepo.List(ctx)
 }
 
 func (s *AuthService) ValidateToken(tokenString string) (int64, error) {
@@ -154,13 +156,13 @@ func (s *AuthService) generateToken(user *entity.User) (string, error) {
 	return tokenString, nil
 }
 
-func normalizeCredentials(username, password string) (string, string, error) {
+func normalizeCredentials(username string) (string, error) {
 	trimmedUsername := strings.TrimSpace(username)
-	if trimmedUsername == "" || password == "" {
-		return "", "", ErrInvalidAuthInput
+	if trimmedUsername == "" {
+		return "", ErrInvalidAuthInput
 	}
 
-	return trimmedUsername, password, nil
+	return trimmedUsername, nil
 }
 
 func isUniqueViolation(err error) bool {

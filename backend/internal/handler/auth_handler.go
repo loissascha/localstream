@@ -17,11 +17,14 @@ type AuthHandler struct {
 
 type AuthRequest struct {
 	Username string `json:"username"`
-	Password string `json:"password"`
 }
 
 type AuthResponse struct {
 	Token string `json:"token"`
+}
+
+type AuthUserResposne struct {
+	Username string `json:"username"`
 }
 
 func NewAuthHandler(s *server.Server, authService *service.AuthService) *AuthHandler {
@@ -32,9 +35,27 @@ func NewAuthHandler(s *server.Server, authService *service.AuthService) *AuthHan
 }
 
 func (h *AuthHandler) RegisterHandlers() {
+	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResposne]())
 	h.s.POST("/auth/register", h.register, server.WithExportType[AuthResponse]())
 	h.s.POST("/auth/reigster", h.register, server.WithExportType[AuthResponse]())
 	h.s.POST("/auth/login", h.login, server.WithExportType[AuthResponse]())
+}
+
+func (h *AuthHandler) listUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.authService.List(r.Context())
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "couldn't match data. Server error."})
+		return
+	}
+
+	result := []AuthUserResposne{}
+	for _, u := range users {
+		result = append(result, AuthUserResposne{
+			Username: u.Username,
+		})
+	}
+
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *AuthHandler) register(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +65,7 @@ func (h *AuthHandler) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.authService.Register(r.Context(), requestBody.Username, requestBody.Password)
+	result, err := h.authService.Register(r.Context(), requestBody.Username)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidAuthInput):
@@ -67,7 +88,7 @@ func (h *AuthHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.authService.Login(r.Context(), requestBody.Username, requestBody.Password)
+	result, err := h.authService.Login(r.Context(), requestBody.Username)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidAuthInput):

@@ -70,4 +70,18 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*e
 	return &user, nil
 }
 
+func (r *UserRepository) List(ctx context.Context) ([]entity.User, error) {
+	const query = `
+		SELECT id, username, created_at
+		FROM users
+	`
+
+	var users []entity.User
+	if err := r.db.SelectContext(ctx, &users, query); err != nil {
+		return nil, fmt.Errorf("list users: %w", err)
+	}
+
+	return users, nil
+}
+
 var _ repository.UserRepository = (*UserRepository)(nil)
