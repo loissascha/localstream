@@ -20,7 +20,7 @@
 				throw new Error('Request failed');
 			}
 
-			resolve('/(auth)/login');
+			window.location.href = resolve('/(auth)/login');
 		} catch (e) {
 			error = (e as Error).message;
 		} finally {

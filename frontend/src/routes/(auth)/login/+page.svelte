@@ -37,7 +37,13 @@
 		{:else if error}
 			<p>Error: {error}</p>
 		{:else}
-			<div>Data</div>
+			<div class="my-4 flex gap-2">
+				{#each data as item}
+					<div class="h-22 w-22 place-content-center place-items-center bg-neutral-200 text-center cursor-pointer rounded shadow border border-neutral-300">
+						{item.username}
+					</div>
+				{/each}
+			</div>
 		{/if}
 
 		<p>No account yet? Go to <a href={resolve('/(auth)/register')}>create a new one</a></p>
