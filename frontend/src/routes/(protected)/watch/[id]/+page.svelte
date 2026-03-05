@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 
 	const videoId = $derived(page.params.id ?? '');
@@ -45,10 +46,12 @@
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr] bg-slate-950 text-slate-50">
-	<header class="border-b border-slate-400/20 bg-gradient-to-b from-slate-900/95 to-slate-900/70 px-4 py-3.5">
+	<header
+		class="border-b border-slate-400/20 bg-gradient-to-b from-slate-900/95 to-slate-900/70 px-4 py-3.5"
+	>
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href="/"
+			href={resolve('/')}
 		>
 			Back to library
 		</a>

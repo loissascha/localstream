@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 
 	type VideoListItem = {
 		id: string;
@@ -53,9 +54,19 @@
 <main
 	class="min-h-dvh bg-[radial-gradient(circle_at_15%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_85%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-5 py-5 text-slate-900"
 >
-	<header>
-		<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
-		<p class="mt-1.5 mb-5 text-slate-700">Your local MP4 library</p>
+	<header class="mb-5 flex items-start justify-between gap-4">
+		<div>
+			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
+			<p class="mt-1.5 text-slate-700">Your local MP4 library</p>
+		</div>
+		<form method="POST" action="/logout">
+			<button
+				type="submit"
+				class="cursor-pointer rounded-md border border-slate-900/20 bg-white/70 px-3 py-1.5 text-sm text-slate-800"
+			>
+				Log out
+			</button>
+		</form>
 	</header>
 
 	{#if loading}
@@ -66,13 +77,13 @@
 		<p>No streamable MP4 files found in your backend video directory.</p>
 	{:else}
 		<section class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-3.5">
-			{#each videos as video}
+			{#each videos as video (video.id)}
 				<a
 					class="grid grid-rows-[8.5rem_auto] overflow-hidden rounded-xl border border-slate-900/10 bg-white/80 no-underline transition-transform duration-150 ease-out hover:-translate-y-0.5"
-					href={`/watch/${encodeURIComponent(video.id)}`}
+					href={resolve('/watch/[id]', { id: video.id })}
 				>
 					<div
-						class="bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl leading-none font-bold tracking-widest text-slate-50 flex items-center"
+						class="flex items-center bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl leading-none font-bold tracking-widest text-slate-50"
 					>
 						MP4
 					</div>
