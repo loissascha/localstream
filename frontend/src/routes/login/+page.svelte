@@ -1,5 +1,27 @@
 <script lang="ts">
-	let { form } = $props();
+	import { API_URL } from '$lib/consts';
+	import { onMount } from 'svelte';
+
+	let loading = true;
+	let data: any = null;
+	let error: string | null = null;
+
+	onMount(async () => {
+		try {
+			const res = await fetch(API_URL + '/auth/users/list');
+
+			if (!res.ok) {
+				throw new Error('Request failed');
+			}
+
+			data = await res.json();
+			console.log('data:', data);
+		} catch (e) {
+			error = (e as Error).message;
+		} finally {
+			loading = false;
+		}
+	});
 </script>
 
 <main
@@ -9,31 +31,12 @@
 		class="w-full max-w-sm rounded-2xl border border-slate-900/10 bg-white/85 p-6 shadow-lg shadow-slate-900/10"
 	>
 		<h1 class="m-0 text-2xl font-semibold text-slate-900">Sign in</h1>
-		<p class="mt-2 text-sm text-slate-600">Enter any username to create a session.</p>
-
-		<form method="POST" class="mt-5 grid gap-3">
-			<label class="grid gap-1.5 text-sm text-slate-700" for="name">
-				Username
-				<input
-					id="name"
-					name="name"
-					type="text"
-					required
-					autocomplete="username"
-					class="rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900"
-				/>
-			</label>
-
-			{#if form?.error}
-				<p class="text-sm text-red-700">{form.error}</p>
-			{/if}
-
-			<button
-				type="submit"
-				class="cursor-pointer rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white"
-			>
-				Continue
-			</button>
-		</form>
+		{#if loading}
+			<p>Loading</p>
+		{:else if error}
+			<p>Error: {error}</p>
+		{:else}
+			<div>Data</div>
+		{/if}
 	</section>
 </main>
