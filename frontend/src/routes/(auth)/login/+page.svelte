@@ -24,6 +24,10 @@
 		}
 	}
 
+	async function clickUser(id: number) {
+		console.log("user clicked ", id)
+	}
+
 	$effect(() => {
 		load();
 	});
@@ -43,11 +47,12 @@
 		{:else}
 			<div class="my-8 flex items-center justify-center gap-2">
 				{#each data as item}
-					<div
+					<button
+						onclick={() => clickUser(item.id)}
 						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-300 bg-neutral-200 text-center shadow"
 					>
 						{item.username}
-					</div>
+					</button>
 				{/each}
 			</div>
 		{/if}
