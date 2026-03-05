@@ -1,4 +1,7 @@
-<script lang="ts"></script>
+<script lang="ts">
+	import { resolve } from "$app/paths";
+
+</script>
 
 <main
 	class="grid min-h-dvh place-items-center bg-[radial-gradient(circle_at_20%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_80%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-4 py-6"
@@ -8,5 +11,6 @@
 	>
 		<h1 class="m-0 text-2xl font-semibold text-slate-900">Register</h1>
 
+		<p>Want to login? Go to <a href={resolve("/login")}>login page</a></p>
 	</section>
 </main>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
 	import { onMount } from 'svelte';
 
@@ -38,5 +39,7 @@
 		{:else}
 			<div>Data</div>
 		{/if}
+
+		<p>No account yet? Go to <a href={resolve("/register")}>create a new one</a></p>
 	</section>
 </main>
