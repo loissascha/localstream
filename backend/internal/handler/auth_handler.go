@@ -36,9 +36,8 @@ func NewAuthHandler(s *server.Server, authService *service.AuthService) *AuthHan
 
 func (h *AuthHandler) RegisterHandlers() {
 	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResposne]())
-	h.s.POST("/auth/register", h.register, server.WithExportType[AuthResponse]())
-	h.s.POST("/auth/reigster", h.register, server.WithExportType[AuthResponse]())
-	h.s.POST("/auth/login", h.login, server.WithExportType[AuthResponse]())
+	h.s.POSTI("/auth/register", h.register, server.WithExportType[AuthResponse]())
+	h.s.POSTI("/auth/login", h.login, server.WithExportType[AuthResponse]())
 }
 
 func (h *AuthHandler) listUsers(w http.ResponseWriter, r *http.Request) {
