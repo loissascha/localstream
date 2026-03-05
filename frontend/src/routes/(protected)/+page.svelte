@@ -80,7 +80,7 @@
 			{#each videos as video (video.id)}
 				<a
 					class="grid grid-rows-[8.5rem_auto] overflow-hidden rounded-xl border border-slate-900/10 bg-white/80 no-underline transition-transform duration-150 ease-out hover:-translate-y-0.5"
-					href={resolve('/watch/[id]', { id: video.id })}
+					href={resolve('/(protected)/watch/[id]', { id: video.id })}
 				>
 					<div
 						class="flex items-center bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl leading-none font-bold tracking-widest text-slate-50"
