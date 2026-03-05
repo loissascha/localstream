@@ -31,21 +31,27 @@
 	<section
 		class="w-full max-w-sm rounded-2xl border border-slate-900/10 bg-white/85 p-6 shadow-lg shadow-slate-900/10"
 	>
-		<h1 class="m-0 text-2xl font-semibold text-slate-900">Sign in</h1>
+		<h1 class="m-0 text-2xl font-semibold text-slate-900">Choose Profile</h1>
 		{#if loading}
 			<p>Loading</p>
 		{:else if error}
 			<p>Error: {error}</p>
 		{:else}
-			<div class="my-4 flex gap-2">
+			<div class="my-8 flex gap-2 items-center justify-center">
 				{#each data as item}
-					<div class="h-22 w-22 place-content-center place-items-center bg-neutral-200 text-center cursor-pointer rounded shadow border border-neutral-300">
+					<div
+						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-300 bg-neutral-200 text-center shadow"
+					>
 						{item.username}
 					</div>
 				{/each}
 			</div>
 		{/if}
 
-		<p>No account yet? Go to <a href={resolve('/(auth)/register')}>create a new one</a></p>
+		<p class="text-sm">
+			No profile yet? <a class="cursor-pointer text-blue-600" href={resolve('/(auth)/register')}
+				>create a new one</a
+			>
+		</p>
 	</section>
 </main>
