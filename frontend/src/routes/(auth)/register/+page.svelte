@@ -1,6 +1,12 @@
 <script lang="ts">
-	import { resolve } from "$app/paths";
+	import { resolve } from '$app/paths';
 
+	let username = $state('');
+	let loading = $state(false);
+
+	async function submit() {
+		loading = true;
+	}
 </script>
 
 <main
@@ -11,6 +17,15 @@
 	>
 		<h1 class="m-0 text-2xl font-semibold text-slate-900">Register</h1>
 
-		<p>Want to login? Go to <a href={resolve("/(auth)/login")}>login page</a></p>
+		{#if loading}
+			<p>Loading</p>
+		{:else}
+			<form on:submit|preventDefault={submit}>
+				<input type="text" name="username" bind:value={username} class="border" />
+				<button>Submit</button>
+			</form>
+		{/if}
+
+		<p>Want to login? Go to <a href={resolve('/(auth)/login')}>login page</a></p>
 	</section>
 </main>
