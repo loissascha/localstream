@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
-	import type { AuthUserResponse } from '$lib/types/export_types';
+	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
 
 	let loading = $state(true);
 	let data: AuthUserResponse[] = $state([]);
@@ -24,8 +24,26 @@
 		}
 	}
 
-	async function clickUser(id: number) {
-		console.log("user clicked ", id)
+	async function clickUser(username: string) {
+		console.log('user clicked ', username);
+		try {
+			const res = await fetch(API_URL + '/auth/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ username: username })
+			});
+
+			if (!res.ok) {
+				throw new Error('Request failed');
+			}
+
+			var response = (await res.json()) as AuthResponse;
+			console.log(response);
+		} catch (e) {
+			error = (e as Error).message;
+		} finally {
+			loading = false;
+		}
 	}
 
 	$effect(() => {
@@ -48,7 +66,7 @@
 			<div class="my-8 flex items-center justify-center gap-2">
 				{#each data as item}
 					<button
-						onclick={() => clickUser(item.id)}
+						onclick={() => clickUser(item.username)}
 						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-300 bg-neutral-200 text-center shadow"
 					>
 						{item.username}
