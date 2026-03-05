@@ -8,3 +8,9 @@ export interface AuthResponse {
 export interface VideoListResponse {
   videos: VideoListItem[];
 }
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+}

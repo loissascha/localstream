@@ -54,6 +54,7 @@ func (h *VideoHandler) RegisterHandlers() {
 	h.s.GET("/api/videos",
 		h.listVideos,
 		server.WithExportType[VideoListResponse](),
+		server.WithExportType[VideoListItem](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 	h.s.GET("/api/videos/stream",
