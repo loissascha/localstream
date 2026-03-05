@@ -11,6 +11,6 @@
 	>
 		<h1 class="m-0 text-2xl font-semibold text-slate-900">Register</h1>
 
-		<p>Want to login? Go to <a href={resolve("/login")}>login page</a></p>
+		<p>Want to login? Go to <a href={resolve("/(auth)/login")}>login page</a></p>
 	</section>
 </main>

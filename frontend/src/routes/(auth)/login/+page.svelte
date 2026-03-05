@@ -40,6 +40,6 @@
 			<div>Data</div>
 		{/if}
 
-		<p>No account yet? Go to <a href={resolve("/register")}>create a new one</a></p>
+		<p>No account yet? Go to <a href={resolve('/(auth)/register')}>create a new one</a></p>
 	</section>
 </main>
