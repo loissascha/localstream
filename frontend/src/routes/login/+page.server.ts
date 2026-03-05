@@ -1,13 +1,14 @@
 import { dev } from '$app/environment';
 import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
-export const load = async ({ locals, url }) => {
+export const load: PageServerLoad = async ({ locals, url }) => {
 	if (locals.user) {
 		throw redirect(302, url.searchParams.get('next') || '/');
 	}
 };
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ cookies, request, url }) => {
 		const data = await request.formData();
 		const name = data.get('name');
