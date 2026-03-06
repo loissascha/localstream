@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
-	import { setCookie } from '$lib/cookies';
+	import { getCookie, setCookie } from '$lib/cookies';
 	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
 
 	let loading = $state(true);
@@ -51,6 +51,8 @@
 
 	$effect(() => {
 		load();
+		const t = getCookie("bearer")
+		console.log("bearer cookie: ", t)
 	});
 </script>
 
