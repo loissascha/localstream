@@ -61,10 +61,12 @@ func main() {
 	// handler
 	authH := handler.NewAuthHandler(s, authService)
 	videoH := handler.NewVideoHandler(s, authMiddleware)
+	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 
 	// register routes
 	authH.RegisterHandlers()
 	videoH.RegisterHandlers()
+	libH.RegisterHandlers()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
