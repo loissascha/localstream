@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
+	import { setCookie } from '$lib/cookies';
 	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
 
 	let loading = $state(true);
@@ -39,6 +40,8 @@
 
 			var response = (await res.json()) as AuthResponse;
 			console.log(response);
+
+			setCookie('bearer', response.token, 30);
 		} catch (e) {
 			error = (e as Error).message;
 		} finally {
