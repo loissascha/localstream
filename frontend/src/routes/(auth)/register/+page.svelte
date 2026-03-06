@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
 
@@ -20,7 +21,7 @@
 				throw new Error('Request failed');
 			}
 
-			window.location.href = resolve('/(auth)/login');
+			goto(resolve('/(auth)/login'));
 		} catch (e) {
 			error = (e as Error).message;
 		} finally {
