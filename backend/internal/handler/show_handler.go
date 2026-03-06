@@ -16,3 +16,7 @@ func NewShowHandler(s *server.Server, authMiddleware *middleware.AuthMiddleware)
 		authMiddleware: authMiddleware,
 	}
 }
+
+func (h *ShowHandler) RegisterRoutes() {
+
+}
