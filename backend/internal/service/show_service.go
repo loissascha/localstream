@@ -1,6 +1,11 @@
 package service
 
-import "github.com/loissascha/localstream/internal/repository"
+import (
+	"context"
+
+	"github.com/google/uuid"
+	"github.com/loissascha/localstream/internal/repository"
+)
 
 type ShowService struct {
 	showRepo repository.ShowRepository
@@ -8,4 +13,7 @@ type ShowService struct {
 
 func NewShowService(showRepo repository.ShowRepository) *ShowService {
 	return &ShowService{showRepo: showRepo}
+}
+
+func (s *ShowService) ListForLibrary(ctx context.Context, libraryID uuid.UUID) {
 }
