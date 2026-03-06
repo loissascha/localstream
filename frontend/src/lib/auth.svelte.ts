@@ -1,11 +1,13 @@
 import { getCookie } from './cookies';
 
 type AuthState = {
+    initialized: boolean;
     loggedIn: boolean;
     token: string | null;
 };
 
 export const auth = $state<AuthState>({
+    initialized: false,
     loggedIn: false,
     token: null
 });
@@ -15,6 +17,7 @@ export function loadAuthFromCookies() {
 
     auth.token = token;
     auth.loggedIn = !!token;
+    auth.initialized = true;
 }
 
 export function clearAuth() {
