@@ -1,36 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import {
-		type LibraryListItem,
-		type LibraryListResponse,
-		type VideoListItem,
-		type VideoListResponse
-	} from '$lib/types/export_types';
+	import { type LibraryListItem, type LibraryListResponse } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
 
-	let videos = $state<VideoListItem[]>([]);
 	let libraries = $state<LibraryListItem[]>([]);
-	let selectedLibraryID = $state<string | null>(null);
+	let selectedLibrary = $state<LibraryListItem | null>(null);
 	let loading = $state(true);
 	let errorMessage = $state('');
-
-	const toHumanSize = (bytes: number): string => {
-		if (bytes < 1024) {
-			return `${bytes} B`;
-		}
-
-		const units = ['KB', 'MB', 'GB', 'TB'];
-		let size = bytes / 1024;
-		let unitIndex = 0;
-
-		while (size >= 1024 && unitIndex < units.length - 1) {
-			size /= 1024;
-			unitIndex += 1;
-		}
-
-		return `${size.toFixed(1)} ${units[unitIndex]}`;
-	};
 
 	async function loadLibraries() {
 		try {
@@ -47,9 +24,9 @@
 			libraries = data.libraries;
 			console.log('data', data);
 
-			if (selectedLibraryID == null) {
+			if (selectedLibrary == null) {
 				if (libraries.length > 0) {
-					selectLibraryID(libraries[0].id);
+					selectLibrary(libraries[0]);
 				}
 			}
 		} catch (error) {
@@ -59,8 +36,8 @@
 		}
 	}
 
-	function selectLibraryID(id: string | null) {
-		selectedLibraryID = id;
+	function selectLibrary(lib: LibraryListItem | null) {
+		selectedLibrary = lib;
 	}
 
 	$effect(() => {
@@ -101,10 +78,10 @@
 		<section class="flex gap-3">
 			{#each libraries as library (library.id)}
 				<button
-					onclick={() => selectLibraryID(library.id)}
+					onclick={() => selectLibrary(library)}
 					class="cursor-pointer rounded border border-neutral-400 bg-neutral-300 p-3 shadow"
 				>
-					{#if selectedLibraryID == library.id}
+					{#if selectedLibrary?.id == library.id}
 						<strong>{library.name}</strong>
 					{:else}
 						{library.name}
