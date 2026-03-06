@@ -104,7 +104,12 @@
 					onclick={() => selectLibraryID(library.id)}
 					class="cursor-pointer rounded border border-neutral-400 bg-neutral-300 p-3 shadow"
 				>
-					<strong>{library.name}</strong><br />
+					{#if selectedLibraryID == library.id}
+						<strong>{library.name}</strong>
+					{:else}
+						{library.name}
+					{/if}
+					<br />
 					{library.library_type}
 				</button>
 			{/each}
