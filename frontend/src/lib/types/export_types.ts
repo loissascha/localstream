@@ -1,3 +1,6 @@
+export interface AuthResponse {
+  token: string;
+}
 export interface VideoListResponse {
   videos: VideoListItem[];
 }
@@ -7,10 +10,15 @@ export interface VideoListItem {
   size: number;
   mimeType: string;
 }
+export interface LibraryListItem {
+  id: string;
+  name: string;
+  path: string;
+}
+export interface LibraryListResponse {
+  libraries: LibraryListItem[];
+}
 export interface AuthUserResponse {
   id: number;
   username: string;
-}
-export interface AuthResponse {
-  token: string;
 }
