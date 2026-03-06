@@ -35,9 +35,10 @@ func (h *LibraryHandler) RegisterHandlers() {
 }
 
 type LibraryListItem struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Path string `json:"path"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Path        string `json:"path"`
+	LibraryType string `json:"library_type"`
 }
 
 type LibraryListResponse struct {
@@ -54,9 +55,10 @@ func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
 	result := []LibraryListItem{}
 	for _, l := range libraries {
 		result = append(result, LibraryListItem{
-			ID:   l.ID.String(),
-			Name: l.Name,
-			Path: l.Path,
+			ID:          l.ID.String(),
+			Name:        l.Name,
+			Path:        l.Path,
+			LibraryType: string(l.LibraryType),
 		})
 	}
 

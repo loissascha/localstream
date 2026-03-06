@@ -1,10 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { VideoListItem, VideoListResponse } from '$lib/types/export_types';
+	import {
+		type LibraryListItem,
+		type LibraryListResponse,
+		type VideoListItem,
+		type VideoListResponse
+	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
 
 	let videos = $state<VideoListItem[]>([]);
+	let libraries = $state<LibraryListItem[]>([]);
+	let selectedLibraryID = $state<string | null>(null);
 	let loading = $state(true);
 	let errorMessage = $state('');
 
@@ -45,13 +52,41 @@
 		}
 	}
 
+	async function loadLibraries() {
+		try {
+			const res = await fetch('/api/libraries', {
+				headers: {
+					Authorization: 'Bearer ' + auth.token
+				}
+			});
+			if (!res.ok) {
+				throw new Error(`Failed to load videos: ${res.status}`);
+			}
+
+			const data = (await res.json()) as LibraryListResponse;
+			libraries = data.libraries;
+			console.log('data', data);
+
+			if (selectedLibraryID == null) {
+				if (libraries.length > 0) {
+					selectedLibraryID = libraries[0].id;
+				}
+			}
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
+		} finally {
+			loading = false;
+		}
+	}
+
 	$effect(() => {
 		if (!auth.initialized) return;
 		if (!auth.loggedIn) {
 			goto(resolve('/(auth)/login'));
 			return;
 		}
-		loadVideos();
+		// loadVideos();
+		loadLibraries();
 	});
 </script>
 
@@ -76,10 +111,15 @@
 		<p>Loading video library...</p>
 	{:else if errorMessage}
 		<p class="text-red-700">{errorMessage}</p>
-	{:else if videos.length === 0}
-		<p>No streamable MP4 files found in your backend video directory.</p>
+	{:else if libraries.length === 0}
+		<p>No libraries found.</p>
 	{:else}
 		<section class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-3.5">
+			{#each libraries as library (library.id)}
+				<div>
+					{library.name}
+				</div>
+			{/each}
 			{#each videos as video (video.id)}
 				<a
 					class="grid grid-rows-[8.5rem_auto] overflow-hidden rounded-xl border border-slate-900/10 bg-white/80 no-underline transition-transform duration-150 ease-out hover:-translate-y-0.5"
