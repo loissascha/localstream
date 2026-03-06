@@ -59,14 +59,13 @@
 			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
 			<p class="mt-1.5 text-slate-700">Your local MP4 library</p>
 		</div>
-		<form method="POST" action="/logout">
-			<button
-				type="submit"
-				class="cursor-pointer rounded-md border border-slate-900/20 bg-white/70 px-3 py-1.5 text-sm text-slate-800"
-			>
-				Log out
-			</button>
-		</form>
+		<a
+			href={resolve('/logout')}
+			type="submit"
+			class="cursor-pointer rounded-md border border-slate-900/20 bg-white/70 px-3 py-1.5 text-sm text-slate-800"
+		>
+			Log out
+		</a>
 	</header>
 
 	{#if loading}

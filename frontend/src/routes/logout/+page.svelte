@@ -11,3 +11,5 @@
 		goto(resolve('/(auth)/login'));
 	});
 </script>
+
+<div>Logging out...</div>
