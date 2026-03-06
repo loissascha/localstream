@@ -1,17 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
-
-	type VideoListItem = {
-		id: string;
-		name: string;
-		size: number;
-		mimeType: string;
-	};
-
-	type VideoListResponse = {
-		videos: VideoListItem[];
-	};
+	import type { VideoListItem, VideoListResponse } from '$lib/types/export_types';
+	import { auth } from '$lib/auth.svelte';
+	import { goto } from '$app/navigation';
 
 	let videos = $state<VideoListItem[]>([]);
 	let loading = $state(true);
@@ -34,9 +25,13 @@
 		return `${size.toFixed(1)} ${units[unitIndex]}`;
 	};
 
-	onMount(async () => {
+	async function loadVideos() {
 		try {
-			const res = await fetch('/api/videos');
+			const res = await fetch('/api/videos', {
+				headers: {
+					Authorization: 'Bearer ' + auth.token
+				}
+			});
 			if (!res.ok) {
 				throw new Error(`Failed to load videos: ${res.status}`);
 			}
@@ -48,6 +43,15 @@
 		} finally {
 			loading = false;
 		}
+	}
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn) {
+			goto(resolve('/(auth)/login'));
+			return;
+		}
+		loadVideos();
 	});
 </script>
 
@@ -87,7 +91,7 @@
 						MP4
 					</div>
 					<div class="px-3.5 pt-3 pb-3.5">
-						<h2 class="m-0 text-[0.96rem] leading-[1.35] break-words text-slate-900">
+						<h2 class="m-0 text-[0.96rem] leading-[1.35] wrap-break-word text-slate-900">
 							{video.name}
 						</h2>
 						<p class="mt-1.5 text-[0.86rem] text-slate-600">{toHumanSize(video.size)}</p>
