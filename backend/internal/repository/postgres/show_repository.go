@@ -60,4 +60,18 @@ func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Sh
 	return &show, nil
 }
 
+func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
+	const query = `
+		SELECT id, name, path, created_at, fetch_source
+		FROM shows
+	`
+
+	var shows []entity.Show
+	if err := r.db.SelectContext(ctx, &shows, query); err != nil {
+		return nil, fmt.Errorf("list shows: %w", err)
+	}
+
+	return shows, nil
+}
+
 var _ repository.ShowRepository = (*ShowRepository)(nil)
