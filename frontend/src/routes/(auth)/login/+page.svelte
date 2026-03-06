@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { API_URL } from '$lib/consts';
-	import { getCookie, setCookie } from '$lib/cookies';
+	import { setCookie } from '$lib/cookies';
 	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
+	import { auth, loadAuthFromCookies } from '$lib/auth.svelte';
 
 	let loading = $state(true);
 	let data: AuthUserResponse[] = $state([]);
@@ -42,6 +43,7 @@
 			console.log(response);
 
 			setCookie('bearer', response.token, 30);
+			loadAuthFromCookies();
 		} catch (e) {
 			error = (e as Error).message;
 		} finally {
@@ -51,8 +53,6 @@
 
 	$effect(() => {
 		load();
-		const t = getCookie("bearer")
-		console.log("bearer cookie: ", t)
 	});
 </script>
 
@@ -63,6 +63,11 @@
 		class="w-full max-w-sm rounded-2xl border border-slate-900/10 bg-white/85 p-6 shadow-lg shadow-slate-900/10"
 	>
 		<h1 class="m-0 text-2xl font-semibold text-slate-900">Choose Profile</h1>
+		{#if auth.loggedIn}
+			<div>Already logged in</div>
+		{:else}
+			<div>Not logged in</div>
+		{/if}
 		{#if loading}
 			<p>Loading</p>
 		{:else if error}
