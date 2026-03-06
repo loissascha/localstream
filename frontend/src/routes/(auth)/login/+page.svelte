@@ -4,6 +4,7 @@
 	import { setCookie } from '$lib/cookies';
 	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
 	import { auth, loadAuthFromCookies } from '$lib/auth.svelte';
+	import { goto } from '$app/navigation';
 
 	let loading = $state(true);
 	let data: AuthUserResponse[] = $state([]);
@@ -53,6 +54,13 @@
 
 	$effect(() => {
 		load();
+	});
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn) return;
+
+		goto(resolve('/(protected)'));
 	});
 </script>
 

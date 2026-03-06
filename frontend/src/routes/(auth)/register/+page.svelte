@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 
 	let username = $state('');
@@ -28,6 +29,13 @@
 			loading = false;
 		}
 	}
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn) return;
+
+		goto(resolve('/(protected)'));
+	});
 </script>
 
 <main
