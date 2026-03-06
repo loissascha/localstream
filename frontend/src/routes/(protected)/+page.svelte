@@ -32,26 +32,6 @@
 		return `${size.toFixed(1)} ${units[unitIndex]}`;
 	};
 
-	async function loadVideos() {
-		try {
-			const res = await fetch('/api/videos', {
-				headers: {
-					Authorization: 'Bearer ' + auth.token
-				}
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to load videos: ${res.status}`);
-			}
-
-			const data = (await res.json()) as VideoListResponse;
-			videos = data.videos ?? [];
-		} catch (error) {
-			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
-		} finally {
-			loading = false;
-		}
-	}
-
 	async function loadLibraries() {
 		try {
 			const res = await fetch('/api/libraries', {
@@ -69,7 +49,7 @@
 
 			if (selectedLibraryID == null) {
 				if (libraries.length > 0) {
-					selectedLibraryID = libraries[0].id;
+					selectLibraryID(libraries[0].id);
 				}
 			}
 		} catch (error) {
@@ -77,6 +57,10 @@
 		} finally {
 			loading = false;
 		}
+	}
+
+	function selectLibraryID(id: string | null) {
+		selectedLibraryID = id;
 	}
 
 	$effect(() => {
@@ -114,29 +98,15 @@
 	{:else if libraries.length === 0}
 		<p>No libraries found.</p>
 	{:else}
-		<section class="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-3.5">
+		<section class="flex gap-3">
 			{#each libraries as library (library.id)}
-				<div>
-					{library.name}
-				</div>
-			{/each}
-			{#each videos as video (video.id)}
-				<a
-					class="grid grid-rows-[8.5rem_auto] overflow-hidden rounded-xl border border-slate-900/10 bg-white/80 no-underline transition-transform duration-150 ease-out hover:-translate-y-0.5"
-					href={resolve('/(protected)/watch/[id]', { id: video.id })}
+				<button
+					onclick={() => selectLibraryID(library.id)}
+					class="cursor-pointer rounded border border-neutral-400 bg-neutral-300 p-3 shadow"
 				>
-					<div
-						class="flex items-center bg-[linear-gradient(135deg,#0f172a_0%,#0b4c6a_100%)] text-xl leading-none font-bold tracking-widest text-slate-50"
-					>
-						MP4
-					</div>
-					<div class="px-3.5 pt-3 pb-3.5">
-						<h2 class="m-0 text-[0.96rem] leading-[1.35] wrap-break-word text-slate-900">
-							{video.name}
-						</h2>
-						<p class="mt-1.5 text-[0.86rem] text-slate-600">{toHumanSize(video.size)}</p>
-					</div>
-				</a>
+					<strong>{library.name}</strong><br />
+					{library.library_type}
+				</button>
 			{/each}
 		</section>
 	{/if}
