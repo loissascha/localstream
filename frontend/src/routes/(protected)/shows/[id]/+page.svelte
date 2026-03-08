@@ -144,9 +144,9 @@
 			</div>
 		{/if}
 	</div>
-	<div class="my-3">
+	<div class="my-3 flex gap-4 overflow-y-scroll">
 		{#each episodeData as episode (episode.id)}
-			<div>
+			<div class="h-34 w-34 content-center bg-neutral-800 text-center text-2xl font-bold rounded">
 				{episode.number}
 			</div>
 		{/each}
