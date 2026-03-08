@@ -61,4 +61,20 @@ func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path strin
 	return &episode, nil
 }
 
+func (r *EpisodeRepository) ListBySeasonID(ctx context.Context, seasonId uuid.UUID) ([]entity.Episode, error) {
+	const query = `
+		SELECT id, season_id, number, path, created_at, fetch_source
+		FROM episodes
+		WHERE season_id = $1
+		ORDER BY number ASC
+	`
+
+	var episodes []entity.Episode
+	if err := r.db.SelectContext(ctx, &episodes, query, seasonId); err != nil {
+		return nil, fmt.Errorf("list episodes by season id: %w", err)
+	}
+
+	return episodes, nil
+}
+
 var _ repository.EpisodeRepository = (*EpisodeRepository)(nil)

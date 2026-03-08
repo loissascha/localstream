@@ -56,6 +56,7 @@ func main() {
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
 	seasonService := service.NewSeasonService(seasonRepo)
+	episodeService := service.NewEpisodeService(episodeRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -66,6 +67,7 @@ func main() {
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
+	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -73,6 +75,7 @@ func main() {
 	libH.RegisterHandlers()
 	showH.RegisterRoutes()
 	seasonH.RegisterRoutes()
+	episodeH.RegisterRoutes()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
