@@ -1,3 +1,10 @@
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface AuthResponse {
+  token: string;
+}
 export interface VideoListResponse {
   videos: VideoListItem[];
 }
@@ -16,10 +23,10 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
-export interface AuthUserResponse {
-  id: number;
-  username: string;
+export interface ShowInfo {
+  id: string;
+  name: string;
 }
-export interface AuthResponse {
-  token: string;
+export interface ShowListResponse {
+  shows: ShowInfo[];
 }

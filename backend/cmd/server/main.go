@@ -54,6 +54,7 @@ func main() {
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
+	showSerivce := service.NewShowService(showRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -62,7 +63,7 @@ func main() {
 	authH := handler.NewAuthHandler(s, authService)
 	videoH := handler.NewVideoHandler(s, authMiddleware)
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
-	showH := handler.NewShowHandler(s, authMiddleware)
+	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 
 	// register routes
 	authH.RegisterHandlers()
