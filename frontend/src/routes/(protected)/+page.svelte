@@ -128,11 +128,12 @@
 	{:else}
 		<section class="my-4 flex gap-3">
 			{#each shows as show (show.id)}
-				<button
+				<a
+					href={resolve('/(protected)/shows/[id]', { id: show.id })}
 					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-300 p-4 shadow-lg shadow-blue-200 hover:bg-blue-400"
 				>
 					{show.name}
-				</button>
+				</a>
 			{/each}
 		</section>
 	{/if}

@@ -11,4 +11,6 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-{@render children()}
+<div class="min-h-dvh w-dvw bg-black text-white">
+	{@render children()}
+</div>

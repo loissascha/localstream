@@ -65,12 +65,12 @@
 </script>
 
 <main
-	class="grid min-h-dvh place-items-center bg-[radial-gradient(circle_at_20%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_80%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-4 py-6"
+	class="grid min-h-dvh place-items-center px-4 py-6"
 >
 	<section
-		class="w-full max-w-sm rounded-2xl border border-slate-900/10 bg-white/85 p-6 shadow-lg shadow-slate-900/10"
+		class="w-full max-w-sm rounded-2xl border border-neutral-500 bg-neutral-800 p-6 shadow-lg shadow-neutral-300/30"
 	>
-		<h1 class="m-0 text-2xl font-semibold text-slate-900">Choose Profile</h1>
+		<h1 class="m-0 text-2xl font-semibold">Choose Profile</h1>
 		{#if auth.loggedIn}
 			<div>Already logged in</div>
 		{:else}
@@ -85,7 +85,7 @@
 				{#each data as item}
 					<button
 						onclick={() => clickUser(item.username)}
-						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-300 bg-neutral-200 text-center shadow"
+						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-500 bg-neutral-700 text-center shadow shadow-neutral-600"
 					>
 						{item.username}
 					</button>
@@ -94,7 +94,7 @@
 		{/if}
 
 		<p class="text-sm">
-			No profile yet? <a class="cursor-pointer text-blue-600" href={resolve('/(auth)/register')}
+			No profile yet? <a class="cursor-pointer text-blue-500" href={resolve('/(auth)/register')}
 				>create a new one</a
 			>
 		</p>

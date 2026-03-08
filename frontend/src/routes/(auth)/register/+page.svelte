@@ -38,23 +38,26 @@
 	});
 </script>
 
-<main
-	class="grid min-h-dvh place-items-center bg-[radial-gradient(circle_at_20%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_80%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-4 py-6"
->
+<main class="grid min-h-dvh place-items-center px-4 py-6">
 	<section
-		class="w-full max-w-sm rounded-2xl border border-slate-900/10 bg-white/85 p-6 shadow-lg shadow-slate-900/10"
+		class="w-full max-w-sm rounded-2xl border border-neutral-500 bg-neutral-800 p-6 shadow-lg shadow-neutral-300/30"
 	>
-		<h1 class="m-0 text-2xl font-semibold text-slate-900">Register</h1>
+		<h1 class="m-0 text-2xl font-semibold">Register</h1>
 
 		{#if loading}
 			<p>Loading</p>
 		{:else}
 			<form on:submit|preventDefault={submit}>
-				<input type="text" name="username" bind:value={username} class="border" />
-				<button>Submit</button>
+				<input
+					type="text"
+					name="username"
+					bind:value={username}
+					class="my-3 rounded border border-neutral-500 p-2"
+				/>
+				<button class="rounded border border-neutral-500 px-4 py-2">Submit</button>
 			</form>
 		{/if}
 
-		<p>Want to login? Go to <a href={resolve('/(auth)/login')}>login page</a></p>
+		<p>Want to login? Go to <a href={resolve('/(auth)/login')} class="text-blue-500">login page</a></p>
 	</section>
 </main>
