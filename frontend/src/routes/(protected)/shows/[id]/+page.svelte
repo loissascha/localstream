@@ -1,20 +1,50 @@
 <script lang="ts">
 	import { auth } from '$lib/auth.svelte';
 	import { page } from '$app/state';
-	import { type SeasonInfo, type SeasonListResponse, type ShowInfo } from '$lib/types/export_types';
+	import {
+		type EpisodeInfo,
+		type EpisodeListResponse,
+		type SeasonInfo,
+		type SeasonListResponse,
+		type ShowInfo
+	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 
 	const showId = $derived(page.params.id ?? '');
 
 	let loadingShowData = $state(true);
 	let loadingSeasons = $state(true);
+	let loadingEpisodes = $state(true);
 
 	let errorMessage = $state<string | null>(null);
 
 	let showData = $state<ShowInfo | null>(null);
 	let seasonData = $state<SeasonInfo[] | null>(null);
+	let episodeData = $state<EpisodeInfo[] | null>(null);
 
 	let selectedSeason = $state<SeasonInfo | null>(null);
+
+	async function loadEpisodes(seasonID: string) {
+		try {
+			const res = await fetch('/api/episodes/' + seasonID, {
+				headers: {
+					Authorization: 'Bearer ' + auth.token
+				}
+			});
+			if (!res.ok) {
+				throw new Error(`Failed to load episodes: ${res.status}`);
+			}
+
+			const r = (await res.json()) as EpisodeListResponse;
+			episodeData = r.episodes;
+		} catch (error) {
+			errorMessage =
+				error instanceof Error ? error.message : 'Unknown error while loading show data';
+		} finally {
+			loadingEpisodes = false;
+		}
+	}
 
 	async function loadSeasons() {
 		try {
@@ -34,6 +64,8 @@
 				selectedSeason = seasonData[0];
 			}
 		} catch (error) {
+			errorMessage =
+				error instanceof Error ? error.message : 'Unknown error while loading show data';
 		} finally {
 			loadingSeasons = false;
 		}
@@ -60,9 +92,24 @@
 	}
 
 	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn) {
+			goto(resolve('/(auth)/login'));
+			return;
+		}
 		if (!showId || showId == '') return;
 		loadShows();
 		loadSeasons();
+	});
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn) {
+			goto(resolve('/(auth)/login'));
+			return;
+		}
+		if (!selectedSeason) return;
+		loadEpisodes(selectedSeason.id);
 	});
 </script>
 
@@ -96,5 +143,12 @@
 				{/each}
 			</div>
 		{/if}
+	</div>
+	<div class="my-3">
+		{#each episodeData as episode (episode.id)}
+			<div>
+				{episode.number}
+			</div>
+		{/each}
 	</div>
 </main>
