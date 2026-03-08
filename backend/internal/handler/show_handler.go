@@ -32,6 +32,11 @@ func (h *ShowHandler) RegisterRoutes() {
 		server.WithExportType[ShowListResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+	h.s.GET("/api/show/{id}",
+		h.showData,
+		server.WithExportType[ShowInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
 }
 
 type ShowInfo struct {
@@ -41,6 +46,22 @@ type ShowInfo struct {
 
 type ShowListResponse struct {
 	Shows []ShowInfo `json:"shows"`
+}
+
+func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
+	showId := r.PathValue("id")
+	show, err := h.showSerivce.GetByID(r.Context(), showId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read show"})
+		return
+	}
+
+	result := ShowInfo{
+		ID:   show.ID.String(),
+		Name: show.Name,
+	}
+
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
@@ -39,6 +40,25 @@ func (r *ShowRepository) Create(ctx context.Context, show *entity.Show) error {
 	show.FetchSource = fetchSource
 
 	return nil
+}
+
+func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Show, error) {
+	const query = `
+		SELECT id, name, path, created_at, fetch_source
+		FROM shows
+		WHERE id = $1
+		LIMIT 1
+	`
+
+	var show entity.Show
+	if err := r.db.GetContext(ctx, &show, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get show by id: %w", err)
+	}
+
+	return &show, nil
 }
 
 func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Show, error) {
