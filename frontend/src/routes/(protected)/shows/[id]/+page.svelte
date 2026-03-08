@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { auth } from '$lib/auth.svelte';
 	import { page } from '$app/state';
-	import { type ShowInfo } from '$lib/types/export_types';
+	import { type SeasonInfo, type SeasonListResponse, type ShowInfo } from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 
 	const showId = $derived(page.params.id ?? '');
@@ -12,6 +12,32 @@
 	let errorMessage = $state<string | null>(null);
 
 	let showData = $state<ShowInfo | null>(null);
+	let seasonData = $state<SeasonInfo[] | null>(null);
+
+	let selectedSeason = $state<SeasonInfo | null>(null);
+
+	async function loadSeasons() {
+		try {
+			const res = await fetch('/api/seasons/' + showId, {
+				headers: {
+					Authorization: 'Bearer ' + auth.token
+				}
+			});
+			if (!res.ok) {
+				throw new Error(`Failed to load seasons: ${res.status}`);
+			}
+
+			const r = (await res.json()) as SeasonListResponse;
+			seasonData = r.seasons;
+
+			if (selectedSeason == null && seasonData.length > 0) {
+				selectedSeason = seasonData[0];
+			}
+		} catch (error) {
+		} finally {
+			loadingSeasons = false;
+		}
+	}
 
 	async function loadShows() {
 		try {
@@ -36,6 +62,7 @@
 	$effect(() => {
 		if (!showId || showId == '') return;
 		loadShows();
+		loadSeasons();
 	});
 </script>
 
@@ -57,6 +84,17 @@
 	<div class="my-3">
 		{#if loadingSeasons}
 			<p>Loading seasons...</p>
+		{:else}
+			<div class="flex gap-2">
+				{#each seasonData as season (season.id)}
+					<button
+						class={`cursor-pointer ${selectedSeason == season ? 'font-bold' : ''}`}
+						onclick={() => (selectedSeason = season)}
+					>
+						Season {season.number}
+					</button>
+				{/each}
+			</div>
 		{/if}
 	</div>
 </main>
