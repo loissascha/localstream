@@ -1,13 +1,41 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { type LibraryListItem, type LibraryListResponse } from '$lib/types/export_types';
+	import {
+		type ShowInfo,
+		type LibraryListItem,
+		type LibraryListResponse,
+		type ShowListResponse
+	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
 
 	let libraries = $state<LibraryListItem[]>([]);
+	let shows = $state<ShowInfo[]>([]);
 	let selectedLibrary = $state<LibraryListItem | null>(null);
 	let loading = $state(true);
+	let loadingShows = $state(true);
 	let errorMessage = $state('');
+
+	async function loadShows() {
+		try {
+			const res = await fetch('/api/shows', {
+				headers: {
+					Authorization: 'Bearer ' + auth.token
+				}
+			});
+			if (!res.ok) {
+				throw new Error(`Failed to load shows: ${res.status}`);
+			}
+
+			const data = (await res.json()) as ShowListResponse;
+			shows = data.shows;
+			console.log('shows', data);
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
+		} finally {
+			loadingShows = false;
+		}
+	}
 
 	async function loadLibraries() {
 		try {
@@ -46,8 +74,8 @@
 			goto(resolve('/(auth)/login'));
 			return;
 		}
-		// loadVideos();
 		loadLibraries();
+		loadShows();
 	});
 </script>
 
@@ -68,10 +96,12 @@
 		</a>
 	</header>
 
+	{#if errorMessage}
+		<p class="text-red-700">{errorMessage}</p>
+	{/if}
+
 	{#if loading}
 		<p>Loading video library...</p>
-	{:else if errorMessage}
-		<p class="text-red-700">{errorMessage}</p>
 	{:else if libraries.length === 0}
 		<p>No libraries found.</p>
 	{:else}
@@ -88,6 +118,20 @@
 					{/if}
 					<br />
 					{library.library_type}
+				</button>
+			{/each}
+		</section>
+	{/if}
+
+	{#if loadingShows}
+		<p>Loading shows...</p>
+	{:else}
+		<section class="my-4 flex gap-3">
+			{#each shows as show (show.id)}
+				<button
+					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-300 p-4 shadow-lg shadow-blue-200 hover:bg-blue-400"
+				>
+					{show.name}
 				</button>
 			{/each}
 		</section>
