@@ -55,6 +55,7 @@ func main() {
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
+	seasonService := service.NewSeasonService(seasonRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -64,12 +65,14 @@ func main() {
 	videoH := handler.NewVideoHandler(s, authMiddleware)
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
+	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
 
 	// register routes
 	authH.RegisterHandlers()
 	videoH.RegisterHandlers()
 	libH.RegisterHandlers()
 	showH.RegisterRoutes()
+	seasonH.RegisterRoutes()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))

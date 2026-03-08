@@ -61,4 +61,20 @@ func (r *SeasonRepository) GetByPathAndShowID(ctx context.Context, path string, 
 	return &season, nil
 }
 
+func (r *SeasonRepository) ListByShowID(ctx context.Context, showId uuid.UUID) ([]entity.Season, error) {
+	const query = `
+		SELECT id, show_id, number, path, created_at, fetch_source
+		FROM seasons
+		WHERE show_id = $1
+		ORDER BY number ASC
+	`
+
+	var seasons []entity.Season
+	if err := r.db.SelectContext(ctx, &seasons, query, showId); err != nil {
+		return nil, fmt.Errorf("list seasons by show id: %w", err)
+	}
+
+	return seasons, nil
+}
+
 var _ repository.SeasonRepository = (*SeasonRepository)(nil)
