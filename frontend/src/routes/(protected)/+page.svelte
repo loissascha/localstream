@@ -80,17 +80,17 @@
 </script>
 
 <main
-	class="min-h-dvh bg-[radial-gradient(circle_at_15%_10%,#d7e8ff_0%,transparent_40%),radial-gradient(circle_at_85%_0%,#c8f5e9_0%,transparent_32%),linear-gradient(180deg,#eef2f7_0%,#dce6f2_100%)] px-5 py-5 text-slate-900"
+	class="min-h-dvh px-5 py-5"
 >
 	<header class="mb-5 flex items-start justify-between gap-4">
 		<div>
 			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
-			<p class="mt-1.5 text-slate-700">Your local MP4 library</p>
+			<p class="mt-1.5">Your local MP4 library</p>
 		</div>
 		<a
 			href={resolve('/logout')}
 			type="submit"
-			class="cursor-pointer rounded-md border border-slate-900/20 bg-white/70 px-3 py-1.5 text-sm text-slate-800"
+			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
 		>
 			Log out
 		</a>
@@ -109,7 +109,7 @@
 			{#each libraries as library (library.id)}
 				<button
 					onclick={() => selectLibrary(library)}
-					class="cursor-pointer rounded border border-neutral-400 bg-neutral-300 p-3 shadow"
+					class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-3"
 				>
 					{#if selectedLibrary?.id == library.id}
 						<strong>{library.name}</strong>
@@ -130,7 +130,7 @@
 			{#each shows as show (show.id)}
 				<a
 					href={resolve('/(protected)/shows/[id]', { id: show.id })}
-					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-300 p-4 shadow-lg shadow-blue-200 hover:bg-blue-400"
+					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
 				>
 					{show.name}
 				</a>
