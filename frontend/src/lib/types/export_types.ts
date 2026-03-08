@@ -1,3 +1,12 @@
+export interface LibraryListItem {
+  id: string;
+  name: string;
+  path: string;
+  library_type: string;
+}
+export interface LibraryListResponse {
+  libraries: LibraryListItem[];
+}
 export interface ShowInfo {
   id: string;
   name: string;
@@ -20,13 +29,4 @@ export interface VideoListItem {
   name: string;
   size: number;
   mimeType: string;
-}
-export interface LibraryListItem {
-  id: string;
-  name: string;
-  path: string;
-  library_type: string;
-}
-export interface LibraryListResponse {
-  libraries: LibraryListItem[];
 }
