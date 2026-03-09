@@ -27,12 +27,17 @@ func (r *EpisodeRepository) Create(ctx context.Context, episode *entity.Episode)
 	}
 
 	const query = `
-		INSERT INTO episodes (season_id, number, path, fetch_source)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO episodes (id, season_id, number, path, fetch_source)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id, created_at
 	`
 
-	err := r.db.QueryRowxContext(ctx, query, episode.SeasonID, episode.Number, episode.Path, fetchSource).Scan(&episode.ID, &episode.CreatedAt)
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
+	err = r.db.QueryRowxContext(ctx, query, id, episode.SeasonID, episode.Number, episode.Path, fetchSource).Scan(&episode.ID, &episode.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create episode: %w", err)
 	}
