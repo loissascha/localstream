@@ -28,9 +28,11 @@
 
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
-		const finished = duration > 0 && position >= Math.max(duration - 1, 0);
+		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
 
 		console.log({
+			userToken: auth.token,
+			episodeId: episodeId,
 			positionSeconds: position,
 			durationSeconds: duration,
 			finished,
