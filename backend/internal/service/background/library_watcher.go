@@ -3,6 +3,7 @@ package background
 import (
 	"context"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -92,7 +93,7 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
-func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo) (*entity.Episode, error) {
+func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string) (*entity.Episode, error) {
 	logger.Debug(nil, "findOrCreateEpisode {EpisodeInfo}", *episodeInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -110,7 +111,7 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 		ID:          uuid.New(),
 		SeasonID:    seasonId,
 		Number:      episodeInfo.Episode,
-		Path:        episodeInfo.RawName,
+		Path:        path.Join(basePath, episodeInfo.RawName),
 		FetchSource: entity.FetchSourceNone,
 	}
 	logger.Debug(nil, "Trying to create Episode {Episode}", *episode)
@@ -123,7 +124,7 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 	return episode, nil
 }
 
-func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo) (*entity.Season, error) {
+func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string) (*entity.Season, error) {
 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -141,7 +142,7 @@ func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parser
 		ID:          uuid.New(),
 		ShowID:      showId,
 		Number:      seasonInfo.Season,
-		Path:        seasonInfo.RawName,
+		Path:        path.Join(basePath, seasonInfo.RawName),
 		FetchSource: entity.FetchSourceNone,
 	}
 
@@ -155,7 +156,7 @@ func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parser
 	return season, nil
 }
 
-func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) (*entity.Show, error) {
+func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
 	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -172,7 +173,7 @@ func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo) (*entity.S
 	show = &entity.Show{
 		ID:          uuid.New(),
 		Name:        showInfo.Series,
-		Path:        showInfo.RawName,
+		Path:        path.Join(basePath, showInfo.RawName),
 		FetchSource: entity.FetchSourceNone,
 	}
 
@@ -204,7 +205,7 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 				continue
 			}
 
-			show, err := l.findOrCreateShow(showInfo)
+			show, err := l.findOrCreateShow(showInfo, library.Path)
 			if err != nil {
 				return err
 			}
@@ -222,7 +223,7 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 					continue
 				}
 
-				season, err := l.findOrCreateSeason(show.ID, seasonInfo)
+				season, err := l.findOrCreateSeason(show.ID, seasonInfo, show.Path)
 				if err != nil {
 					return err
 				}
@@ -236,7 +237,7 @@ func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
 						continue
 					}
 
-					episode, err := l.findOrCreateEpisode(season.ID, episodeInfo)
+					episode, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path)
 					if err != nil {
 						return err
 					}

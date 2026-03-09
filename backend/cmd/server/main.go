@@ -80,8 +80,9 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
-	backgroundservice.NewLibraryWatcher(libService, showRepo, seasonRepo, episodeRepo)
+	libraryWatcher := backgroundservice.NewLibraryWatcher(libService, showRepo, seasonRepo, episodeRepo)
 	// libraryWatcher.RunBackground()
+	libraryWatcher.RunOnce()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
 	err = s.Serve(fmt.Sprintf(":%v", port))
