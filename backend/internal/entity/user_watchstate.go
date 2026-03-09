@@ -8,6 +8,7 @@ import (
 
 type UserWatchstate struct {
 	ID        uuid.UUID `db:"id"`
+	UserID    int64     `db:"user_id"`
 	ShowID    uuid.UUID `db:"show_id"`
 	SeasonID  uuid.UUID `db:"season_id"`
 	EpisodeID uuid.UUID `db:"episode_id"`
