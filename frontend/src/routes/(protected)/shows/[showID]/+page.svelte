@@ -147,8 +147,13 @@
 	<div class="my-3 flex gap-4 overflow-y-scroll">
 		{#each episodeData as episode (episode.id)}
 			<a
-				href={resolve("/(protected)/shows/[showID]/episode/[episodeID]", { showID: showId, episodeID: episode.id})}
-				class="h-34 w-34 content-center bg-neutral-800 text-center text-2xl font-bold rounded">
+				href={resolve('/(protected)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+					showID: showId,
+					seasonID: selectedSeason!.id,
+					episodeID: episode.id
+				})}
+				class="h-34 w-34 content-center rounded bg-neutral-800 text-center text-2xl font-bold"
+			>
 				{episode.number}
 			</a>
 		{/each}
