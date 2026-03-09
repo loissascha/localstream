@@ -11,7 +11,7 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 
-	const showId = $derived(page.params.id ?? '');
+	const showId = $derived(page.params.showID ?? '');
 
 	let loadingShowData = $state(true);
 	let loadingSeasons = $state(true);
@@ -146,9 +146,11 @@
 	</div>
 	<div class="my-3 flex gap-4 overflow-y-scroll">
 		{#each episodeData as episode (episode.id)}
-			<div class="h-34 w-34 content-center bg-neutral-800 text-center text-2xl font-bold rounded">
+			<a
+				href={resolve("/(protected)/shows/[showID]/episode/[episodeID]", { showID: showId, episodeID: episode.id})}
+				class="h-34 w-34 content-center bg-neutral-800 text-center text-2xl font-bold rounded">
 				{episode.number}
-			</div>
+			</a>
 		{/each}
 	</div>
 </main>

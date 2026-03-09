@@ -79,9 +79,7 @@
 	});
 </script>
 
-<main
-	class="min-h-dvh px-5 py-5"
->
+<main class="min-h-dvh px-5 py-5">
 	<header class="mb-5 flex items-start justify-between gap-4">
 		<div>
 			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
@@ -129,7 +127,7 @@
 		<section class="my-4 flex gap-3">
 			{#each shows as show (show.id)}
 				<a
-					href={resolve('/(protected)/shows/[id]', { id: show.id })}
+					href={resolve('/(protected)/shows/[showID]', { showID: show.id })}
 					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
 				>
 					{show.name}
