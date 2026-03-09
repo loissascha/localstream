@@ -12,7 +12,7 @@ import (
 	"github.com/loissascha/localstream/internal/middleware"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
-	backgroundservice "github.com/loissascha/localstream/internal/service/background"
+	// backgroundservice "github.com/loissascha/localstream/internal/service/background"
 )
 
 func main() {
@@ -80,9 +80,9 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
-	libraryWatcher := backgroundservice.NewLibraryWatcher(libService, showRepo, seasonRepo, episodeRepo)
+	// libraryWatcher := backgroundservice.NewLibraryWatcher(libService, showRepo, seasonRepo, episodeRepo)
 	// libraryWatcher.RunBackground()
-	libraryWatcher.RunOnce()
+	// libraryWatcher.RunOnce()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
 	err = s.Serve(fmt.Sprintf(":%v", port))

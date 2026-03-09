@@ -45,10 +45,6 @@ func (h *EpisodeHandler) RegisterRoutes() {
 	)
 }
 
-func (h *EpisodeHandler) resolveVideoPath(episodeID string) (string, error) {
-	return "", nil
-}
-
 func (h *EpisodeHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 	episodeID := strings.TrimSpace(r.URL.Query().Get("id"))
 	if episodeID == "" {
@@ -56,13 +52,13 @@ func (h *EpisodeHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	absoluteVideoPath, err := h.resolveVideoPath(episodeID)
+	episode, err := h.episodeService.GetByID(r.Context(), episodeID)
 	if err != nil {
-		http.Error(w, "video not found", http.StatusNotFound)
+		http.Error(w, "episode not found", http.StatusNotFound)
 		return
 	}
 
-	file, err := os.Open(absoluteVideoPath)
+	file, err := os.Open(episode.Path)
 	if err != nil {
 		http.Error(w, "video not found", http.StatusNotFound)
 		return
@@ -81,7 +77,7 @@ func (h *EpisodeHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ext := strings.ToLower(filepath.Ext(absoluteVideoPath))
+	ext := strings.ToLower(filepath.Ext(episode.Path))
 	contentType := mime.TypeByExtension(ext)
 	if contentType == "" {
 		contentType = "application/octet-stream"

@@ -47,6 +47,25 @@ func (r *EpisodeRepository) Create(ctx context.Context, episode *entity.Episode)
 	return nil
 }
 
+func (r *EpisodeRepository) GetByID(ctx context.Context, episodeId uuid.UUID) (*entity.Episode, error) {
+	const query = `
+		SELECT id, season_id, number, path, created_at, fetch_source
+		FROM episodes
+		WHERE id = $1
+		LIMIT 1
+	`
+
+	var episode entity.Episode
+	if err := r.db.GetContext(ctx, &episode, query, episodeId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get episode by id: %w", err)
+	}
+
+	return &episode, nil
+}
+
 func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path string, seasonId uuid.UUID) (*entity.Episode, error) {
 	const query = `
 		SELECT id, season_id, number, path, created_at, fetch_source
