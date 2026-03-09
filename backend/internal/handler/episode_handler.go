@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -52,7 +53,7 @@ func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 	result := make([]EpisodeInfo, 0, len(episodes))
 	for _, episode := range episodes {
 		result = append(result, EpisodeInfo{
-			ID:     episode.ID.String(),
+			ID:     encoders.EncodeUUID(episode.ID),
 			Number: episode.Number,
 		})
 	}

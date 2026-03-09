@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -17,7 +17,7 @@ func NewShowService(showRepo repository.ShowRepository) *ShowService {
 }
 
 func (s *ShowService) GetByID(ctx context.Context, id string) (*entity.Show, error) {
-	iduu, err := uuid.Parse(id)
+	iduu, err := encoders.DecodeUUID(id)
 	if err != nil {
 		return nil, err
 	}

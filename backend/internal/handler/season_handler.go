@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -52,7 +53,7 @@ func (h *SeasonHandler) listSeasons(w http.ResponseWriter, r *http.Request) {
 	result := make([]SeasonInfo, 0, len(seasons))
 	for _, season := range seasons {
 		result = append(result, SeasonInfo{
-			ID:     season.ID.String(),
+			ID:     encoders.EncodeUUID(season.ID),
 			Number: season.Number,
 		})
 	}

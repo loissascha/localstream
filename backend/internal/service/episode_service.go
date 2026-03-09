@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -18,7 +18,7 @@ func NewEpisodeService(episodeRepo repository.EpisodeRepository) *EpisodeService
 }
 
 func (s *EpisodeService) ListBySeasonID(ctx context.Context, seasonId string) ([]entity.Episode, error) {
-	seasonUUID, err := uuid.Parse(seasonId)
+	seasonUUID, err := encoders.DecodeUUID(seasonId)
 	if err != nil {
 		return nil, fmt.Errorf("parse season id: %w", err)
 	}

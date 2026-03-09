@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -55,7 +56,7 @@ func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
 	result := []LibraryListItem{}
 	for _, l := range libraries {
 		result = append(result, LibraryListItem{
-			ID:          l.ID.String(),
+			ID:          encoders.EncodeUUID(l.ID),
 			Name:        l.Name,
 			Path:        l.Path,
 			LibraryType: string(l.LibraryType),

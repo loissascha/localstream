@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -57,7 +58,7 @@ func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result := ShowInfo{
-		ID:   show.ID.String(),
+		ID:   encoders.EncodeUUID(show.ID),
 		Name: show.Name,
 	}
 
@@ -74,7 +75,7 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 	result := []ShowInfo{}
 	for _, l := range shows {
 		result = append(result, ShowInfo{
-			ID:   l.ID.String(),
+			ID:   encoders.EncodeUUID(l.ID),
 			Name: l.Name,
 		})
 	}
