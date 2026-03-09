@@ -97,7 +97,8 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 	logger.Debug(nil, "findOrCreateEpisode {EpisodeInfo}", *episodeInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	episode, err := l.episodeRepo.GetByPathAndSeasonID(ctx, episodeInfo.RawName, seasonId)
+	p := path.Join(basePath, episodeInfo.RawName)
+	episode, err := l.episodeRepo.GetByPathAndSeasonID(ctx, p, seasonId)
 	if err != nil {
 		logger.Error(err, "Couldn't get episode")
 		return nil, err
@@ -111,7 +112,7 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 		ID:          uuid.New(),
 		SeasonID:    seasonId,
 		Number:      episodeInfo.Episode,
-		Path:        path.Join(basePath, episodeInfo.RawName),
+		Path:        p,
 		FetchSource: entity.FetchSourceNone,
 	}
 	logger.Debug(nil, "Trying to create Episode {Episode}", *episode)
@@ -128,7 +129,8 @@ func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parser
 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	season, err := l.seasonRepo.GetByPathAndShowID(ctx, seasonInfo.RawName, showId)
+	p := path.Join(basePath, seasonInfo.RawName)
+	season, err := l.seasonRepo.GetByPathAndShowID(ctx, p, showId)
 	if err != nil {
 		logger.Error(err, "Couldn't get season")
 		return nil, err
@@ -142,7 +144,7 @@ func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parser
 		ID:          uuid.New(),
 		ShowID:      showId,
 		Number:      seasonInfo.Season,
-		Path:        path.Join(basePath, seasonInfo.RawName),
+		Path:        p,
 		FetchSource: entity.FetchSourceNone,
 	}
 
@@ -160,7 +162,8 @@ func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo, basePath s
 	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	show, err := l.showRepo.GetByPath(ctx, showInfo.RawName)
+	p := path.Join(basePath, showInfo.RawName)
+	show, err := l.showRepo.GetByPath(ctx, p)
 	if err != nil {
 		logger.Error(err, "Couldn't get show by path")
 		return nil, err
@@ -173,7 +176,7 @@ func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo, basePath s
 	show = &entity.Show{
 		ID:          uuid.New(),
 		Name:        showInfo.Series,
-		Path:        path.Join(basePath, showInfo.RawName),
+		Path:        p,
 		FetchSource: entity.FetchSourceNone,
 	}
 
