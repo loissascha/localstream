@@ -1,3 +1,15 @@
+export interface LibraryListItem {
+  id: string;
+  name: string;
+  path: string;
+  library_type: string;
+}
+export interface LibraryListResponse {
+  libraries: LibraryListItem[];
+}
+export interface AuthResponse {
+  token: string;
+}
 export interface ShowInfo {
   id: string;
   name: string;
@@ -12,27 +24,6 @@ export interface SeasonInfo {
 export interface SeasonListResponse {
   seasons: SeasonInfo[];
 }
-export interface AuthResponse {
-  token: string;
-}
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface LibraryListItem {
-  id: string;
-  name: string;
-  path: string;
-  library_type: string;
-}
-export interface LibraryListResponse {
-  libraries: LibraryListItem[];
-}
 export interface EpisodeInfo {
   id: string;
   number: number;
@@ -43,4 +34,13 @@ export interface EpisodeListResponse {
 export interface AuthUserResponse {
   id: number;
   username: string;
+}
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
 }
