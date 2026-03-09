@@ -1,37 +1,3 @@
-export interface ShowInfo {
-  id: string;
-  name: string;
-}
-export interface EpisodeInfo {
-  id: string;
-  number: number;
-}
-export interface EpisodeListResponse {
-  episodes: EpisodeInfo[];
-}
-export interface AuthUserResponse {
-  id: number;
-  username: string;
-}
-export interface AuthResponse {
-  token: string;
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
-}
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
 export interface LibraryListItem {
   id: string;
   name: string;
@@ -41,6 +7,40 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
+export interface ShowInfo {
+  id: string;
+  name: string;
+}
 export interface ShowListResponse {
   shows: ShowInfo[];
+}
+export interface SeasonInfo {
+  id: string;
+  number: number;
+}
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
+}
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface AuthResponse {
+  token: string;
+}
+export interface EpisodeInfo {
+  id: string;
+  number: number;
+}
+export interface EpisodeListResponse {
+  episodes: EpisodeInfo[];
+}
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
 }
