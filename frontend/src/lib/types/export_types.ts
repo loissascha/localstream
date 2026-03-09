@@ -1,12 +1,6 @@
-export interface AuthResponse {
-  token: string;
-}
 export interface ShowInfo {
   id: string;
   name: string;
-}
-export interface ShowListResponse {
-  shows: ShowInfo[];
 }
 export interface EpisodeInfo {
   id: string;
@@ -18,6 +12,16 @@ export interface EpisodeListResponse {
 export interface AuthUserResponse {
   id: number;
   username: string;
+}
+export interface AuthResponse {
+  token: string;
+}
+export interface SeasonInfo {
+  id: string;
+  number: number;
+}
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
 }
 export interface VideoListResponse {
   videos: VideoListItem[];
@@ -37,10 +41,6 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
+export interface ShowListResponse {
+  shows: ShowInfo[];
 }

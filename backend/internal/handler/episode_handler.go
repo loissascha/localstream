@@ -41,7 +41,7 @@ func (h *EpisodeHandler) RegisterRoutes() {
 
 	h.s.GET("/api/episodes/stream",
 		h.streamVideo,
-		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
 	)
 }
 
