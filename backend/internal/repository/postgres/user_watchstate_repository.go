@@ -88,6 +88,26 @@ func (r *UserWatchstateRepository) ListByUserID(ctx context.Context, userId int6
 	return watchstates, nil
 }
 
+func (r *UserWatchstateRepository) ListLatestByShowForUserID(ctx context.Context, userId int64) ([]entity.UserWatchstate, error) {
+	const query = `
+		SELECT id, user_id, show_id, season_id, episode_id, position, duration, finished, created_at, updated_at
+		FROM (
+			SELECT DISTINCT ON (show_id) id, user_id, show_id, season_id, episode_id, position, duration, finished, created_at, updated_at
+			FROM user_watchstates
+			WHERE user_id = $1
+			ORDER BY show_id, updated_at DESC
+		) latest_watchstates
+		ORDER BY updated_at DESC
+	`
+
+	var watchstates []entity.UserWatchstate
+	if err := r.db.SelectContext(ctx, &watchstates, query, userId); err != nil {
+		return nil, fmt.Errorf("list latest user watchstates by show for user id: %w", err)
+	}
+
+	return watchstates, nil
+}
+
 func (r *UserWatchstateRepository) DeleteByUserAndEpisodeID(ctx context.Context, userId int64, episodeId uuid.UUID) error {
 	const query = `
 		DELETE FROM user_watchstates
