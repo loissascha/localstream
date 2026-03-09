@@ -50,6 +50,7 @@ func main() {
 	showRepo := repopostgres.NewShowRepository(db)
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
+	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -57,6 +58,7 @@ func main() {
 	showSerivce := service.NewShowService(showRepo)
 	seasonService := service.NewSeasonService(seasonRepo)
 	episodeService := service.NewEpisodeService(episodeRepo)
+	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -68,6 +70,7 @@ func main() {
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
 	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService)
+	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -76,6 +79,7 @@ func main() {
 	showH.RegisterRoutes()
 	seasonH.RegisterRoutes()
 	episodeH.RegisterRoutes()
+	userWatchstateH.RegisterRoutes()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
