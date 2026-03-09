@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { auth } from '$lib/auth.svelte';
+	import { API_URL } from '$lib/consts';
 	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -9,7 +11,7 @@
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
 
-	const streamUrl = $derived(`/api/episodes/stream?id=${encodeURIComponent(episodeId)}`);
+	const streamUrl = $derived(API_URL + `/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : "")}`);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
 
 	const stopPlaybackLogging = () => {
@@ -48,9 +50,7 @@
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">
-	<header
-		class="border-b border-neutral-500 bg-neutral-800 px-4 py-3.5"
-	>
+	<header class="border-b border-neutral-500 bg-neutral-800 px-4 py-3.5">
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
 			href={resolve('/')}
