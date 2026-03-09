@@ -11,7 +11,10 @@
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
 
-	const streamUrl = $derived(API_URL + `/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : "")}`);
+	const streamUrl = $derived(
+		API_URL +
+			`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
+	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
 
 	const stopPlaybackLogging = () => {
@@ -32,6 +35,8 @@
 
 		console.log({
 			userToken: auth.token,
+			showId: showId,
+			seasonId: seasonId,
 			episodeId: episodeId,
 			positionSeconds: position,
 			durationSeconds: duration,
@@ -55,9 +60,9 @@
 	<header class="border-b border-neutral-500 bg-neutral-800 px-4 py-3.5">
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href={resolve('/')}
+			href={resolve('/(protected)/shows/[showID]', { showID: showId })}
 		>
-			Back to library
+			Back to Show
 		</a>
 	</header>
 
