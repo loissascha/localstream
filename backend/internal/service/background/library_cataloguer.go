@@ -251,12 +251,16 @@ func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
 	if err != nil {
 		return err
 	}
-
-	if library.LibraryType == entity.LibraryTypeShows {
+	switch library.LibraryType {
+	case entity.LibraryTypeShows:
 		err := l.RunShowsLibrary(&library, results)
 		if err != nil {
 			return err
 		}
+		break
+	case entity.LibraryTypeMovies:
+		// TODO: implement movies
+		break
 	}
 
 	return nil
