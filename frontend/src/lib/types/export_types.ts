@@ -1,3 +1,12 @@
+export interface ShowInfo {
+  id: string;
+  name: string;
+  year: number;
+  description: string;
+}
+export interface ShowListResponse {
+  shows: ShowInfo[];
+}
 export interface EpisodeInfo {
   id: string;
   number: number;
@@ -15,6 +24,9 @@ export interface WatchstateResponse {
   finished: boolean;
   created_at: string;
   updated_at: string;
+}
+export interface AuthResponse {
+  token: string;
 }
 export interface VideoListResponse {
   videos: VideoListItem[];
@@ -34,12 +46,12 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
-export interface ShowInfo {
+export interface SeasonInfo {
   id: string;
-  name: string;
+  number: number;
 }
-export interface ShowListResponse {
-  shows: ShowInfo[];
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
 }
 export interface SaveWatchstateRequest {
   show_id: string;
@@ -55,14 +67,4 @@ export interface WatchstateListResponse {
 export interface AuthUserResponse {
   id: number;
   username: string;
-}
-export interface AuthResponse {
-  token: string;
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
 }
