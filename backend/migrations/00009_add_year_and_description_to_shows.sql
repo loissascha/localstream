@@ -1,0 +1,13 @@
+-- +goose Up
+ALTER TABLE shows
+ADD COLUMN year INT NOT NULL DEFAULT 0;
+
+ALTER TABLE shows
+ADD COLUMN description TEXT NOT NULL DEFAULT '';
+
+-- +goose Down
+ALTER TABLE shows
+DROP COLUMN IF EXISTS description;
+
+ALTER TABLE shows
+DROP COLUMN IF EXISTS year;

@@ -41,8 +41,10 @@ func (h *ShowHandler) RegisterRoutes() {
 }
 
 type ShowInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Year        int    `json:"year"`
+	Description string `json:"description"`
 }
 
 type ShowListResponse struct {
@@ -58,8 +60,10 @@ func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result := ShowInfo{
-		ID:   encoders.EncodeUUID(show.ID),
-		Name: show.Name,
+		ID:          encoders.EncodeUUID(show.ID),
+		Name:        show.Name,
+		Year:        show.Year,
+		Description: show.Description,
 	}
 
 	respond.JSON(w, http.StatusOK, result)
@@ -75,8 +79,10 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 	result := []ShowInfo{}
 	for _, l := range shows {
 		result = append(result, ShowInfo{
-			ID:   encoders.EncodeUUID(l.ID),
-			Name: l.Name,
+			ID:          encoders.EncodeUUID(l.ID),
+			Name:        l.Name,
+			Year:        l.Year,
+			Description: l.Description,
 		})
 	}
 

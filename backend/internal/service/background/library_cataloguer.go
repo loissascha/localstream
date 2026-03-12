@@ -176,8 +176,14 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	show = &entity.Show{
 		ID:          uuid.New(),
 		Name:        showInfo.Series,
+		Year:        0,
+		Description: "",
 		Path:        p,
 		FetchSource: entity.FetchSourceNone,
+	}
+
+	if showInfo.Year != nil {
+		show.Year = *showInfo.Year
 	}
 
 	logger.Debug(nil, "Trying to create show {Show}", *show)
