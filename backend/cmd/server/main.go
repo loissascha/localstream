@@ -70,7 +70,7 @@ func main() {
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
 	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService)
-	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService)
+	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
 
 	// register routes
 	authH.RegisterHandlers()

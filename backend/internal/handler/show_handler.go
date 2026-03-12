@@ -8,6 +8,7 @@ import (
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/localstream/internal/encoders"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -59,13 +60,7 @@ func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := ShowInfo{
-		ID:          encoders.EncodeUUID(show.ID),
-		Name:        show.Name,
-		Year:        show.Year,
-		Description: show.Description,
-	}
-
+	result := toShowInfo(show)
 	respond.JSON(w, http.StatusOK, result)
 }
 
@@ -78,12 +73,7 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 
 	result := []ShowInfo{}
 	for _, l := range shows {
-		result = append(result, ShowInfo{
-			ID:          encoders.EncodeUUID(l.ID),
-			Name:        l.Name,
-			Year:        l.Year,
-			Description: l.Description,
-		})
+		result = append(result, toShowInfo(&l))
 	}
 
 	sort.Slice(result, func(i, j int) bool {
@@ -91,4 +81,13 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 	})
 
 	respond.JSON(w, http.StatusOK, ShowListResponse{Shows: result})
+}
+
+func toShowInfo(show *entity.Show) ShowInfo {
+	return ShowInfo{
+		ID:          encoders.EncodeUUID(show.ID),
+		Name:        show.Name,
+		Year:        show.Year,
+		Description: show.Description,
+	}
 }

@@ -18,13 +18,26 @@ type UserWatchstateHandler struct {
 	s                     *server.Server
 	authMiddleware        *middleware.AuthMiddleware
 	userWatchstateService *service.UserWatchstateService
+	showService           *service.ShowService
+	seasonService         *service.SeasonService
+	episodeService        *service.EpisodeService
 }
 
-func NewUserWatchstateHandler(s *server.Server, authMiddleware *middleware.AuthMiddleware, userWatchstateService *service.UserWatchstateService) *UserWatchstateHandler {
+func NewUserWatchstateHandler(
+	s *server.Server,
+	authMiddleware *middleware.AuthMiddleware,
+	userWatchstateService *service.UserWatchstateService,
+	showService *service.ShowService,
+	seasonService *service.SeasonService,
+	episodeService *service.EpisodeService,
+) *UserWatchstateHandler {
 	return &UserWatchstateHandler{
 		s:                     s,
 		authMiddleware:        authMiddleware,
 		userWatchstateService: userWatchstateService,
+		showService:           showService,
+		seasonService:         seasonService,
+		episodeService:        episodeService,
 	}
 }
 
@@ -60,15 +73,18 @@ type SaveWatchstateRequest struct {
 }
 
 type WatchstateResponse struct {
-	ID        string    `json:"id"`
-	ShowID    string    `json:"show_id"`
-	SeasonID  string    `json:"season_id"`
-	EpisodeID string    `json:"episode_id"`
-	Position  float64   `json:"position"`
-	Duration  float64   `json:"duration"`
-	Finished  bool      `json:"finished"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          string      `json:"id"`
+	ShowID      string      `json:"show_id"`
+	ShowInfo    ShowInfo    `json:"show_info"`
+	SeasonID    string      `json:"season_id"`
+	SeasonInfo  SeasonInfo  `json:"season_info"`
+	EpisodeID   string      `json:"episode_id"`
+	EpisodeInfo EpisodeInfo `json:"episode_info"`
+	Position    float64     `json:"position"`
+	Duration    float64     `json:"duration"`
+	Finished    bool        `json:"finished"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
 type WatchstateListResponse struct {
@@ -156,7 +172,29 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 
 	response := make([]WatchstateResponse, 0, len(watchstates))
 	for _, watchstate := range watchstates {
-		response = append(response, toWatchstateResponse(watchstate))
+		showId := encoders.EncodeUUID(watchstate.ShowID)
+		seasonId := encoders.EncodeUUID(watchstate.SeasonID)
+		episodeId := encoders.EncodeUUID(watchstate.EpisodeID)
+
+		show, err := h.showService.GetByID(r.Context(), showId)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
+			return
+		}
+
+		season, err := h.seasonService.GetByID(r.Context(), seasonId)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
+			return
+		}
+
+		episode, err := h.episodeService.GetByID(r.Context(), episodeId)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
+			return
+		}
+
+		response = append(response, toWatchstateResponse(watchstate, toShowInfo(show), toSeasonInfo(season), toEpisodeInfo(episode)))
 	}
 
 	respond.JSON(w, http.StatusOK, WatchstateListResponse{Watchstates: response})
@@ -173,17 +211,40 @@ func decodeSaveWatchstateRequest(r *http.Request) (*SaveWatchstateRequest, error
 	return &requestBody, nil
 }
 
-func toWatchstateResponse(watchstate entity.UserWatchstate) WatchstateResponse {
+func toWatchstateResponse(watchstate entity.UserWatchstate, infos ...any) WatchstateResponse {
+	var showInfo ShowInfo
+	var seasonInfo SeasonInfo
+	var episodeInfo EpisodeInfo
+	for _, info := range infos {
+		eI, ok := info.(EpisodeInfo)
+		if ok {
+			episodeInfo = eI
+			continue
+		}
+		shI, ok := info.(ShowInfo)
+		if ok {
+			showInfo = shI
+			continue
+		}
+		seI, ok := info.(SeasonInfo)
+		if ok {
+			seasonInfo = seI
+			continue
+		}
+	}
 	return WatchstateResponse{
-		ID:        encoders.EncodeUUID(watchstate.ID),
-		ShowID:    encoders.EncodeUUID(watchstate.ShowID),
-		SeasonID:  encoders.EncodeUUID(watchstate.SeasonID),
-		EpisodeID: encoders.EncodeUUID(watchstate.EpisodeID),
-		Position:  watchstate.Position,
-		Duration:  watchstate.Duration,
-		Finished:  watchstate.Finished,
-		CreatedAt: watchstate.CreatedAt,
-		UpdatedAt: watchstate.UpdatedAt,
+		ID:          encoders.EncodeUUID(watchstate.ID),
+		ShowID:      encoders.EncodeUUID(watchstate.ShowID),
+		ShowInfo:    showInfo,
+		SeasonID:    encoders.EncodeUUID(watchstate.SeasonID),
+		SeasonInfo:  seasonInfo,
+		EpisodeID:   encoders.EncodeUUID(watchstate.EpisodeID),
+		EpisodeInfo: episodeInfo,
+		Position:    watchstate.Position,
+		Duration:    watchstate.Duration,
+		Finished:    watchstate.Finished,
+		CreatedAt:   watchstate.CreatedAt,
+		UpdatedAt:   watchstate.UpdatedAt,
 	}
 }
 

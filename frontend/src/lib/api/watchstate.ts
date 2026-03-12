@@ -17,6 +17,7 @@ export async function updateWatchstate(
         body: JSON.stringify(body)
     });
     if (response.status !== 200) {
+		console.error(response)
         throw new Error('Error: ' + response.status);
     }
     const result = (await response.json()) as WatchstateResponse;
@@ -33,6 +34,7 @@ export async function listLatestWatchstateByShow(
         }
     });
     if (response.status !== 200) {
+		console.error(response)
         throw new Error('Error: ' + response.status);
     }
     const result = (await response.json()) as WatchstateListResponse;

@@ -17,6 +17,14 @@ func NewSeasonService(seasonRepo repository.SeasonRepository) *SeasonService {
 	return &SeasonService{seasonRepo: seasonRepo}
 }
 
+func (s *SeasonService) GetByID(ctx context.Context, id string) (*entity.Season, error) {
+	iduu, err := encoders.DecodeUUID(id)
+	if err != nil {
+		return nil, err
+	}
+	return s.seasonRepo.GetByID(ctx, iduu)
+}
+
 func (s *SeasonService) ListByShowID(ctx context.Context, showId string) ([]entity.Season, error) {
 	showUUID, err := encoders.DecodeUUID(showId)
 	if err != nil {

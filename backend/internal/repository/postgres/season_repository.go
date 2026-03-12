@@ -42,6 +42,24 @@ func (r *SeasonRepository) Create(ctx context.Context, season *entity.Season) er
 	return nil
 }
 
+func (r *SeasonRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Season, error) {
+	const query = `
+		SELECT id, show_id, number, path, created_at, fetch_source
+		FROM seasons
+		WHERE id = $1
+		LIMIT 1
+	`
+	var season entity.Season
+	if err := r.db.GetContext(ctx, &season, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get season by path: %w", err)
+	}
+
+	return &season, nil
+}
+
 func (r *SeasonRepository) GetByPathAndShowID(ctx context.Context, path string, showId uuid.UUID) (*entity.Season, error) {
 	const query = `
 		SELECT id, show_id, number, path, created_at, fetch_source

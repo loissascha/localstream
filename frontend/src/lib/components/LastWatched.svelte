@@ -33,6 +33,10 @@
 <h2>Last Watched</h2>
 <div class="flex gap-4">
 	{#each data as d}
-		<div>{d.show_id}</div>
+		<div class="rounded border border-neutral-600 bg-neutral-800 p-4">
+			<div class="font-bold">{d.show_info.name}</div>
+			<div>Season: {d.season_info.number}</div>
+			<div>Episode: {d.episode_info.number}</div>
+		</div>
 	{/each}
 </div>
