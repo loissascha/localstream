@@ -18,14 +18,14 @@
 	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
 
-	const stopPlaybackLogging = () => {
+	function stopPlaybackLogging() {
 		if (logTimer !== null) {
 			clearInterval(logTimer);
 			logTimer = null;
 		}
-	};
+	}
 
-	const logPlaybackStatus = () => {
+	async function logPlaybackStatus() {
 		if (!videoEl) {
 			return;
 		}
@@ -35,33 +35,37 @@
 		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
 
 		if (auth.token) {
-			updateWatchstate(auth.token, {
-				episode_id: episodeId,
-				season_id: seasonId,
-				show_id: showId,
-				position: position,
-				duration: duration,
-				finished: finished
-			});
+			try {
+				await updateWatchstate(auth.token, {
+					episode_id: episodeId,
+					season_id: seasonId,
+					show_id: showId,
+					position: position,
+					duration: duration,
+					finished: finished
+				});
+			} catch (e) {
+				console.error(e);
+			}
 		}
 
-		console.log({
-			userToken: auth.token,
-			showId: showId,
-			seasonId: seasonId,
-			episodeId: episodeId,
-			positionSeconds: position,
-			durationSeconds: duration,
-			finished,
-			updatedAt: new Date().toISOString()
-		});
-	};
+		// 	console.log({
+		// 		userToken: auth.token,
+		// 		showId: showId,
+		// 		seasonId: seasonId,
+		// 		episodeId: episodeId,
+		// 		positionSeconds: position,
+		// 		durationSeconds: duration,
+		// 		finished,
+		// 		updatedAt: new Date().toISOString()
+		// 	});
+	}
 
-	const startPlaybackLogging = () => {
+	function startPlaybackLogging() {
 		stopPlaybackLogging();
 		logPlaybackStatus();
 		logTimer = setInterval(logPlaybackStatus, 5000);
-	};
+	}
 
 	onDestroy(() => {
 		stopPlaybackLogging();
@@ -84,7 +88,6 @@
 			bind:this={videoEl}
 			class="h-auto max-h-[calc(100dvh-4.2rem)] w-full rounded-xl bg-black md:h-[min(88dvh,calc(100dvh-4.2rem))] md:w-[min(100%,120rem)]"
 			controls
-			autoplay
 			preload="metadata"
 			src={streamUrl}
 			onplay={startPlaybackLogging}
