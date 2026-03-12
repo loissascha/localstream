@@ -18,7 +18,7 @@ import (
 	"github.com/loissascha/localstream/internal/service"
 )
 
-type LibraryWatcher struct {
+type LibraryCataloguer struct {
 	libService         *service.LibraryService
 	tvmetadataProvider provider.TVMetadataProvider
 	showRepo           repository.ShowRepository
@@ -26,8 +26,8 @@ type LibraryWatcher struct {
 	episodeRepo        repository.EpisodeRepository
 }
 
-func NewLibraryWatcher(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository) *LibraryWatcher {
-	return &LibraryWatcher{
+func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository) *LibraryCataloguer {
+	return &LibraryCataloguer{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
 		showRepo:           showRepo,
@@ -36,19 +36,19 @@ func NewLibraryWatcher(libService *service.LibraryService, showRepo repository.S
 	}
 }
 
-func (l *LibraryWatcher) RunBackground() {
+func (l *LibraryCataloguer) RunBackground() {
 	go func() {
 		for {
 			err := l.RunOnce()
 			if err != nil {
 				logger.Error(err, "Error running library watcher")
 			}
-			time.Sleep(5 * time.Second)
+			time.Sleep(120 * time.Second)
 		}
 	}()
 }
 
-func (l *LibraryWatcher) RunOnce() error {
+func (l *LibraryCataloguer) RunOnce() error {
 	logger.Info(nil, "Library Watcher running...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
@@ -68,7 +68,7 @@ func (l *LibraryWatcher) RunOnce() error {
 	return nil
 }
 
-func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[string]map[string][]string {
+func (l *LibraryCataloguer) extractShows(basePath string, input []fResult) map[string]map[string][]string {
 	res := map[string]map[string][]string{}
 
 	for _, result := range input {
@@ -93,7 +93,7 @@ func (l *LibraryWatcher) extractShows(basePath string, input []fResult) map[stri
 	return res
 }
 
-func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string) (*entity.Episode, error) {
+func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string) (*entity.Episode, error) {
 	logger.Debug(nil, "findOrCreateEpisode {EpisodeInfo}", *episodeInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -125,7 +125,7 @@ func (l *LibraryWatcher) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *pa
 	return episode, nil
 }
 
-func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string) (*entity.Season, error) {
+func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string) (*entity.Season, error) {
 	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -158,7 +158,7 @@ func (l *LibraryWatcher) findOrCreateSeason(showId uuid.UUID, seasonInfo *parser
 	return season, nil
 }
 
-func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
+func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
 	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -191,7 +191,7 @@ func (l *LibraryWatcher) findOrCreateShow(showInfo *parsers.ShowInfo, basePath s
 	return show, nil
 }
 
-func (l *LibraryWatcher) RunLibrary(library entity.Library) error {
+func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
 	results, err := getAllFilesWithPath(library.Path, "mp4")
 	if err != nil {
 		return err
