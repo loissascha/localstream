@@ -8,6 +8,7 @@
 	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
+	import LastWatched from '$lib/components/LastWatched.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -98,41 +99,49 @@
 		<p class="text-red-700">{errorMessage}</p>
 	{/if}
 
+	<LastWatched />
+
 	{#if loading}
 		<p>Loading video library...</p>
 	{:else if libraries.length === 0}
 		<p>No libraries found.</p>
 	{:else}
-		<section class="flex gap-3">
-			{#each libraries as library (library.id)}
-				<button
-					onclick={() => selectLibrary(library)}
-					class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-3"
-				>
-					{#if selectedLibrary?.id == library.id}
-						<strong>{library.name}</strong>
-					{:else}
-						{library.name}
-					{/if}
-					<br />
-					{library.library_type}
-				</button>
-			{/each}
+		<section class="my-4">
+			<h2>Libraries</h2>
+			<div class="flex gap-3">
+				{#each libraries as library (library.id)}
+					<button
+						onclick={() => selectLibrary(library)}
+						class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-3"
+					>
+						{#if selectedLibrary?.id == library.id}
+							<strong>{library.name}</strong>
+						{:else}
+							{library.name}
+						{/if}
+						<br />
+						{library.library_type}
+					</button>
+				{/each}
+			</div>
 		</section>
 	{/if}
 
 	{#if loadingShows}
 		<p>Loading shows...</p>
 	{:else}
-		<section class="my-4 flex gap-3">
-			{#each shows as show (show.id)}
-				<a
-					href={resolve('/(protected)/shows/[showID]', { showID: show.id })}
-					class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
-				>
-					{show.name}
-				</a>
-			{/each}
+		<section class="my-4">
+			<h2>Shows</h2>
+			<div class="flex gap-3">
+				{#each shows as show (show.id)}
+					<a
+						href={resolve('/(protected)/shows/[showID]', { showID: show.id })}
+						class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
+					>
+						{show.name}
+					</a>
+				{/each}
+			</div>
 		</section>
 	{/if}
 </main>
