@@ -1,5 +1,9 @@
 import { API_URL } from '$lib/consts';
-import type { SaveWatchstateRequest, WatchstateResponse } from '$lib/types/export_types';
+import type {
+    SaveWatchstateRequest,
+    WatchstateListResponse,
+    WatchstateResponse
+} from '$lib/types/export_types';
 
 export async function updateWatchstate(
     bearerToken: string,
@@ -17,4 +21,20 @@ export async function updateWatchstate(
     }
     const result = (await response.json()) as WatchstateResponse;
     return result;
+}
+
+export async function listLatestWatchstateByShow(
+    bearerToken: string
+): Promise<WatchstateResponse[]> {
+    const response = await fetch(API_URL + '/api/watchstate/latest/shows', {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + bearerToken
+        }
+    });
+    if (response.status !== 200) {
+        throw new Error('Error: ' + response.status);
+    }
+    const result = (await response.json()) as WatchstateListResponse;
+    return result.watchstates;
 }
