@@ -124,8 +124,13 @@
 	{#if loadingShowData}
 		<p>Loading stuff...</p>
 	{:else}
-		<h1 class="text-3xl">{showData?.name}</h1>
-		<p>Description</p>
+		<h1 class="text-3xl">
+			{showData?.name}
+			{#if showData && showData.year > 0}
+				({showData.year})
+			{/if}
+		</h1>
+		<p>{showData?.description}</p>
 	{/if}
 
 	<div class="my-3">
@@ -152,7 +157,7 @@
 					seasonID: selectedSeason!.id,
 					episodeID: episode.id
 				})}
-				class="h-34 w-34 content-center rounded bg-neutral-800 text-center text-2xl font-bold"
+				class="h-34 w-34 shrink-0 content-center rounded bg-neutral-800 text-center text-2xl font-bold"
 			>
 				{episode.number}
 			</a>
