@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import { onDestroy } from 'svelte';
@@ -32,6 +33,17 @@
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
 		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+
+		if (auth.token) {
+			updateWatchstate(auth.token, {
+				episode_id: episodeId,
+				season_id: seasonId,
+				show_id: showId,
+				position: position,
+				duration: duration,
+				finished: finished
+			});
+		}
 
 		console.log({
 			userToken: auth.token,
