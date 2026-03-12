@@ -191,6 +191,61 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	return show, nil
 }
 
+func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []fResult) error {
+	shows := l.extractShows(library.Path, results)
+
+	for show, seasons := range shows {
+
+		showInfo, ok := parsers.ParseShowFromName(show)
+		if !ok {
+			logger.Error(nil, "Can't parse show name: {Show}. ParseShowFromName failed", show)
+			continue
+		}
+
+		show, err := l.findOrCreateShow(showInfo, library.Path)
+		if err != nil {
+			return err
+		}
+
+		if showInfo.Year != nil {
+			logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, show.ID.String(), *showInfo.Year, len(seasons))
+		} else {
+			logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Amount Seasons: {Season}", showInfo.Series, show.ID.String(), len(seasons))
+		}
+
+		for season, episodes := range seasons {
+			seasonInfo, ok := parsers.ParseSeasonFromName(season)
+			if !ok {
+				logger.Error(nil, "Can't parse season name: {Season}. ParseSeasonFromName failed", season)
+				continue
+			}
+
+			season, err := l.findOrCreateSeason(show.ID, seasonInfo, show.Path)
+			if err != nil {
+				return err
+			}
+
+			logger.Info(nil, "Season parsed. Number: {Number} (ID: {ID})", season.Number, season.ID.String())
+
+			for _, episode := range episodes {
+				episodeInfo, ok := parsers.ParseEpisodeFromFilename(episode)
+				if !ok {
+					logger.Error(nil, "Can't parse episode name: {Episode}. ParseEpisodeFromFilename failed", episode)
+					continue
+				}
+
+				episode, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path)
+				if err != nil {
+					return err
+				}
+
+				logger.Info(nil, "Episode parsed. Number: {Number} (ID: {ID})", episodeInfo.Episode, episode.ID.String())
+			}
+		}
+	}
+	return nil
+}
+
 func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
 	results, err := getAllFilesWithPath(library.Path, "mp4")
 	if err != nil {
@@ -198,93 +253,12 @@ func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
 	}
 
 	if library.LibraryType == entity.LibraryTypeShows {
-		shows := l.extractShows(library.Path, results)
-
-		for show, seasons := range shows {
-
-			showInfo, ok := parsers.ParseShowFromName(show)
-			if !ok {
-				logger.Error(nil, "Can't parse show name: {Show}. ParseShowFromName failed", show)
-				continue
-			}
-
-			show, err := l.findOrCreateShow(showInfo, library.Path)
-			if err != nil {
-				return err
-			}
-
-			if showInfo.Year != nil {
-				logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, show.ID.String(), *showInfo.Year, len(seasons))
-			} else {
-				logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Amount Seasons: {Season}", showInfo.Series, show.ID.String(), len(seasons))
-			}
-
-			for season, episodes := range seasons {
-				seasonInfo, ok := parsers.ParseSeasonFromName(season)
-				if !ok {
-					logger.Error(nil, "Can't parse season name: {Season}. ParseSeasonFromName failed", season)
-					continue
-				}
-
-				season, err := l.findOrCreateSeason(show.ID, seasonInfo, show.Path)
-				if err != nil {
-					return err
-				}
-
-				logger.Info(nil, "Season parsed. Number: {Number} (ID: {ID})", season.Number, season.ID.String())
-
-				for _, episode := range episodes {
-					episodeInfo, ok := parsers.ParseEpisodeFromFilename(episode)
-					if !ok {
-						logger.Error(nil, "Can't parse episode name: {Episode}. ParseEpisodeFromFilename failed", episode)
-						continue
-					}
-
-					episode, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path)
-					if err != nil {
-						return err
-					}
-
-					logger.Info(nil, "Episode parsed. Number: {Number} (ID: {ID})", episodeInfo.Episode, episode.ID.String())
-				}
-			}
+		err := l.RunShowsLibrary(&library, results)
+		if err != nil {
+			return err
 		}
-
-		// go through each show
-		// check if the show (on that path) already exists
-		// if not -> create it
-		// if yes -> go on
 	}
 
-	// for _, result := range results {
-	//
-	// 	episodeInfo, ok := parsers.ParseEpisodeFromFilename(result.Name)
-	// 	if !ok {
-	// 		logger.Warning(nil, "Couldn't parse file name {Name}", result.Name)
-	// 		continue
-	// 	}
-	//
-	// 	switch library.LibraryType {
-	// 	case entity.LibraryTypeMovies:
-	// 		logger.Debug(nil, "Movie: {File}", episodeInfo)
-	// 	case entity.LibraryTypeShows:
-	// 		logger.Debug(nil, "Show: {File} | Path: {Path}", episodeInfo, result.Path)
-	//
-	// 		// searchResults, err := l.tvmetadataProvider.SearchSeries(episodeInfo)
-	// 		// if err != nil {
-	// 		// 	logger.Error(err, "Failed searching show metadata for {Series}", episodeInfo.Series)
-	// 		// 	continue
-	// 		// }
-	// 		//
-	// 		// if len(searchResults) == 0 {
-	// 		// 	logger.Info(nil, "No metadata results for {Series}", episodeInfo.Series)
-	// 		// 	continue
-	// 		// }
-	// 		//
-	// 		// bestMatch := searchResults[0]
-	// 		// logger.Debug(nil, "Best metadata match for {Series}: {Name} ({ID}) with score {Score}", episodeInfo.Series, bestMatch.Show.Name, bestMatch.Show.ID, bestMatch.Score)
-	// 	}
-	// }
 	return nil
 }
 
