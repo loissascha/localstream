@@ -33,10 +33,17 @@
 <h2>Last Watched</h2>
 <div class="flex gap-4">
 	{#each data as d}
-		<div class="rounded border border-neutral-600 bg-neutral-800 p-4">
+		<a
+			href={resolve('/(protected)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+				showID: d.show_id,
+				seasonID: d.season_id,
+				episodeID: d.episode_id
+			})}
+			class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-4"
+		>
 			<div class="font-bold">{d.show_info.name}</div>
 			<div>Season: {d.season_info.number}</div>
 			<div>Episode: {d.episode_info.number}</div>
-		</div>
+		</a>
 	{/each}
 </div>
