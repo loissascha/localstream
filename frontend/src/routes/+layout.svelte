@@ -10,7 +10,10 @@
 	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+	<title>Localstream</title>
+</svelte:head>
 <div class="min-h-dvh w-dvw bg-black text-white">
 	{@render children()}
 </div>
