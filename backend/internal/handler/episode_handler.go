@@ -12,8 +12,6 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/localstream/internal/encoders"
-	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -115,15 +113,6 @@ func (h *EpisodeHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 	_, _ = io.CopyN(w, file, chunkSize)
 }
 
-type EpisodeInfo struct {
-	ID     string `json:"id"`
-	Number int    `json:"number"`
-}
-
-type EpisodeListResponse struct {
-	Episodes []EpisodeInfo `json:"episodes"`
-}
-
 func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 	seasonID := r.PathValue("seasonID")
 	episodes, err := h.episodeService.ListBySeasonID(r.Context(), seasonID)
@@ -138,11 +127,4 @@ func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respond.JSON(w, http.StatusOK, EpisodeListResponse{Episodes: result})
-}
-
-func toEpisodeInfo(episode *entity.Episode) EpisodeInfo {
-	return EpisodeInfo{
-		ID:     encoders.EncodeUUID(episode.ID),
-		Number: episode.Number,
-	}
 }

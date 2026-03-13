@@ -9,7 +9,6 @@ import (
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/localstream/internal/encoders"
-	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -209,43 +208,6 @@ func decodeSaveWatchstateRequest(r *http.Request) (*SaveWatchstateRequest, error
 	}
 
 	return &requestBody, nil
-}
-
-func toWatchstateResponse(watchstate entity.UserWatchstate, infos ...any) WatchstateResponse {
-	var showInfo ShowInfo
-	var seasonInfo SeasonInfo
-	var episodeInfo EpisodeInfo
-	for _, info := range infos {
-		eI, ok := info.(EpisodeInfo)
-		if ok {
-			episodeInfo = eI
-			continue
-		}
-		shI, ok := info.(ShowInfo)
-		if ok {
-			showInfo = shI
-			continue
-		}
-		seI, ok := info.(SeasonInfo)
-		if ok {
-			seasonInfo = seI
-			continue
-		}
-	}
-	return WatchstateResponse{
-		ID:          encoders.EncodeUUID(watchstate.ID),
-		ShowID:      encoders.EncodeUUID(watchstate.ShowID),
-		ShowInfo:    showInfo,
-		SeasonID:    encoders.EncodeUUID(watchstate.SeasonID),
-		SeasonInfo:  seasonInfo,
-		EpisodeID:   encoders.EncodeUUID(watchstate.EpisodeID),
-		EpisodeInfo: episodeInfo,
-		Position:    watchstate.Position,
-		Duration:    watchstate.Duration,
-		Finished:    watchstate.Finished,
-		CreatedAt:   watchstate.CreatedAt,
-		UpdatedAt:   watchstate.UpdatedAt,
-	}
 }
 
 func authenticatedUserIDFromContext(r *http.Request) (int64, bool) {

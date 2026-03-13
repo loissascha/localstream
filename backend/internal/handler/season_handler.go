@@ -34,15 +34,6 @@ func (h *SeasonHandler) RegisterRoutes() {
 	)
 }
 
-type SeasonInfo struct {
-	ID     string `json:"id"`
-	Number int    `json:"number"`
-}
-
-type SeasonListResponse struct {
-	Seasons []SeasonInfo `json:"seasons"`
-}
-
 func (h *SeasonHandler) listSeasons(w http.ResponseWriter, r *http.Request) {
 	showID := r.PathValue("showID")
 	seasons, err := h.seasonService.ListByShowID(r.Context(), showID)

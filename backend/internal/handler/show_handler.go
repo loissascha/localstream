@@ -7,8 +7,6 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/localstream/internal/encoders"
-	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -39,17 +37,6 @@ func (h *ShowHandler) RegisterRoutes() {
 		server.WithExportType[ShowInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
-}
-
-type ShowInfo struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Year        int    `json:"year"`
-	Description string `json:"description"`
-}
-
-type ShowListResponse struct {
-	Shows []ShowInfo `json:"shows"`
 }
 
 func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
@@ -83,11 +70,3 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 	respond.JSON(w, http.StatusOK, ShowListResponse{Shows: result})
 }
 
-func toShowInfo(show *entity.Show) ShowInfo {
-	return ShowInfo{
-		ID:          encoders.EncodeUUID(show.ID),
-		Name:        show.Name,
-		Year:        show.Year,
-		Description: show.Description,
-	}
-}
