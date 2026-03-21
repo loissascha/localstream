@@ -88,6 +88,9 @@ func toShowInfo(show *entity.Show) ShowInfo {
 
 func toWatchstateInfo(watchstate *entity.UserWatchstate) WatchstateInfo {
 	percent := (100 / watchstate.Duration) * watchstate.Position
+	if watchstate.Finished {
+		percent = 100
+	}
 	return WatchstateInfo{
 		Position:   watchstate.Position,
 		Duration:   watchstate.Duration,

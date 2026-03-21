@@ -89,13 +89,22 @@ func (h *UserWatchstateHandler) saveWatchstate(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	// set finish when almost done
+	finished := requestBody.Finished
+	if !finished {
+		percent := (100 / requestBody.Duration) * requestBody.Position
+		if percent >= 95 {
+			finished = true
+		}
+	}
+
 	watchstate, err := h.userWatchstateService.Save(r.Context(), userID, service.SaveWatchstateInput{
 		ShowID:    requestBody.ShowID,
 		SeasonID:  requestBody.SeasonID,
 		EpisodeID: requestBody.EpisodeID,
 		Position:  requestBody.Position,
 		Duration:  requestBody.Duration,
-		Finished:  requestBody.Finished,
+		Finished:  finished,
 	})
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidWatchstateInput) {
