@@ -210,6 +210,14 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 
 	response := make([]WatchstateResponse, 0, len(watchstates))
 	for _, watchstate := range watchstates {
+
+		// TODO: get next episode from episodeService or something
+		// then get the data for that episode and attach that
+		if watchstate.Finished {
+
+			// continue
+		}
+
 		showId := encoders.EncodeUUID(watchstate.ShowID)
 		seasonId := encoders.EncodeUUID(watchstate.SeasonID)
 		episodeId := encoders.EncodeUUID(watchstate.EpisodeID)
