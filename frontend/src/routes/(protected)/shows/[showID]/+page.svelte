@@ -115,7 +115,10 @@
 
 <main class="px-5 py-5">
 	<div class="mb-4">
-		<a class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50" href={resolve('/(protected)')}>Dashboard</a>
+		<a
+			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
+			href={resolve('/(protected)')}>Dashboard</a
+		>
 	</div>
 	{#if errorMessage}
 		<p>{errorMessage}</p>
@@ -159,6 +162,15 @@
 				})}
 				class="flex h-34 w-34 shrink-0 flex-col justify-between rounded bg-neutral-800"
 			>
+				<div>
+					<div class="flex justify-end px-2 py-1">
+						{#if episode.watchstate.finished}
+							<div class="">T</div>
+						{:else}
+							<div>NT</div>
+						{/if}
+					</div>
+				</div>
 				<div class="grow content-center text-center text-2xl font-bold">
 					{episode.number}
 				</div>
