@@ -167,7 +167,16 @@
 						{#if episode.watchstate.finished}
 							<div class="">T</div>
 						{:else}
-							<div>NT</div>
+							<button
+								class="cursor-pointer"
+								onclick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									alert('Clicked thing');
+								}}
+							>
+								NT
+							</button>
 						{/if}
 					</div>
 				</div>
