@@ -101,32 +101,6 @@
 
 	<LastWatched />
 
-	{#if loading}
-		<p>Loading video library...</p>
-	{:else if libraries.length === 0}
-		<p>No libraries found.</p>
-	{:else}
-		<section class="my-4">
-			<h2>Libraries</h2>
-			<div class="flex gap-3">
-				{#each libraries as library (library.id)}
-					<button
-						onclick={() => selectLibrary(library)}
-						class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-3"
-					>
-						{#if selectedLibrary?.id == library.id}
-							<strong>{library.name}</strong>
-						{:else}
-							{library.name}
-						{/if}
-						<br />
-						{library.library_type}
-					</button>
-				{/each}
-			</div>
-		</section>
-	{/if}
-
 	{#if loadingShows}
 		<p>Loading shows...</p>
 	{:else}
