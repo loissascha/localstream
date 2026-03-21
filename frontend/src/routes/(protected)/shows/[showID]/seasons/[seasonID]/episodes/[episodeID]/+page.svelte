@@ -104,6 +104,10 @@
 	<header class="border-b border-neutral-500 bg-neutral-800 px-4 py-3.5">
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
+			href={resolve('/(protected)')}>Dashboard</a
+		>
+		<a
+			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
 			href={resolve('/(protected)/shows/[showID]', { showID: showId })}
 		>
 			Back to Show
