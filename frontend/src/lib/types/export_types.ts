@@ -1,25 +1,9 @@
-export interface ShowInfo {
+export interface SeasonInfo {
   id: string;
-  name: string;
-  year: number;
-  description: string;
+  number: number;
 }
-export interface WatchstateResponse {
-  id: string;
-  show_id: string;
-  show_info: ShowInfo;
-  season_id: string;
-  season_info: SeasonInfo;
-  episode_id: string;
-  episode_info: EpisodeInfo;
-  position: number;
-  duration: number;
-  finished: boolean;
-  created_at: string;
-  updated_at: string;
-}
-export interface WatchstateListResponse {
-  watchstates: WatchstateResponse[];
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
 }
 export interface EpisodeInfo {
   id: string;
@@ -43,9 +27,22 @@ export interface SaveWatchstateRequest {
   duration: number;
   finished: boolean;
 }
-export interface AuthUserResponse {
-  id: number;
-  username: string;
+export interface WatchstateResponse {
+  id: string;
+  show_id: string;
+  show_info: ShowInfo;
+  season_id: string;
+  season_info: SeasonInfo;
+  episode_id: string;
+  episode_info: EpisodeInfo;
+  position: number;
+  duration: number;
+  finished: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface AuthResponse {
+  token: string;
 }
 export interface VideoListResponse {
   videos: VideoListItem[];
@@ -56,19 +53,6 @@ export interface VideoListItem {
   size: number;
   mimeType: string;
 }
-export interface ShowListResponse {
-  shows: ShowInfo[];
-}
-export interface AuthResponse {
-  token: string;
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
-}
 export interface LibraryListItem {
   id: string;
   name: string;
@@ -77,4 +61,20 @@ export interface LibraryListItem {
 }
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
+}
+export interface ShowInfo {
+  id: string;
+  name: string;
+  year: number;
+  description: string;
+}
+export interface WatchstateListResponse {
+  watchstates: WatchstateResponse[];
+}
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface ShowListResponse {
+  shows: ShowInfo[];
 }

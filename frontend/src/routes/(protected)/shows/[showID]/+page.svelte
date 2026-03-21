@@ -39,6 +39,7 @@
 
 			const r = (await res.json()) as EpisodeListResponse;
 			episodeData = r.episodes;
+			console.log('loaded episodes:', episodeData);
 		} catch (error) {
 			errorMessage =
 				error instanceof Error ? error.message : 'Unknown error while loading show data';
@@ -166,7 +167,7 @@
 				<div>
 					<div class="flex justify-end px-2 py-1">
 						{#if episode.watchstate.finished}
-							<div class="">T</div>
+							<div class="">Watched</div>
 						{:else}
 							<button
 								class="cursor-pointer"
@@ -187,7 +188,7 @@
 									}
 								}}
 							>
-								NT
+								Not Watched
 							</button>
 						{/if}
 					</div>
@@ -196,7 +197,7 @@
 					{episode.number}
 				</div>
 				<div>
-					{#if episode.watchstate.position > 0}
+					{#if episode.watchstate.percentage > 0}
 						<div
 							style={`width: ${episode.watchstate.percentage}%;`}
 							class={`h-2 bg-blue-300 text-sm`}
