@@ -58,6 +58,7 @@ func (h *UserWatchstateHandler) RegisterRoutes() {
 	h.s.POST("/api/watchstate/episode/{episodeID}/finished",
 		h.setEpisodeWatchstateFinished,
 		server.WithExportType[WatchstateResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 		server.WithDescription("Sets the episode to watched"),
 	)
 

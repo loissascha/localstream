@@ -10,6 +10,7 @@
 	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
+	import { setWatchstateFinished } from '$lib/api/watchstate';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -172,7 +173,18 @@
 								onclick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									alert('Clicked thing');
+									if (auth.token) {
+										setWatchstateFinished(auth.token, episode.id)
+											.then((res) => {
+												if (selectedSeason) {
+													loadEpisodes(selectedSeason.id);
+												}
+											})
+											.catch((e) => {
+												const m = (e as Error).message;
+												alert(m);
+											});
+									}
 								}}
 							>
 								NT

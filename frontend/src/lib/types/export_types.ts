@@ -1,23 +1,8 @@
-export interface AuthResponse {
-  token: string;
-}
-export interface LibraryListItem {
-  id: string;
-  name: string;
-  path: string;
-  library_type: string;
-}
-export interface LibraryListResponse {
-  libraries: LibraryListItem[];
-}
 export interface ShowInfo {
   id: string;
   name: string;
   year: number;
   description: string;
-}
-export interface ShowListResponse {
-  shows: ShowInfo[];
 }
 export interface WatchstateResponse {
   id: string;
@@ -35,26 +20,6 @@ export interface WatchstateResponse {
 }
 export interface WatchstateListResponse {
   watchstates: WatchstateResponse[];
-}
-export interface AuthUserResponse {
-  id: number;
-  username: string;
-}
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
 }
 export interface EpisodeInfo {
   id: string;
@@ -77,4 +42,39 @@ export interface SaveWatchstateRequest {
   position: number;
   duration: number;
   finished: boolean;
+}
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+}
+export interface ShowListResponse {
+  shows: ShowInfo[];
+}
+export interface AuthResponse {
+  token: string;
+}
+export interface SeasonInfo {
+  id: string;
+  number: number;
+}
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
+}
+export interface LibraryListItem {
+  id: string;
+  name: string;
+  path: string;
+  library_type: string;
+}
+export interface LibraryListResponse {
+  libraries: LibraryListItem[];
 }

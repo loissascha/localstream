@@ -5,6 +5,24 @@ import type {
     WatchstateResponse
 } from '$lib/types/export_types';
 
+export async function setWatchstateFinished(
+    bearerToken: string,
+    episodeID: string
+): Promise<WatchstateResponse> {
+    const response = await fetch(API_URL + '/api/watchstate/episode/' + episodeID + '/finished', {
+        method: 'POST',
+        headers: {
+            Authorization: 'Bearer ' + bearerToken
+        }
+    });
+    if (response.status !== 200) {
+        console.error(response);
+        throw new Error('Error: ' + response.status);
+    }
+    const result = (await response.json()) as WatchstateResponse;
+    return result;
+}
+
 export async function updateWatchstate(
     bearerToken: string,
     body: SaveWatchstateRequest
