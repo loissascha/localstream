@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 )
@@ -19,8 +21,31 @@ type ShowListResponse struct {
 }
 
 type EpisodeInfo struct {
-	ID     string `json:"id"`
-	Number int    `json:"number"`
+	ID         string         `json:"id"`
+	Number     int            `json:"number"`
+	Watchstate WatchstateInfo `json:"watchstate"`
+}
+
+type WatchstateResponse struct {
+	ID          string      `json:"id"`
+	ShowID      string      `json:"show_id"`
+	ShowInfo    ShowInfo    `json:"show_info"`
+	SeasonID    string      `json:"season_id"`
+	SeasonInfo  SeasonInfo  `json:"season_info"`
+	EpisodeID   string      `json:"episode_id"`
+	EpisodeInfo EpisodeInfo `json:"episode_info"`
+	Position    float64     `json:"position"`
+	Duration    float64     `json:"duration"`
+	Finished    bool        `json:"finished"`
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
+}
+
+type WatchstateInfo struct {
+	Position   float64 `json:"position"`
+	Duration   float64 `json:"duration"`
+	Percentage float64 `json:"percentage"`
+	Finished   bool    `json:"finished"`
 }
 
 type EpisodeListResponse struct {
@@ -36,10 +61,19 @@ type SeasonListResponse struct {
 	Seasons []SeasonInfo `json:"seasons"`
 }
 
-func toEpisodeInfo(episode *entity.Episode) EpisodeInfo {
+func toEpisodeInfo(episode *entity.Episode, infos ...AnyInfoStruct) EpisodeInfo {
+	var watchstateInfo WatchstateInfo
+	for _, info := range infos {
+		i, ok := info.(WatchstateInfo)
+		if ok {
+			watchstateInfo = i
+		}
+	}
+
 	return EpisodeInfo{
-		ID:     encoders.EncodeUUID(episode.ID),
-		Number: episode.Number,
+		ID:         encoders.EncodeUUID(episode.ID),
+		Number:     episode.Number,
+		Watchstate: watchstateInfo,
 	}
 }
 
@@ -49,6 +83,16 @@ func toShowInfo(show *entity.Show) ShowInfo {
 		Name:        show.Name,
 		Year:        show.Year,
 		Description: show.Description,
+	}
+}
+
+func toWatchstateInfo(watchstate *entity.UserWatchstate) WatchstateInfo {
+	percent := (100 / watchstate.Duration) * watchstate.Position
+	return WatchstateInfo{
+		Position:   watchstate.Position,
+		Duration:   watchstate.Duration,
+		Percentage: percent,
+		Finished:   watchstate.Finished,
 	}
 }
 

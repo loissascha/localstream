@@ -157,9 +157,21 @@
 					seasonID: selectedSeason!.id,
 					episodeID: episode.id
 				})}
-				class="h-34 w-34 shrink-0 content-center rounded bg-neutral-800 text-center text-2xl font-bold"
+				class="flex h-34 w-34 shrink-0 flex-col justify-between rounded bg-neutral-800"
 			>
-				{episode.number}
+				<div class="grow content-center text-center text-2xl font-bold">
+					{episode.number}
+				</div>
+				<div>
+					{#if episode.watchstate.position > 0}
+						<div
+							style={`width: ${episode.watchstate.percentage}%;`}
+							class={`h-2 bg-blue-300 text-sm`}
+						></div>
+					{:else}
+						<div class="h-2 w-full"></div>
+					{/if}
+				</div>
 			</a>
 		{/each}
 	</div>

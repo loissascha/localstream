@@ -69,7 +69,7 @@ func main() {
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
-	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService)
+	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService, userWatchstateService)
 	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
 
 	// register routes

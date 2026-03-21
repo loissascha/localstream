@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
@@ -71,21 +70,6 @@ type SaveWatchstateRequest struct {
 	Position  float64 `json:"position"`
 	Duration  float64 `json:"duration"`
 	Finished  bool    `json:"finished"`
-}
-
-type WatchstateResponse struct {
-	ID          string      `json:"id"`
-	ShowID      string      `json:"show_id"`
-	ShowInfo    ShowInfo    `json:"show_info"`
-	SeasonID    string      `json:"season_id"`
-	SeasonInfo  SeasonInfo  `json:"season_info"`
-	EpisodeID   string      `json:"episode_id"`
-	EpisodeInfo EpisodeInfo `json:"episode_info"`
-	Position    float64     `json:"position"`
-	Duration    float64     `json:"duration"`
-	Finished    bool        `json:"finished"`
-	CreatedAt   time.Time   `json:"created_at"`
-	UpdatedAt   time.Time   `json:"updated_at"`
 }
 
 type WatchstateListResponse struct {

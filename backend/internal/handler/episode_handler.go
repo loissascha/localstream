@@ -12,21 +12,25 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
 
 type EpisodeHandler struct {
-	s              *server.Server
-	authMiddleware *middleware.AuthMiddleware
-	episodeService *service.EpisodeService
+	s                 *server.Server
+	authMiddleware    *middleware.AuthMiddleware
+	episodeService    *service.EpisodeService
+	watchstateService *service.UserWatchstateService
 }
 
-func NewEpisodeHandler(s *server.Server, authMiddleware *middleware.AuthMiddleware, episodeService *service.EpisodeService) *EpisodeHandler {
+func NewEpisodeHandler(s *server.Server, authMiddleware *middleware.AuthMiddleware, episodeService *service.EpisodeService, watchstateService *service.UserWatchstateService) *EpisodeHandler {
 	return &EpisodeHandler{
-		s:              s,
-		authMiddleware: authMiddleware,
-		episodeService: episodeService,
+		s:                 s,
+		authMiddleware:    authMiddleware,
+		episodeService:    episodeService,
+		watchstateService: watchstateService,
 	}
 }
 
@@ -35,6 +39,7 @@ func (h *EpisodeHandler) RegisterRoutes() {
 		h.listEpisodes,
 		server.WithExportType[EpisodeInfo](),
 		server.WithExportType[EpisodeListResponse](),
+		server.WithExportType[WatchstateInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
@@ -123,7 +128,18 @@ func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 
 	result := make([]EpisodeInfo, 0, len(episodes))
 	for _, episode := range episodes {
-		result = append(result, toEpisodeInfo(&episode))
+		uuid := encoders.EncodeUUID(episode.ID)
+		userId := r.Context().Value(middleware.AuthenticatedUserIDKey).(int64)
+		watchstate, err := h.watchstateService.GetByEpisodeID(r.Context(), userId, uuid)
+		if err != nil {
+			logger.Error(err, "Error getting watchstate")
+		}
+		if watchstate != nil {
+			wi := toWatchstateInfo(watchstate)
+			result = append(result, toEpisodeInfo(&episode, wi))
+		} else {
+			result = append(result, toEpisodeInfo(&episode))
+		}
 	}
 
 	respond.JSON(w, http.StatusOK, EpisodeListResponse{Episodes: result})

@@ -1,32 +1,5 @@
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface EpisodeInfo {
-  id: string;
-  number: number;
-}
-export interface EpisodeListResponse {
-  episodes: EpisodeInfo[];
-}
-export interface WatchstateResponse {
-  id: string;
-  show_id: string;
-  show_info: ShowInfo;
-  season_id: string;
-  season_info: SeasonInfo;
-  episode_id: string;
-  episode_info: EpisodeInfo;
-  position: number;
-  duration: number;
-  finished: boolean;
-  created_at: string;
-  updated_at: string;
+export interface AuthResponse {
+  token: string;
 }
 export interface LibraryListItem {
   id: string;
@@ -53,6 +26,29 @@ export interface SeasonInfo {
 export interface SeasonListResponse {
   seasons: SeasonInfo[];
 }
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+}
+export interface EpisodeInfo {
+  id: string;
+  number: number;
+  watchstate: WatchstateInfo;
+}
+export interface EpisodeListResponse {
+  episodes: EpisodeInfo[];
+}
+export interface WatchstateInfo {
+  position: number;
+  duration: number;
+  percentage: number;
+  finished: boolean;
+}
 export interface SaveWatchstateRequest {
   show_id: string;
   season_id: string;
@@ -61,13 +57,24 @@ export interface SaveWatchstateRequest {
   duration: number;
   finished: boolean;
 }
+export interface WatchstateResponse {
+  id: string;
+  show_id: string;
+  show_info: ShowInfo;
+  season_id: string;
+  season_info: SeasonInfo;
+  episode_id: string;
+  episode_info: EpisodeInfo;
+  position: number;
+  duration: number;
+  finished: boolean;
+  created_at: string;
+  updated_at: string;
+}
 export interface WatchstateListResponse {
   watchstates: WatchstateResponse[];
 }
 export interface AuthUserResponse {
   id: number;
   username: string;
-}
-export interface AuthResponse {
-  token: string;
 }
