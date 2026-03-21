@@ -17,7 +17,7 @@ export async function updateWatchstate(
         body: JSON.stringify(body)
     });
     if (response.status !== 200) {
-		console.error(response)
+        console.error(response);
         throw new Error('Error: ' + response.status);
     }
     const result = (await response.json()) as WatchstateResponse;
@@ -34,9 +34,27 @@ export async function listLatestWatchstateByShow(
         }
     });
     if (response.status !== 200) {
-		console.error(response)
+        console.error(response);
         throw new Error('Error: ' + response.status);
     }
     const result = (await response.json()) as WatchstateListResponse;
     return result.watchstates;
+}
+
+export async function getWatchstateForEpisode(
+    bearerToken: string,
+    episodeId: string
+): Promise<WatchstateResponse> {
+    const response = await fetch(API_URL + '/api/watchstate/episode/' + episodeId, {
+        method: 'GET',
+        headers: {
+            Authorization: 'Bearer ' + bearerToken
+        }
+    });
+    if (response.status !== 200) {
+        console.error(response);
+        throw new Error('Error: ' + response.status);
+    }
+    const result = (await response.json()) as WatchstateResponse;
+    return result;
 }
