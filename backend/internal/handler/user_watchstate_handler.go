@@ -55,6 +55,12 @@ func (h *UserWatchstateHandler) RegisterRoutes() {
 		server.WithDescription("Get the last watchstate of the episode"),
 	)
 
+	h.s.POST("/api/watchstate/episode/{episodeID}/finished",
+		h.setEpisodeWatchstateFinished,
+		server.WithExportType[WatchstateResponse](),
+		server.WithDescription("Sets the episode to watched"),
+	)
+
 	h.s.GET("/api/watchstate/latest/shows",
 		h.listLatestWatchstatesByShow,
 		server.WithExportType[WatchstateResponse](),
@@ -74,6 +80,43 @@ type SaveWatchstateRequest struct {
 
 type WatchstateListResponse struct {
 	Watchstates []WatchstateResponse `json:"watchstates"`
+}
+
+func (h *UserWatchstateHandler) setEpisodeWatchstateFinished(w http.ResponseWriter, r *http.Request) {
+	episodeID := r.PathValue("episodeID")
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	episode, err := h.episodeService.GetByID(r.Context(), episodeID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "couldn't get existing episode data"})
+		return
+	}
+	seasonID := encoders.EncodeUUID(episode.SeasonID)
+	season, err := h.seasonService.GetByID(r.Context(), seasonID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "couldn't get existing season data"})
+		return
+	}
+	showID := encoders.EncodeUUID(season.ShowID)
+
+	watchstate, err := h.userWatchstateService.Save(r.Context(), userID, service.SaveWatchstateInput{
+		ShowID:    showID,
+		SeasonID:  seasonID,
+		EpisodeID: episodeID,
+		Position:  0,
+		Duration:  0,
+		Finished:  true,
+	})
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "error saving watchstate"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toWatchstateResponse(*watchstate))
 }
 
 func (h *UserWatchstateHandler) saveWatchstate(w http.ResponseWriter, r *http.Request) {
