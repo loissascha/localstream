@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { updateWatchstate } from '$lib/api/watchstate';
+	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import { onDestroy } from 'svelte';
@@ -11,6 +12,7 @@
 	const showId = $derived(page.params.showID ?? '');
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
+	var loadingWatchstate = $state(true);
 
 	const streamUrl = $derived(
 		API_URL +
@@ -69,6 +71,32 @@
 
 	onDestroy(() => {
 		stopPlaybackLogging();
+	});
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.loggedIn || !auth.token) {
+			goto(resolve('/(auth)/login'));
+			return;
+		}
+		if (videoEl == null) return;
+		loadingWatchstate = true;
+		getWatchstateForEpisode(auth.token, episodeId)
+			.then((res) => {
+				console.log('watchstate res:', res);
+				if (!res.finished) {
+					videoEl!.currentTime = res.position;
+					loadingWatchstate = false;
+				}
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				if (m == '404') {
+					loadingWatchstate = false;
+				} else {
+					alert(m);
+				}
+			});
 	});
 </script>
 

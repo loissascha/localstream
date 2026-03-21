@@ -53,7 +53,7 @@ export async function getWatchstateForEpisode(
     });
     if (response.status !== 200) {
         console.error(response);
-        throw new Error('Error: ' + response.status);
+        throw new Error('' + response.status);
     }
     const result = (await response.json()) as WatchstateResponse;
     return result;
