@@ -126,11 +126,16 @@ func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
 	result := make([]EpisodeInfo, 0, len(episodes))
 	for _, episode := range episodes {
 		uuid := encoders.EncodeUUID(episode.ID)
-		userId := r.Context().Value(middleware.AuthenticatedUserIDKey).(int64)
-		watchstate, err := h.watchstateService.GetByEpisodeID(r.Context(), userId, uuid)
+		watchstate, err := h.watchstateService.GetByEpisodeID(r.Context(), userID, uuid)
 		if err != nil {
 			logger.Error(err, "Error getting watchstate")
 		}
