@@ -46,12 +46,14 @@ func (h *UserWatchstateHandler) RegisterRoutes() {
 		server.WithExportType[SaveWatchstateRequest](),
 		server.WithExportType[WatchstateResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("Save the current watchstate"),
 	)
 
 	h.s.GET("/api/watchstate/episode/{episodeID}",
 		h.getWatchstateByEpisodeID,
 		server.WithExportType[WatchstateResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("Get the last watchstate of the episode"),
 	)
 
 	h.s.GET("/api/watchstate/latest/shows",
