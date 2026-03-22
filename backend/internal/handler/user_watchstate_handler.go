@@ -225,6 +225,8 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 			if episode != nil {
 				episodeId = encoders.EncodeUUID(episode.ID)
 				seasonId = encoders.EncodeUUID(episode.SeasonID)
+				watchstate.Finished = false
+				watchstate.Position = 0
 			}
 		}
 
