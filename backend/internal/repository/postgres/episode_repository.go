@@ -101,4 +101,23 @@ func (r *EpisodeRepository) ListBySeasonID(ctx context.Context, seasonId uuid.UU
 	return episodes, nil
 }
 
+func (r *EpisodeRepository) GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*entity.Episode, error) {
+	const query = `
+		SELECT id, season_id, number, path, created_at, fetch_source
+		FROM episodes
+		WHERE season_id = $1 AND number = $2
+		LIMIT 1
+	`
+
+	var episode entity.Episode
+	if err := r.db.GetContext(ctx, &episode, query, seasonId, number); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &episode, nil
+}
+
 var _ repository.EpisodeRepository = (*EpisodeRepository)(nil)

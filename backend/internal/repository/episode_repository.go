@@ -12,4 +12,5 @@ type EpisodeRepository interface {
 	GetByPathAndSeasonID(ctx context.Context, path string, seasonId uuid.UUID) (*entity.Episode, error)
 	ListBySeasonID(ctx context.Context, seasonId uuid.UUID) ([]entity.Episode, error)
 	GetByID(ctx context.Context, episodeId uuid.UUID) (*entity.Episode, error)
+	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*entity.Episode, error)
 }

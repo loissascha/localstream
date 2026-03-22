@@ -39,3 +39,37 @@ func (s *EpisodeService) GetByID(ctx context.Context, episodeId string) (*entity
 
 	return s.episodeRepo.GetByID(ctx, id)
 }
+
+func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (*entity.Episode, error) {
+	id, err := encoders.DecodeUUID(episodeId)
+	if err != nil {
+		return nil, err
+	}
+
+	episode, err := s.episodeRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	number := episode.Number
+	seasonId := episode.SeasonID
+
+	episodes, err := s.episodeRepo.ListBySeasonID(ctx, seasonId)
+	if err != nil {
+		return nil, err
+	}
+
+	useNext := false
+	for _, e := range episodes {
+		if e.Number == number {
+			useNext = true
+			continue
+		}
+		if useNext {
+			return &e, nil
+		}
+	}
+
+	// TODO: check if there is a next season and get first episode of that season
+	return nil, nil
+}
