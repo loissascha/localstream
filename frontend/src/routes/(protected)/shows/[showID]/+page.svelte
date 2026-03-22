@@ -154,7 +154,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="my-3 flex gap-4 overflow-y-scroll">
+	<div class="my-3 flex gap-4 overflow-y-scroll py-5">
 		{#each episodeData as episode (episode.id)}
 			<a
 				href={resolve('/(protected)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
