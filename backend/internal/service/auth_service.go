@@ -42,7 +42,7 @@ func NewAuthService(userRepo repository.UserRepository, jwtSecret string) *AuthS
 	return &AuthService{
 		userRepo:  userRepo,
 		jwtSecret: []byte(secret),
-		tokenTTL:  24 * time.Hour,
+		tokenTTL:  12 * 30 * 24 * time.Hour,
 	}
 }
 

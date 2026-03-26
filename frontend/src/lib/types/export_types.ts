@@ -2,22 +2,6 @@ export interface AuthUserResponse {
   id: number;
   username: string;
 }
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
-}
 export interface WatchstateResponse {
   id: string;
   show_id: string;
@@ -32,6 +16,21 @@ export interface WatchstateResponse {
   created_at: string;
   updated_at: string;
 }
+export interface WatchstateListResponse {
+  watchstates: WatchstateResponse[];
+}
+export interface AuthResponse {
+  token: string;
+}
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+}
 export interface LibraryListItem {
   id: string;
   name: string;
@@ -41,28 +40,12 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
-export interface ShowInfo {
+export interface SeasonInfo {
   id: string;
-  name: string;
-  year: number;
-  description: string;
+  number: number;
 }
-export interface ShowListResponse {
-  shows: ShowInfo[];
-}
-export interface WatchstateListResponse {
-  watchstates: WatchstateResponse[];
-}
-export interface SaveWatchstateRequest {
-  show_id: string;
-  season_id: string;
-  episode_id: string;
-  position: number;
-  duration: number;
-  finished: boolean;
-}
-export interface AuthResponse {
-  token: string;
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
 }
 export interface EpisodeInfo {
   id: string;
@@ -76,5 +59,22 @@ export interface WatchstateInfo {
   position: number;
   duration: number;
   percentage: number;
+  finished: boolean;
+}
+export interface ShowInfo {
+  id: string;
+  name: string;
+  year: number;
+  description: string;
+}
+export interface ShowListResponse {
+  shows: ShowInfo[];
+}
+export interface SaveWatchstateRequest {
+  show_id: string;
+  season_id: string;
+  episode_id: string;
+  position: number;
+  duration: number;
   finished: boolean;
 }
