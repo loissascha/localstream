@@ -7,12 +7,14 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
 
 type AuthHandler struct {
-	s           *server.Server
-	authService *service.AuthService
+	s              *server.Server
+	authService    *service.AuthService
+	authMiddleware *middleware.AuthMiddleware
 }
 
 type AuthRequest struct {
@@ -28,10 +30,16 @@ type AuthUserResponse struct {
 	Username string `json:"username"`
 }
 
-func NewAuthHandler(s *server.Server, authService *service.AuthService) *AuthHandler {
+type AuthUserIsAdminResponse struct {
+	ID      int64 `json:"id"`
+	IsAdmin bool  `json:"is_admin"`
+}
+
+func NewAuthHandler(s *server.Server, authService *service.AuthService, authMiddleware *middleware.AuthMiddleware) *AuthHandler {
 	return &AuthHandler{
-		s:           s,
-		authService: authService,
+		s:              s,
+		authService:    authService,
+		authMiddleware: authMiddleware,
 	}
 }
 
@@ -39,6 +47,26 @@ func (h *AuthHandler) RegisterHandlers() {
 	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResponse]())
 	h.s.POSTI("/auth/register", h.register, server.WithExportType[AuthResponse]())
 	h.s.POSTI("/auth/login", h.login, server.WithExportType[AuthResponse]())
+	h.s.GETI("/auth/user/admin", h.isAdmin, server.WithMiddlewares(h.authMiddleware.RequireAuth), server.WithExportType[AuthUserIsAdminResponse]())
+}
+
+func (h *AuthHandler) isAdmin(w http.ResponseWriter, r *http.Request) {
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	isAdmin, err := h.authService.IsUserAdmin(r.Context(), userID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, AuthUserIsAdminResponse{
+		ID:      userID,
+		IsAdmin: isAdmin,
+	})
 }
 
 func (h *AuthHandler) listUsers(w http.ResponseWriter, r *http.Request) {

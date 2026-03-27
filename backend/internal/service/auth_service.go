@@ -46,6 +46,15 @@ func NewAuthService(userRepo repository.UserRepository, jwtSecret string) *AuthS
 	}
 }
 
+func (s *AuthService) IsUserAdmin(ctx context.Context, userID int64) (bool, error) {
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return false, err
+	}
+
+	return user.IsAdmin, nil
+}
+
 func (s *AuthService) Register(ctx context.Context, username string) (*AuthResult, error) {
 	username, err := normalizeCredentials(username)
 	if err != nil {

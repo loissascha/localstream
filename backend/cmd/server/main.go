@@ -64,7 +64,7 @@ func main() {
 	authMiddleware := middleware.NewAuthMiddleware(authService)
 
 	// handler
-	authH := handler.NewAuthHandler(s, authService)
+	authH := handler.NewAuthHandler(s, authService, authMiddleware)
 	videoH := handler.NewVideoHandler(s, authMiddleware)
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)

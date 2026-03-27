@@ -36,7 +36,7 @@ func (r *UserRepository) Create(ctx context.Context, user *entity.User) error {
 
 func (r *UserRepository) GetByID(ctx context.Context, id int64) (*entity.User, error) {
 	const query = `
-		SELECT id, username, password_hash, created_at
+		SELECT id, username, password_hash, created_at, is_admin
 		FROM users
 		WHERE id = $1
 	`
@@ -54,7 +54,7 @@ func (r *UserRepository) GetByID(ctx context.Context, id int64) (*entity.User, e
 
 func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*entity.User, error) {
 	const query = `
-		SELECT id, username, password_hash, created_at
+		SELECT id, username, password_hash, created_at, is_admin
 		FROM users
 		WHERE username = $1
 	`
@@ -72,7 +72,7 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) (*e
 
 func (r *UserRepository) List(ctx context.Context) ([]entity.User, error) {
 	const query = `
-		SELECT id, username, created_at
+		SELECT id, username, created_at, is_admin
 		FROM users
 	`
 
