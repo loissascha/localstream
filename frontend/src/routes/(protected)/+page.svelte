@@ -86,13 +86,24 @@
 			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
 			<p class="mt-1.5">Your local MP4 library</p>
 		</div>
-		<a
-			href={resolve('/logout')}
-			type="submit"
-			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
-		>
-			Log out
-		</a>
+		<div>
+			{#if auth.isAdmin}
+				<a
+					href={resolve('/logout')}
+					type="submit"
+					class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
+				>
+					Admin
+				</a>
+			{/if}
+			<a
+				href={resolve('/logout')}
+				type="submit"
+				class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
+			>
+				Log out
+			</a>
+		</div>
 	</header>
 
 	{#if errorMessage}
