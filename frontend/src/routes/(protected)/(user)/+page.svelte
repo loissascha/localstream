@@ -74,7 +74,7 @@
 	});
 </script>
 
-<main class="min-h-dvh px-5 py-5">
+<main>
 	{#if errorMessage}
 		<p class="text-red-700">{errorMessage}</p>
 	{/if}
