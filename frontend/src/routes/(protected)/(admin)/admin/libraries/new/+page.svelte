@@ -33,21 +33,34 @@
 			type="text"
 			id="name"
 			name="name"
-			class="rounded bg-neutral-800 px-2 py-1 focus:outline-none focus:ring focus:ring-green-400"
+			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-green-400 focus:outline-none"
 			bind:value={form.name}
 		/>
 	</div>
 	<div class="flex flex-col">
 		<label for="type">Type:</label>
-		<select
-			id="type"
-			name="type"
-			class="rounded bg-neutral-800 px-2 py-1 focus:outline-none focus:ring focus:ring-green-400"
-			bind:value={form.type}
-		>
-			<option value="shows"> TV Shows </option>
-			<option value="movies"> Movies </option>
-		</select>
+		<div class="flex gap-2">
+			<div>
+				<input
+					type="radio"
+					name="type"
+					value={LibraryType.Shows}
+					bind:group={form.type}
+					id="type_shows"
+				/>
+				<label for="type_shows">Shows</label>
+			</div>
+			<div>
+				<input
+					type="radio"
+					name="type"
+					value={LibraryType.Movies}
+					id="type_movies"
+					bind:group={form.type}
+				/>
+				<label for="type_movies">Movies</label>
+			</div>
+		</div>
 	</div>
 	<div class="flex flex-col">
 		<label for="path">Path:</label>
@@ -55,11 +68,13 @@
 			type="text"
 			id="path"
 			name="path"
-			class="rounded bg-neutral-800 px-2 py-1 focus:outline-none focus:ring focus:ring-green-400"
+			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-green-400 focus:outline-none"
 			bind:value={form.path}
 		/>
 	</div>
 	<div>
-		<button class="rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700 cursor-pointer">Submit</button>
+		<button class="cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+			>Submit</button
+		>
 	</div>
 </form>
