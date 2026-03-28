@@ -3,11 +3,11 @@
 	import {
 		type ShowInfo,
 		type LibraryListItem,
-		type LibraryListResponse,
 		type ShowListResponse
 	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
+	import { loadLibraries } from '$lib/api/libraries';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -37,20 +37,14 @@
 		}
 	}
 
-	async function loadLibraries() {
+	async function loadLibrariesData() {
 		try {
-			const res = await fetch('/api/libraries', {
-				headers: {
-					Authorization: 'Bearer ' + auth.token
-				}
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to load videos: ${res.status}`);
+			if (!auth.token) {
+				throw new Error('Auth token not loaded.');
 			}
-
-			const data = (await res.json()) as LibraryListResponse;
+			const data = await loadLibraries(auth.token);
 			libraries = data.libraries;
-			console.log('data', data);
+			console.log('libraries', data);
 
 			if (selectedLibrary == null) {
 				if (libraries.length > 0) {
@@ -69,8 +63,8 @@
 	}
 
 	$effect(() => {
-		if (!auth.initialized) return
-		loadLibraries();
+		if (!auth.initialized) return;
+		loadLibrariesData();
 		loadShows();
 	});
 </script>
