@@ -69,6 +69,7 @@
 	}
 
 	$effect(() => {
+		if (!auth.initialized) return
 		loadLibraries();
 		loadShows();
 	});
