@@ -89,6 +89,7 @@
 					loadingWatchstate = false;
 				} else {
 					alert('already watched');
+					loadingWatchstate = false;
 				}
 			})
 			.catch((e) => {
