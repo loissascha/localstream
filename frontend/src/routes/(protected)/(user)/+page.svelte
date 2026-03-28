@@ -75,31 +75,6 @@
 </script>
 
 <main class="min-h-dvh px-5 py-5">
-	<header class="mb-5 flex items-start justify-between gap-4">
-		<div>
-			<h1 class="m-0 text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold">Localstream</h1>
-			<p class="mt-1.5">Your local MP4 library</p>
-		</div>
-		<div>
-			{#if auth.isAdmin}
-				<a
-					href={resolve('/(protected)/(admin)/admin')}
-					type="submit"
-					class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
-				>
-					Admin
-				</a>
-			{/if}
-			<a
-				href={resolve('/logout')}
-				type="submit"
-				class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
-			>
-				Log out
-			</a>
-		</div>
-	</header>
-
 	{#if errorMessage}
 		<p class="text-red-700">{errorMessage}</p>
 	{/if}
