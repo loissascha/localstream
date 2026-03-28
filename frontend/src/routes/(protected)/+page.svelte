@@ -89,7 +89,7 @@
 		<div>
 			{#if auth.isAdmin}
 				<a
-					href={resolve('/logout')}
+					href={resolve('/(protected)/admin')}
 					type="submit"
 					class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
 				>
