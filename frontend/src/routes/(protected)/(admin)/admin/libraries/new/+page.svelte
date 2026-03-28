@@ -40,7 +40,7 @@
 	<div class="flex flex-col">
 		<label for="type">Type:</label>
 		<div class="flex gap-2">
-			<div>
+			<label for="type_shows" class="rounded-lg bg-neutral-800 px-4 py-2">
 				<input
 					type="radio"
 					name="type"
@@ -48,9 +48,9 @@
 					bind:group={form.type}
 					id="type_shows"
 				/>
-				<label for="type_shows">Shows</label>
-			</div>
-			<div>
+				Shows
+			</label>
+			<label for="type_movies" class="rounded-lg bg-neutral-800 px-4 py-2">
 				<input
 					type="radio"
 					name="type"
@@ -58,8 +58,8 @@
 					id="type_movies"
 					bind:group={form.type}
 				/>
-				<label for="type_movies">Movies</label>
-			</div>
+				Movies
+			</label>
 		</div>
 	</div>
 	<div class="flex flex-col">
