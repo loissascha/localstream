@@ -85,7 +85,7 @@
 				<LibraryIcon />
 				Shows
 			</h2>
-			<div class="flex gap-3">
+			<div class="flex gap-4">
 				{#each shows as show (show.id)}
 					<a
 						href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
