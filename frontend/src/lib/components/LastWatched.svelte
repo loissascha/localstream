@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { listLatestWatchstateByShow } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
+	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateResponse } from '$lib/types/export_types';
 
 	let data = $state<WatchstateResponse[]>([]);
@@ -30,7 +31,10 @@
 	});
 </script>
 
-<h2 class="text-xl tracking-wider">Continue</h2>
+<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
+	<ChevronRightIcon />
+	Continue
+</h2>
 <div class="flex gap-4">
 	{#each data as d}
 		<a

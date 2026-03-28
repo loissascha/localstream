@@ -8,6 +8,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
 	import { loadLibraries } from '$lib/api/libraries';
+	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -79,8 +80,11 @@
 	{#if loadingShows}
 		<p>Loading shows...</p>
 	{:else}
-		<section class="my-4">
-			<h2 class="text-xl tracking-wider">Shows</h2>
+		<section class="my-8">
+			<h2 class="flex items-center gap-1 text-xl tracking-wider mb-2">
+				<LibraryIcon />
+				Shows
+			</h2>
 			<div class="flex gap-3">
 				{#each shows as show (show.id)}
 					<a
