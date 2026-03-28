@@ -1,1 +1,1 @@
-<div>Page</div>
+Dashboard Page
