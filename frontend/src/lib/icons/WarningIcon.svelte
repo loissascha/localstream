@@ -5,7 +5,7 @@
 		title?: string;
 	};
 
-	let { size = 24, class: className = '', title = 'Home' }: Props = $props();
+	let { size = 24, class: className = '', title = 'Warning' }: Props = $props();
 </script>
 
 <svg
@@ -22,6 +22,8 @@
 		<title>{title}</title>
 	{/if}
 	<path
-		d="M11.47 3.84a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1-.53 1.28h-.75v7.13a1.5 1.5 0 0 1-1.5 1.5h-2.5a.75.75 0 0 1-.75-.75V16a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4.5a.75.75 0 0 1-.75.75h-2.5a1.5 1.5 0 0 1-1.5-1.5v-7.13H4.5a.75.75 0 0 1-.53-1.28l7.5-7.5Z"
+		fill-rule="evenodd"
+		clip-rule="evenodd"
+		d="M10.7 4.08a1.5 1.5 0 0 1 2.6 0l7.26 12.9a1.5 1.5 0 0 1-1.3 2.24H4.74a1.5 1.5 0 0 1-1.3-2.24l7.26-12.9ZM12 8.5a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0v-4a1 1 0 0 1 1-1Zm0 8a1.125 1.125 0 1 0 0-2.25 1.125 1.125 0 0 0 0 2.25Z"
 	/>
 </svg>
