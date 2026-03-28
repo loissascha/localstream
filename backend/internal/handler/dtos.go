@@ -39,6 +39,7 @@ type WatchstateResponse struct {
 	Finished    bool        `json:"finished"`
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
+	Percentage  float64     `json:"percentage"`
 }
 
 type WatchstateInfo struct {
@@ -143,6 +144,13 @@ func toWatchstateResponse(watchstate entity.UserWatchstate, infos ...AnyInfoStru
 			continue
 		}
 	}
+	percent := 0.0
+	if watchstate.Duration > 0 {
+		percent = (100 / watchstate.Duration) * watchstate.Position
+	}
+	if watchstate.Finished {
+		percent = 100
+	}
 	return WatchstateResponse{
 		ID:          encoders.EncodeUUID(watchstate.ID),
 		ShowID:      encoders.EncodeUUID(watchstate.ShowID),
@@ -151,6 +159,7 @@ func toWatchstateResponse(watchstate entity.UserWatchstate, infos ...AnyInfoStru
 		SeasonInfo:  seasonInfo,
 		EpisodeID:   encoders.EncodeUUID(watchstate.EpisodeID),
 		EpisodeInfo: episodeInfo,
+		Percentage:  percent,
 		Position:    watchstate.Position,
 		Duration:    watchstate.Duration,
 		Finished:    watchstate.Finished,

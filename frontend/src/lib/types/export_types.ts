@@ -89,4 +89,5 @@ export interface WatchstateResponse {
   finished: boolean;
   created_at: string;
   updated_at: string;
+  percentage: number;
 }
