@@ -110,13 +110,7 @@
 	});
 </script>
 
-<main class="px-5 py-5">
-	<div class="mb-4">
-		<a
-			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href={resolve('/(protected)')}>Dashboard</a
-		>
-	</div>
+<main>
 	{#if errorMessage}
 		<p>{errorMessage}</p>
 	{/if}
