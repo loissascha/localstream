@@ -11,11 +11,7 @@
 <svg
 	xmlns="http://www.w3.org/2000/svg"
 	viewBox="0 0 24 24"
-	fill="none"
-	stroke="currentColor"
-	stroke-width="1.8"
-	stroke-linecap="round"
-	stroke-linejoin="round"
+	fill="currentColor"
 	width={size}
 	height={size}
 	class={className}
@@ -25,7 +21,5 @@
 	{#if title}
 		<title>{title}</title>
 	{/if}
-	<path d="M3.75 9.75 12 3l8.25 6.75" />
-	<path d="M6.75 8.85V20.25h10.5V8.85" />
-	<path d="M10.5 20.25v-5.25h3v5.25" />
+	<path d="M11.47 3.84a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 0 1-.53 1.28h-.75v7.13a1.5 1.5 0 0 1-1.5 1.5h-2.5a.75.75 0 0 1-.75-.75V16a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4.5a.75.75 0 0 1-.75.75h-2.5a1.5 1.5 0 0 1-1.5-1.5v-7.13H4.5a.75.75 0 0 1-.53-1.28l7.5-7.5Z" />
 </svg>
