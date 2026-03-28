@@ -22,7 +22,7 @@
 			if (!auth.token) {
 				throw new Error('Auth token not set');
 			}
-			const response = await createLibrary(auth.token, {
+			await createLibrary(auth.token, {
 				name: form.name,
 				type: form.type,
 				path: form.path
