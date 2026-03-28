@@ -33,7 +33,7 @@
 			type="text"
 			id="name"
 			name="name"
-			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-green-400 focus:outline-none"
+			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-brand focus:outline-none"
 			bind:value={form.name}
 		/>
 	</div>
@@ -68,7 +68,7 @@
 			type="text"
 			id="path"
 			name="path"
-			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-green-400 focus:outline-none"
+			class="rounded bg-neutral-800 px-2 py-1 focus:ring focus:ring-brand focus:outline-none"
 			bind:value={form.path}
 		/>
 	</div>

@@ -1,7 +1,12 @@
 @import 'tailwindcss';
 
+@theme {
+	--color-brand: var(--color-green-400);
+}
+
 :root {
 	font-family: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+	accent-color: var(--color-brand);
 }
 
 body {
