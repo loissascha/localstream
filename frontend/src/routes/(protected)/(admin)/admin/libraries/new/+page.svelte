@@ -40,7 +40,10 @@
 	<div class="flex flex-col">
 		<label for="type">Type:</label>
 		<div class="flex gap-2">
-			<label for="type_shows" class="rounded-lg bg-neutral-800 px-4 py-2">
+			<label
+				for="type_shows"
+				class={`rounded-lg cursor-pointer select-none px-4 py-2 ${form.type == LibraryType.Shows ? 'bg-brand/20' : 'bg-neutral-800'}`}
+			>
 				<input
 					type="radio"
 					name="type"
@@ -50,7 +53,10 @@
 				/>
 				Shows
 			</label>
-			<label for="type_movies" class="rounded-lg bg-neutral-800 px-4 py-2">
+			<label
+				for="type_movies"
+				class={`rounded-lg cursor-pointer select-none px-4 py-2 ${form.type == LibraryType.Movies ? 'bg-brand/20' : 'bg-neutral-800'}`}
+			>
 				<input
 					type="radio"
 					name="type"
