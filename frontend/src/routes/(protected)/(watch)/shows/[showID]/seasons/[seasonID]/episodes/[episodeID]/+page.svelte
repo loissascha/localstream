@@ -30,6 +30,9 @@
 		if (!videoEl) {
 			return;
 		}
+		if (loadingWatchstate) {
+			return;
+		}
 
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
@@ -84,11 +87,14 @@
 				if (!res.finished) {
 					videoEl!.currentTime = res.position;
 					loadingWatchstate = false;
+				} else {
+					alert('already watched');
 				}
 			})
 			.catch((e) => {
 				const m = (e as Error).message;
 				if (m == '404') {
+					// watchstate does not exist -> user didn't watch this yet so it's okay
 					loadingWatchstate = false;
 				} else {
 					alert(m);
