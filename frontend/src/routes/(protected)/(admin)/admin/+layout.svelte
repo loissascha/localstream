@@ -18,7 +18,7 @@
 </script>
 
 <div>
-	<div>Layout</div>
+	<div>Layout Admin</div>
 	<div>
 		{@render children()}
 	</div>

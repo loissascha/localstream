@@ -108,7 +108,7 @@
 		>
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href={resolve('/(protected)/(user)/shows/[showID]', { showID: showId })}
+			href={resolve('/(protected)/(watch)/shows/[showID]', { showID: showId })}
 		>
 			Back to Show
 		</a>

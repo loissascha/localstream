@@ -157,7 +157,7 @@
 	<div class="my-3 flex gap-4 overflow-y-scroll py-5">
 		{#each episodeData as episode (episode.id)}
 			<a
-				href={resolve('/(protected)/(user)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+				href={resolve('/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
 					showID: showId,
 					seasonID: selectedSeason!.id,
 					episodeID: episode.id
