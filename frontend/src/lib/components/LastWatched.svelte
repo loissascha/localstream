@@ -34,7 +34,7 @@
 <div class="flex gap-4">
 	{#each data as d}
 		<a
-			href={resolve('/(protected)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+			href={resolve('/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
 				showID: d.show_id,
 				seasonID: d.season_id,
 				episodeID: d.episode_id

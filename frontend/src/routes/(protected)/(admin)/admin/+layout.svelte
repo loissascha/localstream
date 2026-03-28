@@ -30,9 +30,11 @@
 			</a>
 		</div>
 	</section>
-	<div class="flex grow min-h-0">
-		<section id="left" class="w-80 shrink-0 grow-0 overflow-y-auto bg-neutral-800">
-			Left <br />
+	<div class="flex min-h-0 grow">
+		<section id="left" class="w-80 shrink-0 grow-0 overflow-y-auto bg-neutral-800 p-4">
+			<div class="flex flex-col gap-2">
+				<a>Dashboard</a>
+			</div>
 		</section>
 		<section id="content" class="grow overflow-y-auto p-4">
 			{@render children()}
