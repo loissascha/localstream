@@ -25,8 +25,15 @@ func main() {
 		panic("PORT not defined. Make sure there is a .env file or a environment variable set!")
 	}
 
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "development"
+		logger.Warning(nil, "No APP_ENV found. Setting 'development'")
+	}
+
 	s, err := server.NewServer(
 		server.SetExportTypesLocation("../frontend/src/lib/types/export_types.ts"),
+		server.EnableExportTypes(env == "development"),
 	)
 	if err != nil {
 		panic(err)
