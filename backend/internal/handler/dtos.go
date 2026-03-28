@@ -61,6 +61,26 @@ type SeasonListResponse struct {
 	Seasons []SeasonInfo `json:"seasons"`
 }
 
+type LibraryListItem struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Path        string `json:"path"`
+	LibraryType string `json:"library_type"`
+}
+
+type LibraryListResponse struct {
+	Libraries []LibraryListItem `json:"libraries"`
+}
+
+func toLibraryListItem(l *entity.Library) LibraryListItem {
+	return LibraryListItem{
+		ID:          encoders.EncodeUUID(l.ID),
+		Name:        l.Name,
+		Path:        l.Path,
+		LibraryType: string(l.LibraryType),
+	}
+}
+
 func toEpisodeInfo(episode *entity.Episode, infos ...AnyInfoStruct) EpisodeInfo {
 	var watchstateInfo WatchstateInfo
 	for _, info := range infos {

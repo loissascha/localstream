@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"sort"
 	"strings"
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/localstream/internal/encoders"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -33,17 +34,42 @@ func (h *LibraryHandler) RegisterHandlers() {
 		server.WithExportType[LibraryListResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+	h.s.POSTI("/api/admin/libraries/create",
+		h.createLibrary,
+		server.WithExportType[CreateLibraryRequest](),
+		server.WithExportType[CreateLibraryResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
+	)
 }
 
-type LibraryListItem struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	LibraryType string `json:"library_type"`
+type CreateLibraryRequest struct {
+	Name        string             `json:"name"`
+	LibraryType entity.LibraryType `json:"type"`
+	Path        string             `json:"path"`
 }
 
-type LibraryListResponse struct {
-	Libraries []LibraryListItem `json:"libraries"`
+type CreateLibraryResponse struct {
+	Library LibraryListItem `json:"library"`
+}
+
+func (h *LibraryHandler) createLibrary(w http.ResponseWriter, r *http.Request) {
+	requestBody, err := decodeCreateLibraryRequest(r)
+	if err != nil {
+		respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	lib, err := h.libraryService.Create(r.Context(), requestBody.Name, requestBody.Path, string(requestBody.LibraryType))
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	response := CreateLibraryResponse{
+		Library: toLibraryListItem(lib),
+	}
+
+	respond.JSON(w, http.StatusOK, response)
 }
 
 func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
@@ -55,12 +81,7 @@ func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
 
 	result := []LibraryListItem{}
 	for _, l := range libraries {
-		result = append(result, LibraryListItem{
-			ID:          encoders.EncodeUUID(l.ID),
-			Name:        l.Name,
-			Path:        l.Path,
-			LibraryType: string(l.LibraryType),
-		})
+		result = append(result, toLibraryListItem(&l))
 	}
 
 	sort.Slice(result, func(i, j int) bool {
@@ -68,4 +89,15 @@ func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
 	})
 
 	respond.JSON(w, http.StatusOK, LibraryListResponse{Libraries: result})
+}
+
+func decodeCreateLibraryRequest(r *http.Request) (*CreateLibraryRequest, error) {
+	defer r.Body.Close()
+
+	var requestBody CreateLibraryRequest
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		return nil, err
+	}
+
+	return &requestBody, nil
 }

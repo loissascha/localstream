@@ -1,11 +1,63 @@
+export interface AuthResponse {
+  token: string;
+}
+export interface VideoListResponse {
+  videos: VideoListItem[];
+}
+export interface VideoListItem {
+  id: string;
+  name: string;
+  size: number;
+  mimeType: string;
+}
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface LibraryListItem {
+  id: string;
+  name: string;
+  path: string;
+  library_type: string;
+}
+export interface LibraryListResponse {
+  libraries: LibraryListItem[];
+}
+export interface CreateLibraryRequest {
+  name: string;
+  type: string;
+  path: string;
+}
+export interface CreateLibraryResponse {
+  library: LibraryListItem;
+}
 export interface ShowInfo {
   id: string;
   name: string;
   year: number;
   description: string;
 }
-export interface ShowListResponse {
-  shows: ShowInfo[];
+export interface EpisodeInfo {
+  id: string;
+  number: number;
+  watchstate: WatchstateInfo;
+}
+export interface EpisodeListResponse {
+  episodes: EpisodeInfo[];
+}
+export interface WatchstateInfo {
+  position: number;
+  duration: number;
+  percentage: number;
+  finished: boolean;
+}
+export interface SaveWatchstateRequest {
+  show_id: string;
+  season_id: string;
+  episode_id: string;
+  position: number;
+  duration: number;
+  finished: boolean;
 }
 export interface WatchstateResponse {
   id: string;
@@ -21,15 +73,12 @@ export interface WatchstateResponse {
   created_at: string;
   updated_at: string;
 }
-export interface WatchstateListResponse {
-  watchstates: WatchstateResponse[];
-}
-export interface AuthUserResponse {
+export interface AuthUserIsAdminResponse {
   id: number;
-  username: string;
+  is_admin: boolean;
 }
-export interface AuthResponse {
-  token: string;
+export interface ShowListResponse {
+  shows: ShowInfo[];
 }
 export interface SeasonInfo {
   id: string;
@@ -38,47 +87,6 @@ export interface SeasonInfo {
 export interface SeasonListResponse {
   seasons: SeasonInfo[];
 }
-export interface SaveWatchstateRequest {
-  show_id: string;
-  season_id: string;
-  episode_id: string;
-  position: number;
-  duration: number;
-  finished: boolean;
-}
-export interface AuthUserIsAdminResponse {
-  id: number;
-  is_admin: boolean;
-}
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface LibraryListItem {
-  id: string;
-  name: string;
-  path: string;
-  library_type: string;
-}
-export interface LibraryListResponse {
-  libraries: LibraryListItem[];
-}
-export interface EpisodeInfo {
-  id: string;
-  number: number;
-  watchstate: WatchstateInfo;
-}
-export interface EpisodeListResponse {
-  episodes: EpisodeInfo[];
-}
-export interface WatchstateInfo {
-  position: number;
-  duration: number;
-  percentage: number;
-  finished: boolean;
+export interface WatchstateListResponse {
+  watchstates: WatchstateResponse[];
 }
