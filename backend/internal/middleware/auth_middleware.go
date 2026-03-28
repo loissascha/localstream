@@ -70,6 +70,40 @@ func (m *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 	})
 }
 
+func (m *AuthMiddleware) RequireAuthAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token := parseAuthorizationHeader(r.Header.Get("Authorization"))
+		if token == "" {
+			respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "missing authorization header"})
+			return
+		}
+
+		userID, err := m.authService.ValidateToken(token)
+		if err != nil {
+			if errors.Is(err, service.ErrInvalidToken) {
+				respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "invalid token"})
+				return
+			}
+
+			respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+			return
+		}
+
+		isAdmin, err := m.authService.IsUserAdmin(r.Context(), userID)
+		if err != nil {
+			respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+			return
+		}
+		if !isAdmin {
+			respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "user not admin"})
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), AuthenticatedUserIDKey, userID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 func parseAuthorizationHeader(headerValue string) string {
 	trimmedHeader := strings.TrimSpace(headerValue)
 	if trimmedHeader == "" {
