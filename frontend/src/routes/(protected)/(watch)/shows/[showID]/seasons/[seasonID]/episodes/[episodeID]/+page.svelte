@@ -4,6 +4,7 @@
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
+	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { onDestroy } from 'svelte';
 
@@ -107,17 +108,14 @@
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">
 	<header class="flex items-center gap-2 bg-neutral-900 px-4 py-3.5">
-		<a
-			class="p-2 text-slate-300 hover:text-white no-underline "
-			href={resolve('/(protected)')}
-		>
+		<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
 			<HomeIcon />
 		</a>
 		<a
-			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
+			class="p-2 text-slate-300 no-underline hover:text-white"
 			href={resolve('/(protected)/(watch)/shows/[showID]', { showID: showId })}
 		>
-			Back to Show
+			<ChevronLeftIcon />
 		</a>
 	</header>
 
