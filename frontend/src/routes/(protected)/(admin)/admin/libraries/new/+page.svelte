@@ -1,4 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { createLibrary } from '$lib/api/admin/libraries';
+	import { auth } from '$lib/auth.svelte';
 	import { LibraryType } from '$lib/types/enums';
 
 	type FormData = {
@@ -14,7 +18,20 @@
 	});
 
 	async function handleSubmit() {
-		console.log('submit form data: ', form);
+		try {
+			if (!auth.token) {
+				throw new Error('Auth token not set');
+			}
+			const response = await createLibrary(auth.token, {
+				name: form.name,
+				type: form.type,
+				path: form.path
+			});
+			goto(resolve('/(protected)/(admin)/admin/libraries'));
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
 	}
 </script>
 
@@ -42,7 +59,7 @@
 		<div class="flex gap-2">
 			<label
 				for="type_shows"
-				class={`rounded-lg cursor-pointer select-none px-4 py-2 ${form.type == LibraryType.Shows ? 'bg-brand/20' : 'bg-neutral-800'}`}
+				class={`cursor-pointer rounded-lg px-4 py-2 select-none ${form.type == LibraryType.Shows ? 'bg-brand/20' : 'bg-neutral-800'}`}
 			>
 				<input
 					type="radio"
@@ -55,7 +72,7 @@
 			</label>
 			<label
 				for="type_movies"
-				class={`rounded-lg cursor-pointer select-none px-4 py-2 ${form.type == LibraryType.Movies ? 'bg-brand/20' : 'bg-neutral-800'}`}
+				class={`cursor-pointer rounded-lg px-4 py-2 select-none ${form.type == LibraryType.Movies ? 'bg-brand/20' : 'bg-neutral-800'}`}
 			>
 				<input
 					type="radio"
