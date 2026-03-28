@@ -108,7 +108,7 @@
 	<header class="bg-neutral-900 px-4 py-3.5">
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href={resolve('/(protected)')}>Dashboard</a
+			href={resolve('/(protected)')}>Home</a
 		>
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
@@ -118,11 +118,11 @@
 		</a>
 	</header>
 
-	<section class="flex items-center justify-center p-[clamp(0.5rem,1.2vw,1rem)] bg-black">
+	<section class="flex items-center justify-center bg-black">
 		<!-- svelte-ignore a11y_media_has_caption -->
 		<video
 			bind:this={videoEl}
-			class="w-full h-full rounded-xl bg-black"
+			class="w-full h-full bg-black"
 			controls
 			preload="metadata"
 			src={streamUrl}
