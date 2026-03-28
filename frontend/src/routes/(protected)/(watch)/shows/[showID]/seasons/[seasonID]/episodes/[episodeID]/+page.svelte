@@ -4,6 +4,7 @@
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
+	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -105,11 +106,13 @@
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">
-	<header class="bg-neutral-900 px-4 py-3.5">
+	<header class="flex items-center gap-2 bg-neutral-900 px-4 py-3.5">
 		<a
-			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
-			href={resolve('/(protected)')}>Home</a
+			class="p-2 text-slate-300 hover:text-white no-underline "
+			href={resolve('/(protected)')}
 		>
+			<HomeIcon />
+		</a>
 		<a
 			class="inline-block rounded-md border border-slate-400/30 px-2.5 py-1.5 text-sm text-slate-300 no-underline hover:border-slate-300/70 hover:text-slate-50"
 			href={resolve('/(protected)/(watch)/shows/[showID]', { showID: showId })}
@@ -122,7 +125,7 @@
 		<!-- svelte-ignore a11y_media_has_caption -->
 		<video
 			bind:this={videoEl}
-			class="w-full h-full bg-black"
+			class="h-full w-full bg-black"
 			controls
 			preload="metadata"
 			src={streamUrl}
