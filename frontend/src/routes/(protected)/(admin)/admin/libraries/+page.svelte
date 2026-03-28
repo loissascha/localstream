@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { loadLibraries } from '$lib/api/libraries';
 	import { auth } from '$lib/auth.svelte';
 	import type { LibraryListItem } from '$lib/types/export_types';
@@ -19,9 +20,12 @@
 	});
 </script>
 
-<section id="stats_and_actions" class="mb-4 flex justify-center gap-2">
+<section id="stats_and_actions" class="mb-4 flex justify-center items-center gap-4">
 	<span>{libraries.length} Libraries</span>
-	<button>+ New Library</button>
+	<a
+		href={resolve('/(protected)/(admin)/admin/libraries/new')}
+		class="rounded-full bg-neutral-800 hover:bg-neutral-700 px-4 py-2">+ New Library</a
+	>
 </section>
 
 <section id="libraries" class="flex justify-center gap-2">
@@ -30,7 +34,7 @@
 			class="flex h-40 w-80 flex-col items-end justify-between rounded border border-neutral-500 p-4"
 		>
 			<div class="grow">Settings</div>
-			<div class="flex flex-col items-center w-full">
+			<div class="flex w-full flex-col items-center">
 				<span class="font-bold">
 					{library.name}
 				</span>

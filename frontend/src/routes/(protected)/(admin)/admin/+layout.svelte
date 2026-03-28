@@ -15,7 +15,7 @@
 </script>
 
 <div class="flex h-dvh flex-col">
-	<section id="header" class="flex items-center justify-between bg-neutral-900 px-4 py-4">
+	<section id="header" class="flex items-center justify-between bg-neutral-800 px-4 py-4">
 		<div class="flex items-center gap-4">
 			<a href={resolve('/(protected)/(admin)/admin')} class="text-2xl font-semibold tracking-wider"
 				>Localstream Admin</a
