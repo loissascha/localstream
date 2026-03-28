@@ -80,12 +80,12 @@
 		<p>Loading shows...</p>
 	{:else}
 		<section class="my-4">
-			<h2>Shows</h2>
+			<h2 class="text-xl tracking-wider">Shows</h2>
 			<div class="flex gap-3">
 				{#each shows as show (show.id)}
 					<a
 						href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
-						class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
+						class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
 					>
 						{show.name}
 					</a>

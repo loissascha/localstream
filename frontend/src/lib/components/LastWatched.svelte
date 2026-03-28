@@ -30,7 +30,7 @@
 	});
 </script>
 
-<h2>Last Watched</h2>
+<h2 class="text-xl tracking-wider">Continue</h2>
 <div class="flex gap-4">
 	{#each data as d}
 		<a
@@ -39,11 +39,16 @@
 				seasonID: d.season_id,
 				episodeID: d.episode_id
 			})}
-			class="cursor-pointer rounded border border-neutral-600 bg-neutral-800 p-4"
+			class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 		>
 			<div class="font-bold">{d.show_info.name}</div>
-			<div>Season: {d.season_info.number}</div>
-			<div>Episode: {d.episode_info.number}</div>
+			<div>
+				<div>Season: {d.season_info.number}</div>
+				<div>Episode: {d.episode_info.number}</div>
+				<div class="bg-neutral-600">
+					<div style={`width: ${d.percentage}%;`} class={`h-2 bg-blue-300 text-sm`}></div>
+				</div>
+			</div>
 		</a>
 	{/each}
 </div>
