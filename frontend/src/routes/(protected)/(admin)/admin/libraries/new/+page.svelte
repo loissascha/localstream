@@ -60,6 +60,6 @@
 		/>
 	</div>
 	<div>
-		<button class="rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700">Submit</button>
+		<button class="rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700 cursor-pointer">Submit</button>
 	</div>
 </form>
