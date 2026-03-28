@@ -7,7 +7,6 @@
 		type ShowListResponse
 	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
-	import { goto } from '$app/navigation';
 	import LastWatched from '$lib/components/LastWatched.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
@@ -70,11 +69,6 @@
 	}
 
 	$effect(() => {
-		if (!auth.initialized) return;
-		if (!auth.loggedIn) {
-			goto(resolve('/(auth)/login'));
-			return;
-		}
 		loadLibraries();
 		loadShows();
 	});
@@ -89,7 +83,7 @@
 		<div>
 			{#if auth.isAdmin}
 				<a
-					href={resolve('/(protected)/admin')}
+					href={resolve('/(protected)/(admin)/admin')}
 					type="submit"
 					class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
 				>
@@ -120,7 +114,7 @@
 			<div class="flex gap-3">
 				{#each shows as show (show.id)}
 					<a
-						href={resolve('/(protected)/shows/[showID]', { showID: show.id })}
+						href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
 						class="w-60 cursor-pointer rounded-lg border border-blue-500 bg-blue-800 p-4 shadow-lg shadow-blue-600/50"
 					>
 						{show.name}
