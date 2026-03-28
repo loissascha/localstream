@@ -1,1 +1,2 @@
-Dashboard Page
+Dashboard Page<br />
+Version and stuff like that
