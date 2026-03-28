@@ -14,6 +14,6 @@
 	<link rel="icon" href={favicon} />
 	<title>Localstream</title>
 </svelte:head>
-<div class="min-h-dvh w-dvw bg-black text-white">
+<div class="min-h-dvh w-dvw bg-neutral-900 text-white">
 	{@render children()}
 </div>

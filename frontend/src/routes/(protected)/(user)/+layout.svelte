@@ -5,13 +5,13 @@
 	let { children } = $props();
 </script>
 
-<section id="header" class="flex items-center justify-between bg-neutral-900 px-4 py-4">
+<section id="header" class="flex items-center justify-between px-4 py-4">
 	<div>
 		<a href={resolve('/(protected)/(user)')} class="text-2xl font-semibold tracking-wider"
 			>Localstream</a
 		>
 	</div>
-	<div>
+	<div class="flex items-center gap-2">
 		{#if auth.isAdmin}
 			<a
 				href={resolve('/(protected)/(admin)/admin')}
