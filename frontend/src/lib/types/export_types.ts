@@ -1,5 +1,48 @@
+export interface WatchstateResponse {
+  id: string;
+  show_id: string;
+  show_info: ShowInfo;
+  season_id: string;
+  season_info: SeasonInfo;
+  episode_id: string;
+  episode_info: EpisodeInfo;
+  position: number;
+  duration: number;
+  finished: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface AuthUserResponse {
+  id: number;
+  username: string;
+}
+export interface SeasonInfo {
+  id: string;
+  number: number;
+}
+export interface SeasonListResponse {
+  seasons: SeasonInfo[];
+}
+export interface EpisodeInfo {
+  id: string;
+  number: number;
+  watchstate: WatchstateInfo;
+}
+export interface EpisodeListResponse {
+  episodes: EpisodeInfo[];
+}
+export interface WatchstateInfo {
+  position: number;
+  duration: number;
+  percentage: number;
+  finished: boolean;
+}
 export interface AuthResponse {
   token: string;
+}
+export interface AuthUserIsAdminResponse {
+  id: number;
+  is_admin: boolean;
 }
 export interface VideoListResponse {
   videos: VideoListItem[];
@@ -10,9 +53,17 @@ export interface VideoListItem {
   size: number;
   mimeType: string;
 }
-export interface AuthUserResponse {
-  id: number;
-  username: string;
+export interface ShowInfo {
+  id: string;
+  name: string;
+  year: number;
+  description: string;
+}
+export interface ShowListResponse {
+  shows: ShowInfo[];
+}
+export interface WatchstateListResponse {
+  watchstates: WatchstateResponse[];
 }
 export interface LibraryListItem {
   id: string;
@@ -31,26 +82,6 @@ export interface CreateLibraryRequest {
 export interface CreateLibraryResponse {
   library: LibraryListItem;
 }
-export interface ShowInfo {
-  id: string;
-  name: string;
-  year: number;
-  description: string;
-}
-export interface EpisodeInfo {
-  id: string;
-  number: number;
-  watchstate: WatchstateInfo;
-}
-export interface EpisodeListResponse {
-  episodes: EpisodeInfo[];
-}
-export interface WatchstateInfo {
-  position: number;
-  duration: number;
-  percentage: number;
-  finished: boolean;
-}
 export interface SaveWatchstateRequest {
   show_id: string;
   season_id: string;
@@ -58,35 +89,4 @@ export interface SaveWatchstateRequest {
   position: number;
   duration: number;
   finished: boolean;
-}
-export interface WatchstateResponse {
-  id: string;
-  show_id: string;
-  show_info: ShowInfo;
-  season_id: string;
-  season_info: SeasonInfo;
-  episode_id: string;
-  episode_info: EpisodeInfo;
-  position: number;
-  duration: number;
-  finished: boolean;
-  created_at: string;
-  updated_at: string;
-}
-export interface AuthUserIsAdminResponse {
-  id: number;
-  is_admin: boolean;
-}
-export interface ShowListResponse {
-  shows: ShowInfo[];
-}
-export interface SeasonInfo {
-  id: string;
-  number: number;
-}
-export interface SeasonListResponse {
-  seasons: SeasonInfo[];
-}
-export interface WatchstateListResponse {
-  watchstates: WatchstateResponse[];
 }
