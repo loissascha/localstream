@@ -16,10 +16,17 @@
 
 <div class="flex h-dvh flex-col">
 	<section id="header" class="flex items-center justify-between bg-neutral-900 px-4 py-4">
-		<div>
-			<a href={resolve('/(protected)/(user)')} class="text-2xl font-semibold tracking-wider"
+		<div class="flex items-center gap-4">
+			<a href={resolve('/(protected)/(admin)/admin')} class="text-2xl font-semibold tracking-wider"
 				>Localstream Admin</a
 			>
+			<a
+				href={resolve('/(protected)/(user)')}
+				type="submit"
+				class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
+			>
+				Home
+			</a>
 		</div>
 		<div>
 			<a
@@ -40,7 +47,8 @@
 				<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/libraries')}
 					>Libraries</AdminLeftMenuButton
 				>
-				<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/users')}>Users</AdminLeftMenuButton
+				<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/users')}
+					>Users</AdminLeftMenuButton
 				>
 			</div>
 		</section>
