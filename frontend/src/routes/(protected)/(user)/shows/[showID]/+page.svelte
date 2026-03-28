@@ -94,11 +94,6 @@
 	}
 
 	$effect(() => {
-		if (!auth.initialized) return;
-		if (!auth.loggedIn) {
-			goto(resolve('/(auth)/login'));
-			return;
-		}
 		if (!showId || showId == '') return;
 		loadShows();
 		loadSeasons();

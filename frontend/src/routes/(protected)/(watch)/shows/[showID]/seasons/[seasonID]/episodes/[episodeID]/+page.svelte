@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
@@ -74,9 +73,7 @@
 	});
 
 	$effect(() => {
-		if (!auth.initialized) return;
-		if (!auth.loggedIn || !auth.token) {
-			goto(resolve('/(auth)/login'));
+		if (!auth.token) {
 			return;
 		}
 		if (videoEl == null) return;

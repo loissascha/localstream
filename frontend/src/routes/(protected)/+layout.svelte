@@ -7,15 +7,11 @@
 
 	$effect(() => {
 		if (!auth.initialized) return;
-		if (!auth.isAdmin) {
-			goto(resolve('/(protected)'));
+		if (!auth.loggedIn) {
+			goto(resolve('/(auth)/login'));
+			return;
 		}
 	});
 </script>
 
-<div>
-	<div>Layout Admin</div>
-	<div>
-		{@render children()}
-	</div>
-</div>
+{@render children()}

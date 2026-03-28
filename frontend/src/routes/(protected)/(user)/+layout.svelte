@@ -1,22 +1,15 @@
 <script lang="ts">
 	import { auth } from '$lib/auth.svelte';
-	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
 	let { children } = $props();
-
-	$effect(() => {
-		if (!auth.initialized) return;
-		if (!auth.loggedIn) {
-			goto(resolve('/(auth)/login'));
-			return;
-		}
-	});
 </script>
 
 <div>
 	<section id="header" class="flex justify-between bg-neutral-900 px-4 py-4">
-		<div>Layout User</div>
+		<div>
+			<a href={resolve('/(protected)/(user)')}>Localstream</a>
+		</div>
 		<div>
 			{#if auth.isAdmin}
 				<a
