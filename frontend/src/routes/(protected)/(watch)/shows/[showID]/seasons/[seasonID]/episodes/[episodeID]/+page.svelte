@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { getNextEpisode } from '$lib/api/episode';
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
+	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
+	import { type EpisodeInfo } from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -15,6 +18,7 @@
 	const episodeId = $derived(page.params.episodeID ?? '');
 	var loadingWatchstate = $state(true);
 	var almostDone = $state(false);
+	var nextEpisode = $state<EpisodeInfo | null>(null);
 
 	const streamUrl = $derived(
 		API_URL +
@@ -106,6 +110,23 @@
 				}
 			});
 	});
+
+	$effect(() => {
+		if (!auth.token) {
+			return;
+		}
+		if (!loadingWatchstate) return;
+		if (!almostDone) return;
+		if (nextEpisode != null) return;
+		getNextEpisode(auth.token, episodeId)
+			.then((r) => {
+				nextEpisode = r;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+	});
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">
@@ -135,11 +156,16 @@
 		></video>
 	</section>
 
-	{#if almostDone}
-		<div
-			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded bg-orange-500"
+	{#if almostDone && nextEpisode != null}
+		<a
+			href={resolve('/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+				showID: showId,
+				seasonID: nextEpisode.season_id,
+				episodeID: nextEpisode.id
+			})}
+			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded bg-neutral-500 border border-neutral-600"
 		>
-			Next Episode
-		</div>
+			Next Episode <ChevronRightIcon />
+		</a>
 	{/if}
 </main>

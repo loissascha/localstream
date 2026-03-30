@@ -19,6 +19,7 @@ export interface CreateLibraryResponse {
 }
 export interface EpisodeInfo {
   id: string;
+  season_id: string;
   number: number;
   watchstate: WatchstateInfo;
 }

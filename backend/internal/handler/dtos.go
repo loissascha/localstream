@@ -22,6 +22,7 @@ type ShowListResponse struct {
 
 type EpisodeInfo struct {
 	ID         string         `json:"id"`
+	SeasonID   string         `json:"season_id"`
 	Number     int            `json:"number"`
 	Watchstate WatchstateInfo `json:"watchstate"`
 }
@@ -93,6 +94,7 @@ func toEpisodeInfo(episode *entity.Episode, infos ...AnyInfoStruct) EpisodeInfo 
 
 	return EpisodeInfo{
 		ID:         encoders.EncodeUUID(episode.ID),
+		SeasonID:   encoders.EncodeUUID(episode.SeasonID),
 		Number:     episode.Number,
 		Watchstate: watchstateInfo,
 	}
