@@ -134,4 +134,12 @@
 			onended={stopPlaybackLogging}
 		></video>
 	</section>
+
+	{#if almostDone}
+		<div
+			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded bg-orange-500"
+		>
+			Next Episode
+		</div>
+	{/if}
 </main>
