@@ -14,6 +14,7 @@
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
 	var loadingWatchstate = $state(true);
+	var almostDone = $state(false);
 
 	const streamUrl = $derived(
 		API_URL +
@@ -39,6 +40,7 @@
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
 		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+		almostDone = duration > 0 && position >= Math.max(duration - 120, 0);
 
 		if (auth.token) {
 			try {
