@@ -3,19 +3,36 @@
 	import {
 		type ShowInfo,
 		type LibraryListItem,
-		type ShowListResponse
+		type ShowListResponse,
+		type MovieInfo
 	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
 	import { loadLibraries } from '$lib/api/libraries';
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
+	import { listMovies } from '$lib/api/movies';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
+	let movies = $state<MovieInfo[]>([]);
 	let selectedLibrary = $state<LibraryListItem | null>(null);
 	let loading = $state(true);
 	let loadingShows = $state(true);
+	let loadingMovies = $state(true);
 	let errorMessage = $state('');
+
+	async function loadMovies() {
+		try {
+			if (!auth.token) return;
+			const data = await listMovies(auth.token);
+			movies = data.movies;
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		} finally {
+			loadingMovies = false;
+		}
+	}
 
 	async function loadShows() {
 		try {
@@ -67,6 +84,7 @@
 		if (!auth.initialized) return;
 		loadLibrariesData();
 		loadShows();
+		loadMovies();
 	});
 </script>
 
@@ -81,7 +99,7 @@
 		<p>Loading shows...</p>
 	{:else}
 		<section class="my-8">
-			<h2 class="flex items-center gap-1 text-xl tracking-wider mb-2">
+			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 				<LibraryIcon />
 				Shows
 			</h2>
@@ -93,6 +111,27 @@
 					>
 						{show.name}
 					</a>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	{#if loadingMovies}
+		<p>Loading movies...</p>
+	{:else}
+		<section class="my-8">
+			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
+				<LibraryIcon />
+				Movies
+			</h2>
+			<div class="flex gap-4">
+				{#each movies as movie (movie.id)}
+					<!-- <a -->
+					<!-- 	href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })} -->
+					<!-- 	class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700" -->
+					<!-- > -->
+					{movie.name}
+					<!-- </a> -->
 				{/each}
 			</div>
 		</section>
