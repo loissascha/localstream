@@ -120,6 +120,7 @@
 		if (nextEpisode != null) return;
 		getNextEpisode(auth.token, episodeId)
 			.then((r) => {
+				console.log("next episode res:", r)
 				nextEpisode = r;
 			})
 			.catch((e) => {
