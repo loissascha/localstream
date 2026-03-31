@@ -11,6 +11,7 @@
 	import { loadLibraries } from '$lib/api/libraries';
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { listMovies } from '$lib/api/movies';
+	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -94,6 +95,7 @@
 	{/if}
 
 	<LastWatched />
+	<LastWatchedMovies />
 
 	{#if loadingShows}
 		<p>Loading shows...</p>

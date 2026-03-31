@@ -34,7 +34,7 @@
 <section class="my-4">
 	<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 		<ChevronRightIcon />
-		Continue Shows
+		Continue Movies
 	</h2>
 	<div class="flex gap-4">
 		{#each data as d}
