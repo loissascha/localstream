@@ -79,6 +79,7 @@ func main() {
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
 	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService, userWatchstateService)
 	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
+	movieH := handler.NewMovieHandler(s, authMiddleware)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -88,6 +89,7 @@ func main() {
 	seasonH.RegisterRoutes()
 	episodeH.RegisterRoutes()
 	userWatchstateH.RegisterRoutes()
+	movieH.RegisterRoutes()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
