@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { listLatestWatchstateByShow } from '$lib/api/watchstate';
+	import { listLatestWatchstateByMovie } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
-	import { type WatchstateResponse } from '$lib/types/export_types';
+	import { type WatchstateMovieResponse } from '$lib/types/export_types';
 
-	let data = $state<WatchstateResponse[]>([]);
+	let data = $state<WatchstateMovieResponse[]>([]);
 
 	async function updateData() {
 		if (!auth.token) {
 			return;
 		}
 		try {
-			const result = await listLatestWatchstateByShow(auth.token);
+			const result = await listLatestWatchstateByMovie(auth.token);
 			data = result;
 		} catch (e) {
 			const m = (e as Error).message;
@@ -39,20 +39,13 @@
 	<div class="flex gap-4">
 		{#each data as d}
 			<a
-				href={resolve(
-					'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
-					{
-						showID: d.show_id,
-						seasonID: d.season_id,
-						episodeID: d.episode_id
-					}
-				)}
+				href={resolve('/(protected)/(watch)/movies/[movieID]', {
+					movieID: d.movie_id
+				})}
 				class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
-				<div class="font-bold">{d.show_info.name}</div>
+				<div class="font-bold">{d.movie_id}</div>
 				<div>
-					<div>Season: {d.season_info.number}</div>
-					<div>Episode: {d.episode_info.number}</div>
 					<div class="bg-neutral-600">
 						<div style={`width: ${d.percentage}%;`} class={`h-2 bg-blue-300 text-sm`}></div>
 					</div>
