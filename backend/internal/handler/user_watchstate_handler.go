@@ -79,6 +79,10 @@ type SaveWatchstateRequest struct {
 	Finished  bool    `json:"finished"`
 }
 
+type WatchstateMoviesListResponse struct {
+	Watchstates []WatchstateMovieResponse `json:"watchstates"`
+}
+
 type WatchstateListResponse struct {
 	Watchstates []WatchstateResponse `json:"watchstates"`
 }

@@ -92,6 +92,18 @@ export interface WatchstateInfo {
 export interface WatchstateListResponse {
   watchstates: WatchstateResponse[];
 }
+export interface WatchstateMovieResponse {
+  movie_id: string;
+  position: number;
+  duration: number;
+  finished: boolean;
+  created_at: string;
+  updated_at: string;
+  percentage: number;
+}
+export interface WatchstateMoviesListResponse {
+  watchstates: WatchstateMovieResponse[];
+}
 export interface WatchstateResponse {
   id: string;
   show_id: string;

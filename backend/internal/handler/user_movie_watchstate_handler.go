@@ -33,6 +33,85 @@ func (h *UserMovieWatchstateHandler) RegisterHandlers() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 		server.WithDescription("Save the current watchstate for movie"),
 	)
+
+	h.s.GET("/api/v1/watchstate/movie/{movieID}",
+		h.getWatchstateByMovieID,
+		server.WithExportType[WatchstateInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("Get the last watchstate of the movie"),
+	)
+
+	h.s.GET("/api/v1/watchstate/movie/latest",
+		h.listLatestWatchstates,
+		server.WithExportType[WatchstateMoviesListResponse](),
+		server.WithExportType[WatchstateMovieResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+}
+
+func (h *UserMovieWatchstateHandler) listLatestWatchstates(w http.ResponseWriter, r *http.Request) {
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	watchstates, err := h.userMovieWatchstateService.ListByUserID(r.Context(), userID)
+	if err != nil {
+		if errors.Is(err, service.ErrInvalidWatchstateInput) {
+			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid user id"})
+			return
+		}
+
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates"})
+		return
+	}
+
+	response := make([]WatchstateMovieResponse, 0, len(watchstates))
+	for _, watchstate := range watchstates {
+		// movieId := encoders.EncodeUUID(watchstate.MovieID)
+
+		if watchstate.Finished {
+			continue
+		}
+
+		// movie, err := h.movieService.GetById(r.Context(), movieId)
+		// if err != nil {
+		// 	respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
+		// 	return
+		// }
+
+		response = append(response, toWatchstateMovieResponse(watchstate))
+	}
+
+	respond.JSON(w, http.StatusOK, WatchstateMoviesListResponse{Watchstates: response})
+}
+
+func (h *UserMovieWatchstateHandler) getWatchstateByMovieID(w http.ResponseWriter, r *http.Request) {
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	movieID := r.PathValue("movieID")
+	watchstate, err := h.userMovieWatchstateService.GetByMovieID(r.Context(), userID, movieID)
+	if err != nil {
+		if errors.Is(err, service.ErrInvalidWatchstateInput) {
+			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid movie id"})
+			return
+		}
+
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstate"})
+		return
+	}
+
+	if watchstate == nil {
+		respond.JSON(w, http.StatusNotFound, map[string]string{"error": "watchstate not found"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toWatchstateInfoMovie(watchstate))
 }
 
 type SaveMovieWatchstateRequest struct {
