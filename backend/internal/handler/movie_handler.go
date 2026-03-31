@@ -26,6 +26,8 @@ func NewMovieHandler(s *server.Server, authM *middleware.AuthMiddleware, movieS 
 func (h *MovieHandler) RegisterRoutes() {
 	h.s.GETI("/api/v1/movies/list",
 		h.list,
+		server.WithExportType[MovieListResponse](),
+		server.WithExportType[MovieInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 }
