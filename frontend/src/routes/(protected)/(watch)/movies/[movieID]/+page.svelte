@@ -4,85 +4,65 @@
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	import { onDestroy } from 'svelte';
+	// import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 
 	const movieId = $derived(page.params.movieID ?? '');
-	var loadingWatchstate = $state(true);
+	// var loadingWatchstate = $state(true);
 
 	const streamUrl = $derived(
 		API_URL +
 			`/api/movies/stream?id=${encodeURIComponent(movieId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
-	let logTimer: ReturnType<typeof setInterval> | null = null;
+	// let logTimer: ReturnType<typeof setInterval> | null = null;
 
-	 function stopPlaybackLogging() {
-	 	if (logTimer !== null) {
-	 		clearInterval(logTimer);
-	 		logTimer = null;
-	 	}
-	 }
+	 // function stopPlaybackLogging() {
+	 // 	if (logTimer !== null) {
+	 // 		clearInterval(logTimer);
+	 // 		logTimer = null;
+	 // 	}
+	 // }
 	
-	 async function logPlaybackStatus() {
-	 	if (!videoEl) {
-	 		return;
-	 	}
-	 	if (loadingWatchstate) {
-	 		return;
-	 	}
-	
-	 	const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
-	 	const position = Number(videoEl.currentTime.toFixed(2));
-	 	const finished = duration > 0 && position >= Math.max(duration - 10, 0);
-	 	// almostDone = duration > 0 && position >= Math.max(duration - 120, 0);
-	
-	 	if (auth.token) {
-	 		try {
-				console.log("log watchsatte")
-	 		} catch (e) {
-	 			console.error(e);
-	 		}
-	 	}
-	 }
-	
-	 function startPlaybackLogging() {
-	 	stopPlaybackLogging();
-	 	logPlaybackStatus();
-	 	logTimer = setInterval(logPlaybackStatus, 5000);
-	
-	
-	 onDestroy(() => {
-	 	stopPlaybackLogging();
-	 });
-	
-	 $effect(() => {
-	 	if (!auth.token) {
-	 		return;
-	 	}
-	 	if (videoEl == null) return;
-	 	loadingWatchstate = true;
-	 	// getWatchstateForEpisode(auth.token, episodeId)
-	 	// 	.then((res) => {
-	 	// 		console.log('watchstate res:', res);
-	 	// 		if (!res.finished) {
-	 	// 			videoEl!.currentTime = res.position;
-	 	// 			loadingWatchstate = false;
-	 	// 		} else {
-	 	// 			alert('already watched');
-	 	// 			loadingWatchstate = false;
-	 	// 		}
-	 	// 	})
-	 	// 	.catch((e) => {
-	 	// 		const m = (e as Error).message;
-	 	// 		if (m == '404') {
-	 	// 			// watchstate does not exist -> user didn't watch this yet so it's okay
-	 	// 			loadingWatchstate = false;
-	 	// 		} else {
-	 	// 			alert(m);
-	 	// 		}
-	 	// 	});
-	 });
+	 // async function logPlaybackStatus() {
+	 // 	if (!videoEl) {
+	 // 		return;
+	 // 	}
+	 // 	if (loadingWatchstate) {
+	 // 		return;
+	 // 	}
+	 //
+	 // 	const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
+	 // 	const position = Number(videoEl.currentTime.toFixed(2));
+	 // 	const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+	 // 	// almostDone = duration > 0 && position >= Math.max(duration - 120, 0);
+	 //
+	 // 	if (auth.token) {
+	 // 		try {
+	 // 		console.log("log watchsatte")
+	 // 		} catch (e) {
+	 // 			console.error(e);
+	 // 		}
+	 // 	}
+	 // }
+	 //
+	 // function startPlaybackLogging() {
+	 // 	stopPlaybackLogging();
+	 // 	logPlaybackStatus();
+	 // 	logTimer = setInterval(logPlaybackStatus, 5000);
+	 //
+	 //
+	 // onDestroy(() => {
+	 // 	stopPlaybackLogging();
+	 // });
+	 //
+	 // $effect(() => {
+	 // 	if (!auth.token) {
+	 // 		return;
+	 // 	}
+	 // 	if (videoEl == null) return;
+	 // 	loadingWatchstate = false;
+	 // });
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">

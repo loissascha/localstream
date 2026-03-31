@@ -126,12 +126,12 @@
 			</h2>
 			<div class="flex gap-4">
 				{#each movies as movie (movie.id)}
-					<!-- <a -->
-					<!-- 	href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })} -->
-					<!-- 	class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700" -->
-					<!-- > -->
-					{movie.name}
-					<!-- </a> -->
+					<a
+						href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
+						class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 wrap-anywhere hover:bg-neutral-700"
+					>
+						{movie.name}
+					</a>
 				{/each}
 			</div>
 		</section>
