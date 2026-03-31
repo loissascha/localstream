@@ -27,7 +27,7 @@ func NewUserMovieWatchstateHandler(s *server.Server, authM *middleware.AuthMiddl
 }
 
 func (h *UserMovieWatchstateHandler) RegisterHandlers() {
-	h.s.POST("/api/watchstate",
+	h.s.POST("/api/v1/movie/watchstate",
 		h.saveWatchstate,
 		server.WithExportType[SaveMovieWatchstateRequest](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),

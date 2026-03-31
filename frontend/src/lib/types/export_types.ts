@@ -35,6 +35,12 @@ export interface LibraryListItem {
 export interface LibraryListResponse {
   libraries: LibraryListItem[];
 }
+export interface SaveMovieWatchstateRequest {
+  movie_id: string;
+  position: number;
+  duration: number;
+  finished: boolean;
+}
 export interface SaveWatchstateRequest {
   show_id: string;
   season_id: string;
