@@ -256,6 +256,17 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 	respond.JSON(w, http.StatusOK, WatchstateListResponse{Watchstates: response})
 }
 
+func decodeSaveMovieWatchstateRequest(r *http.Request) (*SaveMovieWatchstateRequest, error) {
+	defer r.Body.Close()
+
+	var requestBody SaveMovieWatchstateRequest
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		return nil, err
+	}
+
+	return &requestBody, nil
+}
+
 func decodeSaveWatchstateRequest(r *http.Request) (*SaveWatchstateRequest, error) {
 	defer r.Body.Close()
 

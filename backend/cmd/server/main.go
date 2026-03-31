@@ -58,6 +58,7 @@ func main() {
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
+	userMovieWatchstateRepo := repopostgres.NewUserMovieWatchstateRepository(db)
 	movieRepo := repopostgres.NewMovieRepository(db)
 
 	// services
@@ -67,6 +68,7 @@ func main() {
 	seasonService := service.NewSeasonService(seasonRepo)
 	episodeService := service.NewEpisodeService(episodeRepo)
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
+	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
 
 	// middleware
@@ -80,6 +82,7 @@ func main() {
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
 	episodeH := handler.NewEpisodeHandler(s, authMiddleware, episodeService, userWatchstateService)
 	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
+	userMovieWatchstateH := handler.NewUserMovieWatchstateHandler(s, authMiddleware, userMovieWatchstateServiced, movieService)
 	movieH := handler.NewMovieHandler(s, authMiddleware, movieService)
 
 	// register routes
@@ -91,6 +94,7 @@ func main() {
 	episodeH.RegisterRoutes()
 	userWatchstateH.RegisterRoutes()
 	movieH.RegisterRoutes()
+	userMovieWatchstateH.RegisterHandlers()
 
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
