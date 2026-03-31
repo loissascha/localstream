@@ -69,4 +69,3 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 
 	respond.JSON(w, http.StatusOK, ShowListResponse{Shows: result})
 }
-
