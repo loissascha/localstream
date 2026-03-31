@@ -58,6 +58,7 @@ func main() {
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
+	movieRepo := repopostgres.NewMovieRepository(db)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -91,7 +92,7 @@ func main() {
 	// fs := http.FileServer(http.Dir("./static"))
 	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo)
 	libraryCataloguer.RunBackground()
 	// libraryWatcher.RunOnce()
 

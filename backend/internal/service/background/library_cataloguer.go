@@ -24,15 +24,17 @@ type LibraryCataloguer struct {
 	showRepo           repository.ShowRepository
 	seasonRepo         repository.SeasonRepository
 	episodeRepo        repository.EpisodeRepository
+	movieRepo          repository.MovieRepository
 }
 
-func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository) *LibraryCataloguer {
+func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository) *LibraryCataloguer {
 	return &LibraryCataloguer{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
 		showRepo:           showRepo,
 		seasonRepo:         seasonRepo,
 		episodeRepo:        episodeRepo,
+		movieRepo:          movieRepo,
 	}
 }
 
@@ -197,6 +199,29 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	return show, nil
 }
 
+func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
+	results, err := getAllFilesWithPath(library.Path, "mp4")
+	if err != nil {
+		return err
+	}
+	switch library.LibraryType {
+	case entity.LibraryTypeShows:
+		err := l.RunShowsLibrary(&library, results)
+		if err != nil {
+			return err
+		}
+		break
+	case entity.LibraryTypeMovies:
+		err := l.RunMoviesLibrary(&library, results)
+		if err != nil {
+			return err
+		}
+		break
+	}
+
+	return nil
+}
+
 func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []fResult) error {
 	shows := l.extractShows(library.Path, results)
 
@@ -252,23 +277,28 @@ func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []f
 	return nil
 }
 
-func (l *LibraryCataloguer) RunLibrary(library entity.Library) error {
-	results, err := getAllFilesWithPath(library.Path, "mp4")
-	if err != nil {
-		return err
-	}
-	switch library.LibraryType {
-	case entity.LibraryTypeShows:
-		err := l.RunShowsLibrary(&library, results)
+func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []fResult) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	for _, f := range results {
+		movie, err := l.movieRepo.GetByPath(ctx, f.Path)
 		if err != nil {
 			return err
 		}
-		break
-	case entity.LibraryTypeMovies:
-		// TODO: implement movies
-		break
+		if movie != nil {
+			continue
+		}
+		movie = &entity.Movie{
+			Name:      f.Name,
+			CreatedAt: time.Now().UTC(),
+			Path:      f.Path,
+		}
+		err = l.movieRepo.Create(ctx, movie)
+		if err != nil {
+			return err
+		}
 	}
-
 	return nil
 }
 
