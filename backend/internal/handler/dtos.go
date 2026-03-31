@@ -9,6 +9,17 @@ import (
 
 type AnyInfoStruct interface{}
 
+type MovieInfo struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Year        int    `json:"year"`
+	Description string `json:"description"`
+}
+
+type MovieListResponse struct {
+	Movies []MovieInfo `json:"movies"`
+}
+
 type ShowInfo struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
@@ -72,6 +83,15 @@ type LibraryListItem struct {
 
 type LibraryListResponse struct {
 	Libraries []LibraryListItem `json:"libraries"`
+}
+
+func toMovieInfo(m *entity.Movie) MovieInfo {
+	return MovieInfo{
+		ID:          encoders.EncodeUUID(m.ID),
+		Name:        m.Name,
+		Year:        m.Year,
+		Description: m.Description,
+	}
 }
 
 func toLibraryListItem(l *entity.Library) LibraryListItem {
