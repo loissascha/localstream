@@ -25,9 +25,14 @@ type LibraryCataloguer struct {
 	seasonRepo         repository.SeasonRepository
 	episodeRepo        repository.EpisodeRepository
 	movieRepo          repository.MovieRepository
+	showMatcher        *ShowMatcher
 }
 
 func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository) *LibraryCataloguer {
+
+	showMatcher := NewShowMatcher()
+	showMatcher.RunBackground()
+
 	return &LibraryCataloguer{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
@@ -35,6 +40,7 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 		seasonRepo:         seasonRepo,
 		episodeRepo:        episodeRepo,
 		movieRepo:          movieRepo,
+		showMatcher:        showMatcher,
 	}
 }
 
@@ -181,6 +187,7 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 
+	l.showMatcher.Channel <- show.ID
 	return show, nil
 }
 
