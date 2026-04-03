@@ -51,8 +51,6 @@ func (l *LibraryCataloguer) RunBackground() {
 }
 
 func (l *LibraryCataloguer) RunOnce() error {
-	logger.Info(nil, "Library Watcher running...")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
 
@@ -76,13 +74,11 @@ func (l *LibraryCataloguer) extractShows(basePath string, input []fResult) map[s
 	for _, result := range input {
 		pathStr := strings.TrimPrefix(result.Path, basePath)
 		pathStr = strings.TrimPrefix(pathStr, "/")
-		logger.Debug(nil, "PathSTr: {Path}", pathStr)
 		split := strings.SplitN(pathStr, "/", 3)
 		if len(split) != 3 {
 			logger.Error(nil, "Wrong length!")
 			continue
 		}
-		logger.Debug(nil, "Split: {S}", split)
 
 		r, ok := res[split[0]]
 		if !ok {
@@ -96,7 +92,6 @@ func (l *LibraryCataloguer) extractShows(basePath string, input []fResult) map[s
 }
 
 func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string) (*entity.Episode, error) {
-	logger.Debug(nil, "findOrCreateEpisode {EpisodeInfo}", *episodeInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	p := path.Join(basePath, episodeInfo.RawName)
@@ -106,7 +101,6 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 		return nil, err
 	}
 	if episode != nil {
-		logger.Debug(nil, "Found episode {Episode}", *episode)
 		return episode, nil
 	}
 
@@ -117,7 +111,6 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 		Path:        p,
 		FetchSource: entity.FetchSourceNone,
 	}
-	logger.Debug(nil, "Trying to create Episode {Episode}", *episode)
 
 	err = l.episodeRepo.Create(ctx, episode)
 	if err != nil {
@@ -128,7 +121,6 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 }
 
 func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string) (*entity.Season, error) {
-	logger.Debug(nil, "findOrCreateSeason {SeasonInfo}", *seasonInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	p := path.Join(basePath, seasonInfo.RawName)
@@ -138,7 +130,6 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 		return nil, err
 	}
 	if season != nil {
-		logger.Debug(nil, "Found season {Season}", *season)
 		return season, nil
 	}
 
@@ -150,8 +141,6 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 		FetchSource: entity.FetchSourceNone,
 	}
 
-	logger.Debug(nil, "Trying to create season {Season}", *season)
-
 	err = l.seasonRepo.Create(ctx, season)
 	if err != nil {
 		logger.Error(err, "Error creating season")
@@ -161,7 +150,6 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 }
 
 func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
-	logger.Debug(nil, "findOrCreateShow {ShowInfo}", *showInfo)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	p := path.Join(basePath, showInfo.RawName)
@@ -171,7 +159,6 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 	if show != nil {
-		logger.Debug(nil, "Found show {Show}", *show)
 		return show, nil
 	}
 
@@ -187,8 +174,6 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	if showInfo.Year != nil {
 		show.Year = *showInfo.Year
 	}
-
-	logger.Debug(nil, "Trying to create show {Show}", *show)
 
 	err = l.showRepo.Create(ctx, show)
 	if err != nil {
@@ -238,11 +223,11 @@ func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []f
 			return err
 		}
 
-		if showInfo.Year != nil {
-			logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, show.ID.String(), *showInfo.Year, len(seasons))
-		} else {
-			logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Amount Seasons: {Season}", showInfo.Series, show.ID.String(), len(seasons))
-		}
+		// if showInfo.Year != nil {
+		// 	logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Year: {Year} | Amount Seasons: {Seasons}", showInfo.Series, show.ID.String(), *showInfo.Year, len(seasons))
+		// } else {
+		// 	logger.Info(nil, "Show parsed. Name: {Name} (ID: {ID}) | Amount Seasons: {Season}", showInfo.Series, show.ID.String(), len(seasons))
+		// }
 
 		for season, episodes := range seasons {
 			seasonInfo, ok := parsers.ParseSeasonFromName(season)
@@ -256,8 +241,6 @@ func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []f
 				return err
 			}
 
-			logger.Info(nil, "Season parsed. Number: {Number} (ID: {ID})", season.Number, season.ID.String())
-
 			for _, episode := range episodes {
 				episodeInfo, ok := parsers.ParseEpisodeFromFilename(episode)
 				if !ok {
@@ -265,12 +248,10 @@ func (l *LibraryCataloguer) RunShowsLibrary(library *entity.Library, results []f
 					continue
 				}
 
-				episode, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path)
+				_, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path)
 				if err != nil {
 					return err
 				}
-
-				logger.Info(nil, "Episode parsed. Number: {Number} (ID: {ID})", episodeInfo.Episode, episode.ID.String())
 			}
 		}
 	}
