@@ -165,6 +165,9 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 	if show != nil {
+		if show.FetchSource == entity.FetchSourceNone {
+			l.showMatcher.Channel <- show.ID
+		}
 		return show, nil
 	}
 
