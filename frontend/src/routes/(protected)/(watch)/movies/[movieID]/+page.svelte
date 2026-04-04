@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { updateWatchstateMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	// import { onDestroy } from 'svelte';
+	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 
@@ -15,47 +16,52 @@
 		API_URL +
 			`/api/movies/stream?id=${encodeURIComponent(movieId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
-	// let logTimer: ReturnType<typeof setInterval> | null = null;
+	let logTimer: ReturnType<typeof setInterval> | null = null;
 
-	// function stopPlaybackLogging() {
-	// 	if (logTimer !== null) {
-	// 		clearInterval(logTimer);
-	// 		logTimer = null;
-	// 	}
-	// }
+	function stopPlaybackLogging() {
+		if (logTimer !== null) {
+			clearInterval(logTimer);
+			logTimer = null;
+		}
+	}
 
-	// async function logPlaybackStatus() {
-	// 	if (!videoEl) {
-	// 		return;
-	// 	}
-	// 	if (loadingWatchstate) {
-	// 		return;
-	// 	}
-	//
-	// 	const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
-	// 	const position = Number(videoEl.currentTime.toFixed(2));
-	// 	const finished = duration > 0 && position >= Math.max(duration - 10, 0);
-	// 	// almostDone = duration > 0 && position >= Math.max(duration - 120, 0);
-	//
-	// 	if (auth.token) {
-	// 		try {
-	// 		console.log("log watchsatte")
-	// 		} catch (e) {
-	// 			console.error(e);
-	// 		}
-	// 	}
-	// }
-	//
-	// function startPlaybackLogging() {
-	// 	stopPlaybackLogging();
-	// 	logPlaybackStatus();
-	// 	logTimer = setInterval(logPlaybackStatus, 5000);
-	//
-	//
-	// onDestroy(() => {
-	// 	stopPlaybackLogging();
-	// });
-	//
+	async function logPlaybackStatus() {
+		if (!videoEl) {
+			return;
+		}
+		// if (loadingWatchstate) {
+		// 	return;
+		// }
+
+		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
+		const position = Number(videoEl.currentTime.toFixed(2));
+		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+
+		if (auth.token) {
+			try {
+				console.log('log watchsatte');
+				await updateWatchstateMovie(auth.token, {
+					movie_id: movieId,
+					position: position,
+					duration: duration,
+					finished: finished
+				});
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	}
+
+	function startPlaybackLogging() {
+		stopPlaybackLogging();
+		logPlaybackStatus();
+		logTimer = setInterval(logPlaybackStatus, 5000);
+	}
+
+	onDestroy(() => {
+		stopPlaybackLogging();
+	});
+
 	// $effect(() => {
 	// 	if (!auth.token) {
 	// 		return;
@@ -80,6 +86,9 @@
 			controls
 			preload="metadata"
 			src={streamUrl}
+			onplay={startPlaybackLogging}
+			onpause={stopPlaybackLogging}
+			onended={stopPlaybackLogging}
 		></video>
 	</section>
 </main>
