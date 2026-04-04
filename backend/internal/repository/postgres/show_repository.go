@@ -80,6 +80,34 @@ func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Sh
 	return &show, nil
 }
 
+func (r *ShowRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+	if fetchSource == "" {
+		fetchSource = entity.FetchSourceNone
+	}
+
+	const query = `
+		UPDATE shows
+		SET fetch_source = $1
+		WHERE id = $2
+	`
+
+	result, err := r.db.ExecContext(ctx, query, fetchSource, id)
+	if err != nil {
+		return fmt.Errorf("update show fetch source: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("update show fetch source rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrShowNotFound
+	}
+
+	return nil
+}
+
 func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	const query = `
 		SELECT id, name, year, path, created_at, fetch_source
