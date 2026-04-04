@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { updateWatchstateMovie } from '$lib/api/watchstate_movie';
+	import { getWatchstateForMovie, updateWatchstateMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
@@ -10,7 +10,7 @@
 	let videoEl = $state<HTMLVideoElement | null>(null);
 
 	const movieId = $derived(page.params.movieID ?? '');
-	// var loadingWatchstate = $state(true);
+	var loadingWatchstate = $state(true);
 
 	const streamUrl = $derived(
 		API_URL +
@@ -32,9 +32,9 @@
 			return;
 		}
 		console.log('log playback status 2');
-		// if (loadingWatchstate) {
-		// 	return;
-		// }
+		if (loadingWatchstate) {
+			return;
+		}
 
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
@@ -66,13 +66,33 @@
 		stopPlaybackLogging();
 	});
 
-	// $effect(() => {
-	// 	if (!auth.token) {
-	// 		return;
-	// 	}
-	// 	if (videoEl == null) return;
-	// 	loadingWatchstate = false;
-	// });
+	$effect(() => {
+		if (!auth.token) {
+			return;
+		}
+		if (videoEl == null) return;
+		loadingWatchstate = true;
+		getWatchstateForMovie(auth.token, movieId)
+			.then((res) => {
+				console.log('watchstate res:', res);
+				if (!res.finished) {
+					videoEl!.currentTime = res.position;
+					loadingWatchstate = false;
+				} else {
+					alert('already watched');
+					loadingWatchstate = false;
+				}
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				if (m == '404') {
+					// watchstate does not exist -> user didn't watch this yet so it's okay
+					loadingWatchstate = false;
+				} else {
+					alert(m);
+				}
+			});
+	});
 </script>
 
 <main class="grid min-h-dvh grid-rows-[auto_1fr]">

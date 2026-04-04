@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { listLatestWatchstateByMovie } from '$lib/api/watchstate';
+	import { listLatestWatchstateByMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateMovieResponse } from '$lib/types/export_types';
