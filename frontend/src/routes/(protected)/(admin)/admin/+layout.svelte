@@ -50,6 +50,9 @@
 				<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/users')}
 					>Users</AdminLeftMenuButton
 				>
+				<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/metadata')}
+					>Metadata</AdminLeftMenuButton
+				>
 			</div>
 		</section>
 		<section id="content" class="grow overflow-y-auto p-4">
