@@ -30,6 +30,7 @@ func (h *UserMovieWatchstateHandler) RegisterHandlers() {
 	h.s.POST("/api/v1/movie/watchstate",
 		h.saveWatchstate,
 		server.WithExportType[SaveMovieWatchstateRequest](),
+		server.WithExportType[WatchstateInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 		server.WithDescription("Save the current watchstate for movie"),
 	)
