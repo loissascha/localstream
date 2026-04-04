@@ -20,8 +20,8 @@ func NewShowMetadataRepository(db *sqlx.DB) *ShowMetadataRepository {
 
 func (r *ShowMetadataRepository) Create(ctx context.Context, metadata *entity.ShowMetadata) error {
 	const query = `
-		INSERT INTO show_metadata (show_id, url, description, medium_image_url, original_image_url)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO show_metadata (show_id, name, url, description, medium_image_url, original_image_url, fetch_source)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
 	`
 
@@ -29,10 +29,12 @@ func (r *ShowMetadataRepository) Create(ctx context.Context, metadata *entity.Sh
 		ctx,
 		query,
 		metadata.ShowID,
+		metadata.Name,
 		metadata.Url,
 		metadata.Description,
 		metadata.MediumImageUrl,
 		metadata.OriginalImageUrl,
+		metadata.FetchSource,
 	).Scan(&metadata.ID)
 	if err != nil {
 		return fmt.Errorf("create show metadata: %w", err)
@@ -43,7 +45,7 @@ func (r *ShowMetadataRepository) Create(ctx context.Context, metadata *entity.Sh
 
 func (r *ShowMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.ShowMetadata, error) {
 	const query = `
-		SELECT id, show_id, url, description, medium_image_url, original_image_url
+		SELECT *
 		FROM show_metadata
 		WHERE show_id = $1
 	`

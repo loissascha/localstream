@@ -62,13 +62,21 @@ func (l *ShowMatcher) RunBackground() {
 				if res.Show.Summary != nil {
 					description = *res.Show.Summary
 				}
+				mediumImage := ""
+				originalImage := ""
+				if res.Show.Image != nil {
+					mediumImage = res.Show.Image.Medium
+					originalImage = res.Show.Image.Original
+				}
 				metadata := entity.ShowMetadata{
 					ID:               mid,
 					ShowID:           show.ID,
+					Name:             res.Show.Name,
 					Url:              res.Show.URL,
 					Description:      description,
-					MediumImageUrl:   res.Show.Image.Medium,
-					OriginalImageUrl: res.Show.Image.Original,
+					MediumImageUrl:   mediumImage,
+					OriginalImageUrl: originalImage,
+					FetchSource:      entity.FetchSourceTVMaze,
 				}
 				err = l.showMetadataRepo.Create(ctx, &metadata)
 				if err != nil {
@@ -90,7 +98,6 @@ func (l *ShowMatcher) RunBackground() {
 				l.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
 				logger.Info(nil, "Found perfect match for show {Show} ({Year}): {Match}", show.Name, show.Year, showSearchResults[0])
 			}
-
 		}
 	}()
 }
