@@ -1,8 +1,11 @@
 package background
 
 import (
+	"context"
 	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
@@ -43,19 +46,51 @@ func (l *ShowMatcher) RunBackground() {
 				continue
 			}
 
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+
+			hasError := false
+			for _, res := range showSearchResults {
+				fmt.Println(res)
+				mid, err := uuid.NewV7()
+				if err != nil {
+					logger.Fatal(err, "Can't create uuid")
+					hasError = true
+					continue
+				}
+				description := ""
+				if res.Show.Summary != nil {
+					description = *res.Show.Summary
+				}
+				metadata := entity.ShowMetadata{
+					ID:               mid,
+					ShowID:           show.ID,
+					Url:              res.Show.URL,
+					Description:      description,
+					MediumImageUrl:   res.Show.Image.Medium,
+					OriginalImageUrl: res.Show.Image.Original,
+				}
+				err = l.showMetadataRepo.Create(ctx, &metadata)
+				if err != nil {
+					logger.Fatal(err, "Can't create show metadata")
+					hasError = true
+				}
+			}
+
+			if hasError {
+				continue
+			}
+
 			if len(showSearchResults) > 1 {
 				show.FetchSource = entity.FetchSourceMultiple
-				// l.showRepo.UpdateFetchSource(context.Background(), show.ID, entity.FetchSourceMultiple)
+				l.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceMultiple)
 				logger.Info(nil, "Found multiple results for show {Show} ({Year})", show.Name, show.Year)
 			} else {
 				show.FetchSource = entity.FetchSourceTVMaze
-				// l.showRepo.UpdateFetchSource(context.Background(), show.ID, entity.FetchSourceTVMaze)
+				l.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
 				logger.Info(nil, "Found perfect match for show {Show} ({Year}): {Match}", show.Name, show.Year, showSearchResults[0])
 			}
 
-			for _, res := range showSearchResults {
-				fmt.Println(res)
-			}
 		}
 	}()
 }
