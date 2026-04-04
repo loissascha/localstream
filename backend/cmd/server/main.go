@@ -10,6 +10,7 @@ import (
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
 	backgroundservice "github.com/loissascha/localstream/internal/service/background"
@@ -96,12 +97,11 @@ func main() {
 	movieH.RegisterRoutes()
 	userMovieWatchstateH.RegisterHandlers()
 
-	// fs := http.FileServer(http.Dir("./static"))
-	// s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
+	// metadata providers
+	tvMazeProvider := tvmaze.NewTVMazeProvider()
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider)
 	libraryCataloguer.RunBackground()
-	// libraryWatcher.RunOnce()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
 	err = s.Serve(fmt.Sprintf(":%v", port))

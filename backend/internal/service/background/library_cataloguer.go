@@ -26,11 +26,12 @@ type LibraryCataloguer struct {
 	episodeRepo        repository.EpisodeRepository
 	movieRepo          repository.MovieRepository
 	showMatcher        *ShowMatcher
+	metadataProvider   provider.TVMetadataProvider
 }
 
-func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository) *LibraryCataloguer {
+func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider) *LibraryCataloguer {
 
-	showMatcher := NewShowMatcher()
+	showMatcher := NewShowMatcher(metadataProvider)
 	showMatcher.RunBackground()
 
 	return &LibraryCataloguer{
@@ -41,6 +42,7 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 		episodeRepo:        episodeRepo,
 		movieRepo:          movieRepo,
 		showMatcher:        showMatcher,
+		metadataProvider:   metadataProvider,
 	}
 }
 
@@ -166,7 +168,7 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	}
 	if show != nil {
 		if show.FetchSource == entity.FetchSourceNone {
-			l.showMatcher.Channel <- show.ID
+			l.showMatcher.Channel <- show
 		}
 		return show, nil
 	}
@@ -190,7 +192,7 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 
-	l.showMatcher.Channel <- show.ID
+	l.showMatcher.Channel <- show
 	return show, nil
 }
 

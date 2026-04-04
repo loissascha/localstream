@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/loissascha/go-logger/logger"
-	"github.com/loissascha/localstream/internal/parsers"
 	"github.com/loissascha/localstream/internal/provider"
 )
 
@@ -41,20 +40,17 @@ func NewTVMazeProvider() *TVMazeProvider {
 	return &TVMazeProvider{}
 }
 
-func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) ([]provider.ShowSearchResult, error) {
-	if episodeInfo == nil {
-		return nil, nil
+func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearchResult, error) {
+	searchTerm := name
+	if year != 0 {
+		searchTerm = fmt.Sprintf("%s (%n)", name, year)
 	}
 
-	logger.Info(nil, "Search series {Name}", episodeInfo)
-
 	params := url.Values{}
-	params.Add("q", episodeInfo.Series)
+	params.Add("q", searchTerm)
 	encoded := params.Encode()
 
 	fullUrl := "https://api.tvmaze.com/search/shows?" + encoded
-
-	logger.Info(nil, "URL: {Url}", fullUrl)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -93,7 +89,7 @@ func (p *TVMazeProvider) SearchSeries(episodeInfo *parsers.EpisodeInfo) ([]provi
 	}
 
 	if len(searchResults) == 0 {
-		logger.Info(nil, "No series found for {Name}", episodeInfo.Series)
+		logger.Info(nil, "No series found for {Name} ({Year})", name, year)
 		return []provider.ShowSearchResult{}, nil
 	}
 
