@@ -124,7 +124,6 @@
 				({showData.year})
 			{/if}
 		</h1>
-		<p>{showData?.description}</p>
 	{/if}
 
 	<div class="my-3">
