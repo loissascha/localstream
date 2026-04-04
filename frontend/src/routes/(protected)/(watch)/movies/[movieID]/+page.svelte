@@ -22,13 +22,16 @@
 		if (logTimer !== null) {
 			clearInterval(logTimer);
 			logTimer = null;
+			console.log('playback logging stopped');
 		}
 	}
 
 	async function logPlaybackStatus() {
+		console.log('log playback status 1');
 		if (!videoEl) {
 			return;
 		}
+		console.log('log playback status 2');
 		// if (loadingWatchstate) {
 		// 	return;
 		// }
@@ -53,6 +56,7 @@
 	}
 
 	function startPlaybackLogging() {
+		console.log('start playback logging');
 		stopPlaybackLogging();
 		logPlaybackStatus();
 		logTimer = setInterval(logPlaybackStatus, 5000);
