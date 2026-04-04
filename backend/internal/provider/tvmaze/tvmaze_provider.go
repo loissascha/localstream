@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/loissascha/go-logger/logger"
@@ -27,8 +29,10 @@ type TVMazeShow struct {
 	Name      string           `json:"name"`
 	Genres    []string         `json:"genres"`
 	Premiered *string          `json:"premiered"`
+	Ended     *string          `json:"ended"`
 	Image     *TVMazeShowImage `json:"image"`
 	Summary   *string          `json:"summary"`
+	Language  *string          `json:"language"`
 }
 
 type TVMazeShowImage struct {
@@ -41,13 +45,8 @@ func NewTVMazeProvider() *TVMazeProvider {
 }
 
 func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearchResult, error) {
-	searchTerm := name
-	if year != 0 {
-		searchTerm = fmt.Sprintf("%s (%n)", name, year)
-	}
-
 	params := url.Values{}
-	params.Add("q", searchTerm)
+	params.Add("q", name)
 	encoded := params.Encode()
 
 	fullUrl := "https://api.tvmaze.com/search/shows?" + encoded
@@ -57,7 +56,6 @@ func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearc
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
 	if err != nil {
-		logger.Error(err, "Error with http request")
 		return nil, err
 	}
 	req.Header.Set("Content-Type", "application/json")
@@ -65,36 +63,45 @@ func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearc
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		logger.Error(err, "Error with http request 2")
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logger.Error(err, "Error with http request 3")
 		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf("tvmaze search returned status %d", resp.StatusCode)
-		logger.Error(err, "Non success status code")
 		return nil, err
 	}
 
 	var searchResults []TVMazeSearchResult
 	if err = json.Unmarshal(body, &searchResults); err != nil {
-		logger.Error(err, "Error decoding tvmaze response")
 		return nil, err
 	}
 
 	if len(searchResults) == 0 {
-		logger.Info(nil, "No series found for {Name} ({Year})", name, year)
 		return []provider.ShowSearchResult{}, nil
 	}
 
 	mappedResults := make([]provider.ShowSearchResult, 0, len(searchResults))
 	for _, result := range searchResults {
+
+		// if a year is provided -> check the year of the fetched show and continue if it doesn't match
+		if year != 0 && result.Show.Premiered != nil {
+			resultYear, err := getResultYear(*result.Show.Premiered)
+			logger.Debug(nil, "Result Year: {Resultyear}", resultYear)
+			if err == nil {
+				if resultYear != year {
+					continue
+				}
+			} else {
+				logger.Error(err, "Couldn't get result year")
+			}
+		}
+
 		mappedResult := provider.ShowSearchResult{
 			Score: result.Score,
 			Show: provider.ShowMetadata{
@@ -117,8 +124,18 @@ func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearc
 		mappedResults = append(mappedResults, mappedResult)
 	}
 
-	firstResult := mappedResults[0]
-	logger.Debug(nil, "Found {Count} results. Top match: {Name} ({ID}) with score {Score}", len(searchResults), firstResult.Show.Name, firstResult.Show.ID, firstResult.Score)
-
 	return mappedResults, nil
+}
+
+func getResultYear(premiered string) (int, error) {
+	split := strings.Split(premiered, "-")
+	if len(split) > 0 {
+		resultYear, err := strconv.Atoi(split[0])
+		if err != nil {
+			return 0, err
+		}
+		return resultYear, nil
+	} else {
+		return 0, fmt.Errorf("String is in wrong format.")
+	}
 }
