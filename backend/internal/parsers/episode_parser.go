@@ -16,7 +16,7 @@ type EpisodeInfo struct {
 
 var (
 	// S03E03 / s03e03 / S3E3
-	reSxxEyy = regexp.MustCompile(`(?i)\bS(\d{1,2})\s*E(\d{1,3})\b`)
+	reSxxEyy = regexp.MustCompile(`(?i)\bS(\d{1,2})\s*(?:E|EP)\s*(\d{1,3})\b`)
 	// 3x03
 	reX = regexp.MustCompile(`(?i)\b(\d{1,2})\s*x\s*(\d{1,3})\b`)
 
