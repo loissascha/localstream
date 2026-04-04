@@ -4,18 +4,21 @@ import (
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
+	"github.com/loissascha/localstream/internal/repository"
 )
 
 type ShowMatcher struct {
 	Channel          chan *entity.Show
 	metadataProvider provider.TVMetadataProvider
+	showRepo         repository.ShowRepository
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider) *ShowMatcher {
+func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
 		Channel:          ch,
 		metadataProvider: metadataProvider,
+		showRepo:         showRepo,
 	}
 }
 
