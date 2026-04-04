@@ -46,6 +46,7 @@ type WatchstateMovieResponse struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	Percentage float64   `json:"percentage"`
+	MovieInfo  MovieInfo `json:"movie_info"`
 }
 
 type WatchstateResponse struct {
@@ -171,12 +172,13 @@ func toWatchstateInfo(watchstate *entity.UserWatchstate) WatchstateInfo {
 	}
 }
 
-func toWatchstateMovieResponse(watchstate entity.UserMovieWatchstate) WatchstateMovieResponse {
+func toWatchstateMovieResponse(watchstate entity.UserMovieWatchstate, movieInfo MovieInfo) WatchstateMovieResponse {
 	return WatchstateMovieResponse{
-		MovieID:  encoders.EncodeUUID(watchstate.MovieID),
-		Position: watchstate.Position,
-		Duration: watchstate.Duration,
-		Finished: watchstate.Finished,
+		MovieID:   encoders.EncodeUUID(watchstate.MovieID),
+		Position:  watchstate.Position,
+		Duration:  watchstate.Duration,
+		Finished:  watchstate.Finished,
+		MovieInfo: movieInfo,
 	}
 }
 

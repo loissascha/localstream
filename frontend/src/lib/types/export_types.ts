@@ -100,6 +100,7 @@ export interface WatchstateMovieResponse {
   created_at: string;
   updated_at: string;
   percentage: number;
+  movie_info: MovieInfo;
 }
 export interface WatchstateMoviesListResponse {
   watchstates: WatchstateMovieResponse[];

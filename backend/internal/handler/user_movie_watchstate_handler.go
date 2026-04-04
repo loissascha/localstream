@@ -6,6 +6,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -46,6 +47,7 @@ func (h *UserMovieWatchstateHandler) RegisterHandlers() {
 		h.listLatestWatchstates,
 		server.WithExportType[WatchstateMoviesListResponse](),
 		server.WithExportType[WatchstateMovieResponse](),
+		server.WithExportType[MovieInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 }
@@ -70,19 +72,20 @@ func (h *UserMovieWatchstateHandler) listLatestWatchstates(w http.ResponseWriter
 
 	response := make([]WatchstateMovieResponse, 0, len(watchstates))
 	for _, watchstate := range watchstates {
-		// movieId := encoders.EncodeUUID(watchstate.MovieID)
 
 		if watchstate.Finished {
 			continue
 		}
 
-		// movie, err := h.movieService.GetById(r.Context(), movieId)
-		// if err != nil {
-		// 	respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
-		// 	return
-		// }
+		movieId := encoders.EncodeUUID(watchstate.MovieID)
+		movie, err := h.movieService.GetById(r.Context(), movieId)
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
+			return
+		}
 
-		response = append(response, toWatchstateMovieResponse(watchstate))
+		movieInfo := toMovieInfo(movie)
+		response = append(response, toWatchstateMovieResponse(watchstate, movieInfo))
 	}
 
 	respond.JSON(w, http.StatusOK, WatchstateMoviesListResponse{Watchstates: response})
