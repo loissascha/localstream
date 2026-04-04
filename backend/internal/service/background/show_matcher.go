@@ -13,14 +13,16 @@ type ShowMatcher struct {
 	Channel          chan *entity.Show
 	metadataProvider provider.TVMetadataProvider
 	showRepo         repository.ShowRepository
+	showMetadataRepo repository.ShowMetadataRepository
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository) *ShowMatcher {
+func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
 		Channel:          ch,
 		metadataProvider: metadataProvider,
 		showRepo:         showRepo,
+		showMetadataRepo: showMetadataRepo,
 	}
 }
 
