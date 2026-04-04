@@ -24,7 +24,6 @@ type ShowInfo struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Year        int    `json:"year"`
-	Description string `json:"description"`
 }
 
 type ShowListResponse struct {
@@ -136,7 +135,6 @@ func toShowInfo(show *entity.Show) ShowInfo {
 		ID:          encoders.EncodeUUID(show.ID),
 		Name:        show.Name,
 		Year:        show.Year,
-		Description: show.Description,
 	}
 }
 

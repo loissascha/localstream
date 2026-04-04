@@ -175,7 +175,6 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		ID:          uuid.New(),
 		Name:        showInfo.Series,
 		Year:        0,
-		Description: "",
 		Path:        p,
 		FetchSource: entity.FetchSourceNone,
 	}

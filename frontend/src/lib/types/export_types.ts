@@ -69,7 +69,6 @@ export interface ShowInfo {
   id: string;
   name: string;
   year: number;
-  description: string;
 }
 export interface ShowListResponse {
   shows: ShowInfo[];

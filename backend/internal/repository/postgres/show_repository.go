@@ -27,12 +27,12 @@ func (r *ShowRepository) Create(ctx context.Context, show *entity.Show) error {
 	}
 
 	const query = `
-		INSERT INTO shows (name, year, description, path, fetch_source)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO shows (name, year, path, fetch_source)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id, created_at
 	`
 
-	err := r.db.QueryRowxContext(ctx, query, show.Name, show.Year, show.Description, show.Path, fetchSource).Scan(&show.ID, &show.CreatedAt)
+	err := r.db.QueryRowxContext(ctx, query, show.Name, show.Year, show.Path, fetchSource).Scan(&show.ID, &show.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create show: %w", err)
 	}
@@ -44,7 +44,7 @@ func (r *ShowRepository) Create(ctx context.Context, show *entity.Show) error {
 
 func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Show, error) {
 	const query = `
-		SELECT id, name, year, description, path, created_at, fetch_source
+		SELECT id, name, year, path, created_at, fetch_source
 		FROM shows
 		WHERE id = $1
 		LIMIT 1
@@ -63,7 +63,7 @@ func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Sho
 
 func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Show, error) {
 	const query = `
-		SELECT id, name, year, description, path, created_at, fetch_source
+		SELECT id, name, year, path, created_at, fetch_source
 		FROM shows
 		WHERE path = $1
 		LIMIT 1
@@ -82,7 +82,7 @@ func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Sh
 
 func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	const query = `
-		SELECT id, name, year, description, path, created_at, fetch_source
+		SELECT id, name, year, path, created_at, fetch_source
 		FROM shows
 	`
 
