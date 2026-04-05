@@ -58,4 +58,27 @@ func (r *ShowMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UU
 	return metadata, nil
 }
 
+func (r *ShowMetadataRepository) DeleteOne(ctx context.Context, id uuid.UUID) error {
+	const query = `
+		DELETE FROM show_metadata
+		WHERE id = $1
+		`
+
+	result, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrShowMetadataNotFound
+	}
+
+	return nil
+}
+
 var _ repository.ShowMetadataRepository = (*ShowMetadataRepository)(nil)

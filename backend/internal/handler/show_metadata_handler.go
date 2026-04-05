@@ -5,7 +5,6 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -40,7 +39,13 @@ func (h *ShowMetadataHandler) setPrimary(w http.ResponseWriter, r *http.Request)
 	showId := r.PathValue("showID")
 	id := r.PathValue("id")
 
-	logger.Info(nil, "Set Primary to {ID} for show {ShowID}", id, showId)
+	err := h.showMetaService.SetPrimaryForShowID(r.Context(), showId, id)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, id)
 }
 
 func (h *ShowMetadataHandler) listByShow(w http.ResponseWriter, r *http.Request) {

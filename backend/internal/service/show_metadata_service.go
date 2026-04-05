@@ -45,3 +45,31 @@ func (s *ShowMetadataService) GetByShowID(ctx context.Context, showID string) ([
 
 	return metadata, nil
 }
+
+func (s *ShowMetadataService) SetPrimaryForShowID(ctx context.Context, showID string, id string) error {
+	uuid, err := encoders.DecodeUUID(id)
+	if err != nil {
+		return fmt.Errorf("parse id: %w", err)
+	}
+
+	showUUID, err := encoders.DecodeUUID(showID)
+	if err != nil {
+		return fmt.Errorf("parse show id: %w", err)
+	}
+
+	metadata, err := s.showMetadataRepo.GetByShowID(ctx, showUUID)
+	if err != nil {
+		return fmt.Errorf("get show metadata by show id: %w", err)
+	}
+
+	for _, m := range metadata {
+		if m.ID != uuid {
+			err := s.showMetadataRepo.DeleteOne(ctx, uuid)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
