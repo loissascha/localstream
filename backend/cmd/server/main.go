@@ -86,6 +86,7 @@ func main() {
 	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
 	userMovieWatchstateH := handler.NewUserMovieWatchstateHandler(s, authMiddleware, userMovieWatchstateServiced, movieService)
 	movieH := handler.NewMovieHandler(s, authMiddleware, movieService)
+	showMetaH := handler.NewShowMetadataHandler(s, authMiddleware)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -97,6 +98,7 @@ func main() {
 	userWatchstateH.RegisterRoutes()
 	movieH.RegisterRoutes()
 	userMovieWatchstateH.RegisterHandlers()
+	showMetaH.RegisterRoutes()
 
 	// metadata providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
