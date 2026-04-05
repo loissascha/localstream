@@ -10,11 +10,15 @@ import (
 )
 
 type ShowMetadataService struct {
+	showRepo         repository.ShowRepository
 	showMetadataRepo repository.ShowMetadataRepository
 }
 
-func NewShowMetadataService(showMetadataRepo repository.ShowMetadataRepository) *ShowMetadataService {
-	return &ShowMetadataService{showMetadataRepo: showMetadataRepo}
+func NewShowMetadataService(showMetadataRepo repository.ShowMetadataRepository, showRepo repository.ShowRepository) *ShowMetadataService {
+	return &ShowMetadataService{
+		showMetadataRepo: showMetadataRepo,
+		showRepo:         showRepo,
+	}
 }
 
 func (s *ShowMetadataService) Create(ctx context.Context, showID string, metadata *entity.ShowMetadata) error {
@@ -62,13 +66,21 @@ func (s *ShowMetadataService) SetPrimaryForShowID(ctx context.Context, showID st
 		return fmt.Errorf("get show metadata by show id: %w", err)
 	}
 
+	targetFetchSource := entity.FetchSourceNone
 	for _, m := range metadata {
 		if m.ID != uuid {
 			err := s.showMetadataRepo.DeleteOne(ctx, uuid)
 			if err != nil {
 				return err
 			}
+			continue
 		}
+		targetFetchSource = m.FetchSource
+	}
+
+	err = s.showRepo.UpdateFetchSource(ctx, showUUID, targetFetchSource)
+	if err != nil {
+		return err
 	}
 
 	return nil

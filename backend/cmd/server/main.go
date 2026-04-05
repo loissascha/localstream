@@ -72,7 +72,7 @@ func main() {
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
-	showMetaService := service.NewShowMetadataService(showMetaRepo)
+	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
