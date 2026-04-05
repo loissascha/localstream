@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -28,6 +29,18 @@ func (h *ShowMetadataHandler) RegisterRoutes() {
 		h.listByShow,
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+
+	h.s.POSTI("/api/v1/show/metadata/{showID}/set/primary/{id}",
+		h.setPrimary,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+}
+
+func (h *ShowMetadataHandler) setPrimary(w http.ResponseWriter, r *http.Request) {
+	showId := r.PathValue("showID")
+	id := r.PathValue("id")
+
+	logger.Info(nil, "Set Primary to {ID} for show {ShowID}", id, showId)
 }
 
 func (h *ShowMetadataHandler) listByShow(w http.ResponseWriter, r *http.Request) {
