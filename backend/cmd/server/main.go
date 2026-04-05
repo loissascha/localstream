@@ -72,6 +72,7 @@ func main() {
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
+	showMetaService := service.NewShowMetadataService(showMetaRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -86,7 +87,7 @@ func main() {
 	userWatchstateH := handler.NewUserWatchstateHandler(s, authMiddleware, userWatchstateService, showSerivce, seasonService, episodeService)
 	userMovieWatchstateH := handler.NewUserMovieWatchstateHandler(s, authMiddleware, userMovieWatchstateServiced, movieService)
 	movieH := handler.NewMovieHandler(s, authMiddleware, movieService)
-	showMetaH := handler.NewShowMetadataHandler(s, authMiddleware)
+	showMetaH := handler.NewShowMetadataHandler(s, authMiddleware, showMetaService)
 
 	// register routes
 	authH.RegisterHandlers()
