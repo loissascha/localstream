@@ -26,6 +26,7 @@ func NewShowMetadataHandler(s *server.Server, authM *middleware.AuthMiddleware, 
 func (h *ShowMetadataHandler) RegisterRoutes() {
 	h.s.GETI("/api/v1/show/metadata/{showID}",
 		h.listByShow,
+		server.WithExportType[ShowMetadataInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
