@@ -2,7 +2,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import AdminLeftMenuButton from '$lib/components/AdminLeftMenuButton.svelte';
+	import AdminLeftMenuButton from '$lib/components/admin/AdminLeftMenuButton.svelte';
 
 	let { children } = $props();
 

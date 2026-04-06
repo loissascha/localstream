@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { loadShows } from '$lib/api/shows';
 	import { auth } from '$lib/auth.svelte';
-	import AdminShowMetadataBlock from '$lib/components/AdminShowMetadataBlock.svelte';
+	import AdminShowMetadataBlock from '$lib/components/admin/AdminShowMetadataBlock.svelte';
 	import type { ShowInfo } from '$lib/types/export_types';
 
 	var shows = $state<ShowInfo[]>([]);

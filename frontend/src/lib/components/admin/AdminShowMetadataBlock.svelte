@@ -72,13 +72,13 @@
 													alert(m);
 												});
 										}}
-										class="mt-2 cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+										class="mt-2 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
 										>Select as Primary</button
 									>
 								{/if}
 							</div>
 							<div>
-								<img class="w-full" src={m.medium_image_url} />
+								<img class="w-full" src={m.medium_image_url} alt={m.name} />
 							</div>
 						</div>
 					</div>
