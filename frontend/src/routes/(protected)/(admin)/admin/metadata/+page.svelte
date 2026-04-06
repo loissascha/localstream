@@ -30,6 +30,8 @@
 	<p class="text-red-500">{errorMessage}</p>
 {/if}
 
-{#each shows as show}
-	<AdminShowMetadataBlock {show} />
-{/each}
+<div class="grid grid-cols-3 gap-4">
+	{#each shows as show}
+		<AdminShowMetadataBlock {show} />
+	{/each}
+</div>
