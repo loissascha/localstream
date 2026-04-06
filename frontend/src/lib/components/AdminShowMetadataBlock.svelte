@@ -57,7 +57,12 @@
 						<div class="grid grid-cols-2">
 							<div>
 								<p>{m.description}</p>
-								<button>Select as Primary</button>
+								{#if metadata.length > 1}
+									<button
+										class="mt-2 cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+										>Select as Primary</button
+									>
+								{/if}
 							</div>
 							<div>
 								<img class="w-full" src={m.medium_image_url} />
