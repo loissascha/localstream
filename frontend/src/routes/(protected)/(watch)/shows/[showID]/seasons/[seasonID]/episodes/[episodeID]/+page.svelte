@@ -44,7 +44,9 @@
 		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
 		const position = Number(videoEl.currentTime.toFixed(2));
 		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
-		almostDone = duration > 0 && position >= Math.max(duration - 120, 0);
+		const almostDoneStatus = duration > 0 && position >= Math.max(duration - 120, 0);
+		console.log('almost done status:', almostDoneStatus);
+		almostDone = almostDoneStatus;
 
 		if (auth.token) {
 			try {
@@ -115,12 +117,13 @@
 		if (!auth.token) {
 			return;
 		}
-		if (!loadingWatchstate) return;
+		if (loadingWatchstate) return;
 		if (!almostDone) return;
 		if (nextEpisode != null) return;
+		console.log('loading next episode!');
 		getNextEpisode(auth.token, episodeId)
 			.then((r) => {
-				console.log("next episode res:", r)
+				console.log('next episode res:', r);
 				nextEpisode = r;
 			})
 			.catch((e) => {
@@ -164,7 +167,7 @@
 				seasonID: nextEpisode.season_id,
 				episodeID: nextEpisode.id
 			})}
-			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded bg-neutral-500 border border-neutral-600"
+			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded border border-neutral-600 bg-neutral-500"
 		>
 			Next Episode <ChevronRightIcon />
 		</a>

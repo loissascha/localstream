@@ -1,8 +1,11 @@
 import { API_URL } from '$lib/consts';
 import type { EpisodeInfo } from '$lib/types/export_types';
 
-export async function getNextEpisode(bearerToken: string, currentEpisodeID: string): Promise<EpisodeInfo> {
-	const response = await fetch(API_URL + '/api/watchstate/latest/shows', {
+export async function getNextEpisode(
+	bearerToken: string,
+	currentEpisodeID: string
+): Promise<EpisodeInfo> {
+	const response = await fetch(API_URL + '/api/episodes/next/' + currentEpisodeID, {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
