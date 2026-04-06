@@ -133,7 +133,7 @@
 	});
 </script>
 
-<main class="grid min-h-dvh grid-rows-[auto_1fr]">
+<main class="grid h-dvh grid-rows-[auto_1fr] overflow-hidden">
 	<header class="flex items-center gap-2 bg-neutral-900 px-4 py-3.5">
 		<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
 			<HomeIcon />
@@ -146,18 +146,20 @@
 		</a>
 	</header>
 
-	<section class="flex items-center justify-center bg-black">
+	<section class="min-h-0 bg-orange-100">
 		<!-- svelte-ignore a11y_media_has_caption -->
-		<video
-			bind:this={videoEl}
-			class="h-full w-full bg-black"
-			controls
-			preload="metadata"
-			src={streamUrl}
-			onplay={startPlaybackLogging}
-			onpause={stopPlaybackLogging}
-			onended={stopPlaybackLogging}
-		></video>
+		<div class="h-full w-full bg-green-100">
+			<video
+				bind:this={videoEl}
+				class="h-full w-full bg-black object-contain"
+				controls
+				preload="metadata"
+				src={streamUrl}
+				onplay={startPlaybackLogging}
+				onpause={stopPlaybackLogging}
+				onended={stopPlaybackLogging}
+			></video>
+		</div>
 	</section>
 
 	{#if almostDone && nextEpisode != null}
@@ -167,7 +169,7 @@
 				seasonID: nextEpisode.season_id,
 				episodeID: nextEpisode.id
 			})}
-			class="fixed right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded border border-neutral-600 bg-neutral-500"
+			class="absolute right-8 bottom-12 flex h-10 w-60 items-center justify-center rounded border border-neutral-600 bg-neutral-500"
 		>
 			Next Episode <ChevronRightIcon />
 		</a>
