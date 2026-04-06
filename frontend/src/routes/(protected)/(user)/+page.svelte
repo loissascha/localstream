@@ -12,6 +12,7 @@
 	import { listMovies } from '$lib/api/movies';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import { loadShows } from '$lib/api/shows';
+	import ShowListItem from '$lib/components/ShowListItem.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -98,12 +99,7 @@
 			</h2>
 			<div class="flex gap-4">
 				{#each shows as show (show.id)}
-					<a
-						href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
-						class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
-					>
-						{show.name}
-					</a>
+					<ShowListItem show={show} />
 				{/each}
 			</div>
 		</section>
