@@ -27,7 +27,7 @@
 </script>
 
 {#if metadata == null || metadata.medium_image_url == ''}
-	{show.name}
+	<span class="font-bold">{show.name}</span>
 {:else}
 	<img alt={show.name} src={metadata.medium_image_url} />
 {/if}
