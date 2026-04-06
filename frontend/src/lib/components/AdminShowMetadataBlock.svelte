@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setPrimaryMetadataForShow } from '$lib/api/admin/show_metadata';
 	import { loadShowMetadata } from '$lib/api/show_metadata';
 	import { auth } from '$lib/auth.svelte';
 	import { type ShowMetadataInfo, type ShowInfo } from '$lib/types/export_types';
@@ -8,7 +9,7 @@
 	let loading = $state(true);
 	let showMetadata = $state(false);
 
-	async function loadMetadata(show: ShowInfo) {
+	async function loadMetadata() {
 		try {
 			if (!auth.token) return;
 			metadata = await loadShowMetadata(auth.token, show.id);
@@ -22,7 +23,7 @@
 
 	$effect(() => {
 		if (!auth.initialized) return;
-		loadMetadata(show);
+		loadMetadata();
 	});
 </script>
 
@@ -59,6 +60,17 @@
 								<p>{m.description}</p>
 								{#if metadata.length > 1}
 									<button
+										onclick={() => {
+											if (!auth.token) return;
+											setPrimaryMetadataForShow(auth.token, show.id, m.id)
+												.then(() => {
+													loadMetadata();
+												})
+												.catch((e) => {
+													const m = (e as Error).message;
+													alert(m);
+												});
+										}}
 										class="mt-2 cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 										>Select as Primary</button
 									>
