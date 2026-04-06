@@ -27,7 +27,7 @@
 	});
 </script>
 
-<div class="border border-neutral-500 p-4">
+<div class="rounded bg-neutral-800 p-4">
 	<div class="font-bold">
 		{show.name}
 	</div>
