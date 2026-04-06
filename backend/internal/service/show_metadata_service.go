@@ -69,7 +69,7 @@ func (s *ShowMetadataService) SetPrimaryForShowID(ctx context.Context, showID st
 	targetFetchSource := entity.FetchSourceNone
 	for _, m := range metadata {
 		if m.ID != uuid {
-			err := s.showMetadataRepo.DeleteOne(ctx, uuid)
+			err := s.showMetadataRepo.DeleteOne(ctx, m.ID)
 			if err != nil {
 				return err
 			}
