@@ -3,7 +3,6 @@
 	import {
 		type ShowInfo,
 		type LibraryListItem,
-		type ShowListResponse,
 		type MovieInfo
 	} from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
@@ -12,6 +11,7 @@
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { listMovies } from '$lib/api/movies';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
+	import { loadShows } from '$lib/api/shows';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -35,20 +35,11 @@
 		}
 	}
 
-	async function loadShows() {
+	async function loadShowsList() {
 		try {
-			const res = await fetch('/api/shows', {
-				headers: {
-					Authorization: 'Bearer ' + auth.token
-				}
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to load shows: ${res.status}`);
-			}
-
-			const data = (await res.json()) as ShowListResponse;
+			if (!auth.token) return;
+			const data = await loadShows(auth.token);
 			shows = data.shows;
-			console.log('shows', data);
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
 		} finally {
@@ -84,7 +75,7 @@
 	$effect(() => {
 		if (!auth.initialized) return;
 		loadLibrariesData();
-		loadShows();
+		loadShowsList();
 		loadMovies();
 	});
 </script>

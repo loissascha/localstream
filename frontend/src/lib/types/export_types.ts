@@ -73,6 +73,16 @@ export interface ShowInfo {
 export interface ShowListResponse {
   shows: ShowInfo[];
 }
+export interface ShowMetadataInfo {
+  id: string;
+  show_id: string;
+  name: string;
+  url: string;
+  description: string;
+  medium_image_url: string;
+  original_image_url: string;
+  fetch_source: string;
+}
 export interface VideoListItem {
   id: string;
   name: string;
