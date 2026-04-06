@@ -7,7 +7,7 @@
 	let { show }: { show: ShowInfo } = $props();
 	let metadata = $state<ShowMetadataInfo[]>([]);
 	let loading = $state(true);
-	let showMetadata = $state(false);
+	let showMetadata = $state(true);
 
 	async function loadMetadata() {
 		try {
@@ -28,7 +28,7 @@
 </script>
 
 <div class="border border-neutral-500 p-4">
-	<div>
+	<div class="font-bold">
 		{show.name}
 	</div>
 	{#if loading}
