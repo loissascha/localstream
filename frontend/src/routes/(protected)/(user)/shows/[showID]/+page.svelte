@@ -2,6 +2,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import { page } from '$app/state';
 	import {
+		type ShowMetadataInfo,
 		type EpisodeInfo,
 		type EpisodeListResponse,
 		type SeasonInfo,
@@ -11,6 +12,7 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { setWatchstateFinished } from '$lib/api/watchstate';
+	import { loadShowMetadata } from '$lib/api/show_metadata';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -23,6 +25,8 @@
 	let showData = $state<ShowInfo | null>(null);
 	let seasonData = $state<SeasonInfo[] | null>(null);
 	let episodeData = $state<EpisodeInfo[] | null>(null);
+
+	let metadata = $state<ShowMetadataInfo | null>(null);
 
 	let selectedSeason = $state<SeasonInfo | null>(null);
 
@@ -93,10 +97,24 @@
 		}
 	}
 
+	async function loadMetadata() {
+		try {
+			if (!auth.token) return;
+			const data = await loadShowMetadata(auth.token, showId);
+			if (data.length == 1) {
+				metadata = data[0];
+			}
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
+
 	$effect(() => {
 		if (!showId || showId == '') return;
 		loadShows();
 		loadSeasons();
+		loadMetadata();
 	});
 
 	$effect(() => {
@@ -115,16 +133,32 @@
 		<p>{errorMessage}</p>
 	{/if}
 
-	{#if loadingShowData}
-		<p>Loading stuff...</p>
-	{:else}
-		<h1 class="text-3xl">
-			{showData?.name}
-			{#if showData && showData.year > 0}
-				({showData.year})
+	<div class="flex gap-2">
+		<div class="shrink-0">
+			{#if metadata != null}
+				<div>
+					<img alt={metadata.name} class="max-h-102" src={metadata.original_image_url} />
+				</div>
 			{/if}
-		</h1>
-	{/if}
+		</div>
+		<div>
+			{#if loadingShowData}
+				<p>Loading stuff...</p>
+			{:else}
+				<h1 class="text-3xl mb-2">
+					{showData?.name}
+					{#if showData && showData.year > 0}
+						({showData.year})
+					{/if}
+				</h1>
+			{/if}
+			{#if metadata != null}
+				<div>
+					{metadata.description}
+				</div>
+			{/if}
+		</div>
+	</div>
 
 	<div class="my-3">
 		{#if loadingSeasons}
@@ -145,11 +179,14 @@
 	<div class="my-3 flex gap-4 overflow-y-scroll py-5">
 		{#each episodeData as episode (episode.id)}
 			<a
-				href={resolve('/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
-					showID: showId,
-					seasonID: selectedSeason!.id,
-					episodeID: episode.id
-				})}
+				href={resolve(
+					'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+					{
+						showID: showId,
+						seasonID: selectedSeason!.id,
+						episodeID: episode.id
+					}
+				)}
 				class="flex h-34 w-34 shrink-0 flex-col justify-between rounded bg-neutral-800"
 			>
 				<div>
