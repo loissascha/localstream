@@ -51,7 +51,6 @@
 				class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
 				<ShowInfoDisplay show={d.show_info} />
-				<div class="grow font-bold">{d.show_info.name}</div>
 				<div>
 					<div>S{d.season_info.number} E{d.episode_info.number}</div>
 					<div class="bg-neutral-600">
