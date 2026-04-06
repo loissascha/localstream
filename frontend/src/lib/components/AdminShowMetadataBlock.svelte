@@ -6,6 +6,7 @@
 	let { show }: { show: ShowInfo } = $props();
 	let metadata = $state<ShowMetadataInfo[]>([]);
 	let loading = $state(true);
+	let showMetadata = $state(false);
 
 	async function loadMetadata(show: ShowInfo) {
 		try {
@@ -32,8 +33,39 @@
 	{#if loading}
 		Loading metadata...
 	{:else}
-		<div>
-			Metadata: {metadata.length}
+		<div class="flex items-center justify-between">
+			<span>
+				Metadata: {metadata.length}
+			</span>
+			<button
+				onclick={() => {
+					showMetadata = !showMetadata;
+				}}
+			>
+				{#if showMetadata}
+					Hide
+				{:else}
+					Show
+				{/if}
+			</button>
 		</div>
+		{#if showMetadata}
+			<div class="mt-4 flex flex-col gap-2">
+				{#each metadata as m}
+					<div class="">
+						<div class="font-bold">{m.name}</div>
+						<div class="grid grid-cols-2">
+							<div>
+								<p>{m.description}</p>
+								<button>Select as Primary</button>
+							</div>
+							<div>
+								<img class="w-full" src={m.medium_image_url} />
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 	{/if}
 </div>
