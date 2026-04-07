@@ -26,6 +26,7 @@ type LibraryCataloguer struct {
 	episodeRepo        repository.EpisodeRepository
 	movieRepo          repository.MovieRepository
 	showMatcher        *ShowMatcher
+	movieMatcher       *MovieMatcher
 	showMetadataRepo   repository.ShowMetadataRepository
 }
 
@@ -33,6 +34,9 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 
 	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo)
 	showMatcher.RunBackground()
+
+	movieMatcher := NewMovieMatcher()
+	movieMatcher.RunBackground()
 
 	return &LibraryCataloguer{
 		libService:         libService,
@@ -42,6 +46,7 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 		episodeRepo:        episodeRepo,
 		movieRepo:          movieRepo,
 		showMatcher:        showMatcher,
+		movieMatcher:       movieMatcher,
 	}
 }
 
@@ -278,7 +283,7 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 			return err
 		}
 		if movie != nil {
-			// TODO: trigger movie matcher
+			l.movieMatcher.Channel <- movie
 			continue
 		}
 		movieInfo, ok := parsers.ParseMovieFromFilename(f.Name)
@@ -300,7 +305,7 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 		if err != nil {
 			return err
 		}
-		// TODO: trigger movie matcher
+		l.movieMatcher.Channel <- movie
 	}
 	return nil
 }
