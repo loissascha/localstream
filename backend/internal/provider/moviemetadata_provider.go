@@ -1,5 +1,5 @@
 package provider
 
 type MovieMetadataProvider interface {
-	SearchMovie(name string, year int)
+	SearchMovie(name string, year int) ([]MovieResult, error)
 }

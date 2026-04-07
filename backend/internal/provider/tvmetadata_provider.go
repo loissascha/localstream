@@ -20,6 +20,18 @@ type ShowImage struct {
 	Original string
 }
 
+type MovieSearchResult struct {
+	Page    int           `json:"page"`
+	Results []MovieResult `json:"results"`
+}
+
+type MovieResult struct {
+	Adult         bool   `json:"adult"`
+	OriginalTitle string `json:"original_title"`
+	Overview      string `json:"overview"`
+	ReleaseDate   string `json:"release_date"`
+}
+
 type TVMetadataProvider interface {
 	SearchShow(name string, year int) ([]ShowSearchResult, error)
 }
