@@ -25,6 +25,11 @@ func (self *MovieMatcher) RunBackground() {
 	go func() {
 		for {
 			movie := <-self.Channel
+			if !movie.FetchSource.IsNone() {
+				continue
+			}
+			continue // TODO: temporary 
+
 			fmt.Println("movie", movie)
 			result, err := self.metadataProvider.SearchMovie(movie.Name, movie.Year)
 			if err != nil {
