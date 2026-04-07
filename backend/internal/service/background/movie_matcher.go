@@ -17,10 +17,10 @@ func NewMovieMatcher() *MovieMatcher {
 	}
 }
 
-func (l *MovieMatcher) RunBackground() {
+func (self *MovieMatcher) RunBackground() {
 	go func() {
 		for {
-			movie := <-l.Channel
+			movie := <-self.Channel
 			fmt.Println("movie", movie)
 		}
 	}()

@@ -29,13 +29,13 @@ func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repos
 	}
 }
 
-func (l *ShowMatcher) RunBackground() {
+func (self *ShowMatcher) RunBackground() {
 	go func() {
 		for {
-			show := <-l.Channel
+			show := <-self.Channel
 			logger.Info(nil, "New ShowID triggered! {Show}", show)
 
-			showSearchResults, err := l.metadataProvider.SearchShow(show.Name, show.Year)
+			showSearchResults, err := self.metadataProvider.SearchShow(show.Name, show.Year)
 			if err != nil {
 				logger.Error(err, "Error getting show results")
 				continue
@@ -78,7 +78,7 @@ func (l *ShowMatcher) RunBackground() {
 					OriginalImageUrl: originalImage,
 					FetchSource:      entity.FetchSourceTVMaze,
 				}
-				err = l.showMetadataRepo.Create(ctx, &metadata)
+				err = self.showMetadataRepo.Create(ctx, &metadata)
 				if err != nil {
 					logger.Fatal(err, "Can't create show metadata")
 					hasError = true
@@ -91,11 +91,11 @@ func (l *ShowMatcher) RunBackground() {
 
 			if len(showSearchResults) > 1 {
 				show.FetchSource = entity.FetchSourceMultiple
-				l.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceMultiple)
+				self.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceMultiple)
 				logger.Info(nil, "Found multiple results for show {Show} ({Year})", show.Name, show.Year)
 			} else {
 				show.FetchSource = entity.FetchSourceTVMaze
-				l.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
+				self.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
 				logger.Info(nil, "Found perfect match for show {Show} ({Year}): {Match}", show.Name, show.Year, showSearchResults[0])
 			}
 		}
