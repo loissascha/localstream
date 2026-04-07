@@ -285,9 +285,13 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 			logger.Error(nil, "Can't parse movie filename")
 			continue
 		}
+		year := 0
+		if movieInfo.Year != nil {
+			year = *movieInfo.Year
+		}
 		movie = &entity.Movie{
 			Name:      movieInfo.Title,
-			Year:      movie.Year,
+			Year:      year,
 			CreatedAt: time.Now().UTC(),
 			Path:      f.Path,
 		}
