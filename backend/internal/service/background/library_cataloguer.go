@@ -30,12 +30,12 @@ type LibraryCataloguer struct {
 	showMetadataRepo   repository.ShowMetadataRepository
 }
 
-func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, showMetadataRepo repository.ShowMetadataRepository) *LibraryCataloguer {
+func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, movieMetadataProvider provider.MovieMetadataProvider, showMetadataRepo repository.ShowMetadataRepository) *LibraryCataloguer {
 
 	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo)
 	showMatcher.RunBackground()
 
-	movieMatcher := NewMovieMatcher()
+	movieMatcher := NewMovieMatcher(movieMetadataProvider)
 	movieMatcher.RunBackground()
 
 	return &LibraryCataloguer{

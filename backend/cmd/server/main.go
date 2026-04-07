@@ -10,6 +10,7 @@ import (
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/provider/tmdb"
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
@@ -103,8 +104,9 @@ func main() {
 
 	// metadata providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
+	tmdbProvider := tmdb.NewTMDBProvider()
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, showMetaRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo)
 	libraryCataloguer.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
