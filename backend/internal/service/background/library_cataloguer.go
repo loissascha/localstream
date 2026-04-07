@@ -280,8 +280,14 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 		if movie != nil {
 			continue
 		}
+		movieInfo, ok := parsers.ParseMovieFromFilename(f.Name)
+		if !ok {
+			logger.Error(nil, "Can't parse movie filename")
+			continue
+		}
 		movie = &entity.Movie{
-			Name:      f.Name,
+			Name:      movieInfo.Title,
+			Year:      movie.Year,
 			CreatedAt: time.Now().UTC(),
 			Path:      f.Path,
 		}
