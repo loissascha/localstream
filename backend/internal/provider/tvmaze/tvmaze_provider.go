@@ -139,3 +139,5 @@ func getResultYear(premiered string) (int, error) {
 		return 0, fmt.Errorf("String is in wrong format.")
 	}
 }
+
+var _ provider.TVMetadataProvider = (*TVMazeProvider)(nil)
