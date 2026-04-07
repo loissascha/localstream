@@ -278,6 +278,7 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 			return err
 		}
 		if movie != nil {
+			// TODO: trigger movie matcher
 			continue
 		}
 		movieInfo, ok := parsers.ParseMovieFromFilename(f.Name)
@@ -299,6 +300,7 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 		if err != nil {
 			return err
 		}
+		// TODO: trigger movie matcher
 	}
 	return nil
 }
