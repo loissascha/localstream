@@ -119,7 +119,9 @@
 		}
 		if (loadingWatchstate) return;
 		if (!almostDone) return;
-		if (nextEpisode != null) return;
+
+		// TODO: wenn man schonmal "Next episode" geklickt hat wird getNextEpisode nicht erneut getriggered wodurch man kein 2. mal auf Next Episode klicken kann
+
 		console.log('loading next episode!');
 		getNextEpisode(auth.token, episodeId)
 			.then((r) => {
