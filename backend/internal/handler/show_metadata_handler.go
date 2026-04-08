@@ -59,7 +59,7 @@ func (h *ShowMetadataHandler) listByShow(w http.ResponseWriter, r *http.Request)
 
 	result := []ShowMetadataInfo{}
 	for _, m := range metadata {
-		result = append(result, toMetadataInfo(&m))
+		result = append(result, toShowMetadataInfo(&m))
 	}
 
 	respond.JSON(w, http.StatusOK, result)

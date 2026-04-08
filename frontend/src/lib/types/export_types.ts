@@ -44,6 +44,16 @@ export interface MovieInfo {
 export interface MovieListResponse {
   movies: MovieInfo[];
 }
+export interface MovieMetadataInfo {
+  id: string;
+  movie_id: string;
+  name: string;
+  url: string;
+  description: string;
+  medium_image_url: string;
+  backdrop_image_url: string;
+  fetch_source: string;
+}
 export interface SaveMovieWatchstateRequest {
   movie_id: string;
   position: number;

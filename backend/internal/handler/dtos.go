@@ -106,7 +106,31 @@ type ShowMetadataInfo struct {
 	FetchSource      entity.FetchSource `json:"fetch_source"`
 }
 
-func toMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {
+type MovieMetadataInfo struct {
+	ID               string             `json:"id"`
+	MovieID          string             `json:"movie_id"`
+	Name             string             `json:"name"`
+	Url              string             `json:"url"`
+	Description      string             `json:"description"`
+	MediumImageUrl   string             `json:"medium_image_url"`
+	BackdropImageUrl string             `json:"backdrop_image_url"`
+	FetchSource      entity.FetchSource `json:"fetch_source"`
+}
+
+func toMovieMetadataInfo(m *entity.MovieMetadata) MovieMetadataInfo {
+	return MovieMetadataInfo{
+		ID:               encoders.EncodeUUID(m.ID),
+		MovieID:          encoders.EncodeUUID(m.MovieID),
+		Name:             m.Name,
+		Url:              m.Url,
+		Description:      m.Description,
+		MediumImageUrl:   m.MediumImageUrl,
+		BackdropImageUrl: m.BackdropImageUrl,
+		FetchSource:      m.FetchSource,
+	}
+}
+
+func toShowMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {
 	return ShowMetadataInfo{
 		ID:               encoders.EncodeUUID(m.ID),
 		ShowID:           encoders.EncodeUUID(m.ShowID),
