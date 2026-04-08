@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setPrimaryMetadataForMovie } from '$lib/api/admin/movie_metadata';
 	import { loadMovieMetadata } from '$lib/api/movie_metadata';
 	import { auth } from '$lib/auth.svelte';
 	import type { MovieInfo, MovieMetadataInfo } from '$lib/types/export_types';
@@ -62,14 +63,14 @@
 									<button
 										onclick={() => {
 											if (!auth.token) return;
-											// setPrimaryMetadataForShow(auth.token, show.id, m.id)
-											// 	.then(() => {
-											// 		loadMetadata();
-											// 	})
-											// 	.catch((e) => {
-											// 		const m = (e as Error).message;
-											// 		alert(m);
-											// 	});
+											setPrimaryMetadataForMovie(auth.token, movie.id, m.id)
+												.then(() => {
+													loadMetadata();
+												})
+												.catch((e) => {
+													const m = (e as Error).message;
+													alert(m);
+												});
 										}}
 										class="mt-2 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
 										>Select as Primary</button
