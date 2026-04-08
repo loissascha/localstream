@@ -72,6 +72,34 @@ func (r *MovieRepository) List(ctx context.Context) ([]entity.Movie, error) {
 	return movies, nil
 }
 
+func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+	if fetchSource == "" {
+		fetchSource = entity.FetchSourceNone
+	}
+
+	const query = `
+		UPDATE movies
+		SET fetch_source = $1
+		WHERE id = $2
+	`
+
+	result, err := r.db.ExecContext(ctx, query, fetchSource, id)
+	if err != nil {
+		return fmt.Errorf("update movie fetch source: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("update movie fetch source rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrMovieNotFound
+	}
+
+	return nil
+}
+
 func (r *MovieRepository) Create(ctx context.Context, movie *entity.Movie) error {
 	fetchSource := movie.FetchSource
 	if fetchSource == "" {
