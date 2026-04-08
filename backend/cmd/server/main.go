@@ -63,6 +63,7 @@ func main() {
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
 	userMovieWatchstateRepo := repopostgres.NewUserMovieWatchstateRepository(db)
 	movieRepo := repopostgres.NewMovieRepository(db)
+	movieMetaRepo := repopostgres.NewMovieMetadataRepository(db)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -106,7 +107,7 @@ func main() {
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo)
 	libraryCataloguer.RunBackground()
 
 	logger.Info(nil, "Server starting at port: {port}", port)
