@@ -30,6 +30,8 @@ type MovieResult struct {
 	OriginalTitle string `json:"original_title"`
 	Overview      string `json:"overview"`
 	ReleaseDate   string `json:"release_date"`
+	BackdropPath  string `json:"backdrop_path"`
+	PosterPath    string `json:"poster_path"`
 }
 
 type TVMetadataProvider interface {
