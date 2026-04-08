@@ -70,7 +70,7 @@ func main() {
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
 	seasonService := service.NewSeasonService(seasonRepo)
-	episodeService := service.NewEpisodeService(episodeRepo)
+	episodeService := service.NewEpisodeService(episodeRepo, seasonRepo)
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
