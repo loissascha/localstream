@@ -32,7 +32,7 @@ func (h *ShowMetadataHandler) RegisterRoutes() {
 
 	h.s.POSTI("/api/v1/show/metadata/{showID}/set/primary/{id}",
 		h.setPrimary,
-		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
 }
 

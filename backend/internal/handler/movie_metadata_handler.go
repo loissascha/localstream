@@ -32,7 +32,7 @@ func (h *MovieMetadataHandler) RegisterRoutes() {
 
 	h.s.POSTI("/api/v1/movie/metadata/{movieID}/set/primary/{id}",
 		h.setPrimary,
-		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
 }
 
