@@ -5,6 +5,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateMovieResponse } from '$lib/types/export_types';
+	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
 
 	let data = $state<WatchstateMovieResponse[]>([]);
 
@@ -44,7 +45,9 @@
 				})}
 				class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
-				<div class="font-bold">{d.movie_info.name}</div>
+				<div>
+					<MovieInfoDisplay movie={d.movie_info} />
+				</div>
 				<div>
 					<div class="bg-neutral-600">
 						<div style={`width: ${d.percentage}%;`} class={`h-2 bg-blue-300 text-sm`}></div>

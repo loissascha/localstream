@@ -24,7 +24,7 @@ func NewMovieMetadataHandler(s *server.Server, authM *middleware.AuthMiddleware,
 }
 
 func (h *MovieMetadataHandler) RegisterRoutes() {
-	h.s.GETI("/api/v1/movie/metadata/{showID}",
+	h.s.GETI("/api/v1/movie/metadata/{movieID}",
 		h.listByMovie,
 		server.WithExportType[MovieMetadataInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),

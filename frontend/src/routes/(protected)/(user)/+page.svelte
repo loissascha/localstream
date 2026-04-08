@@ -13,6 +13,7 @@
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import { loadShows } from '$lib/api/shows';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
+	import MovieInfoDisplay from '$lib/components/MovieInfoDisplay.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -117,9 +118,9 @@
 				{#each movies as movie (movie.id)}
 					<a
 						href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
-						class="h-20 w-60 cursor-pointer truncate rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
+						class="w-60 cursor-pointer truncate rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
 					>
-						{movie.name}
+						<MovieInfoDisplay movie={movie} />
 					</a>
 				{/each}
 			</div>
