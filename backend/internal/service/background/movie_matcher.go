@@ -26,7 +26,7 @@ func (self *MovieMatcher) RunBackground() {
 			if !movie.FetchSource.IsNone() {
 				continue
 			}
-			// continue // TODO: temporary
+			continue // TODO: temporary
 
 			logger.Debug(nil, "____________ MOVIE ____________")
 			logger.Debug(nil, "Name: {Name} | Year: {Year}", movie.Name, movie.Year)
