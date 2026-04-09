@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -31,6 +33,17 @@ func main() {
 	if env == "" {
 		env = "development"
 		logger.Warning(nil, "No APP_ENV found. Setting 'development'")
+	}
+
+	listenAddr := fmt.Sprintf(":%v", port)
+	if env == "development" {
+		go func() {
+			const pprofAddr = "127.0.0.1:6060"
+			logger.Info(nil, "pprof listening on {addr}", pprofAddr)
+			if err := http.ListenAndServe(pprofAddr, nil); err != nil {
+				logger.Error(err, "pprof server stopped")
+			}
+		}()
 	}
 
 	s, err := server.NewServer(
@@ -113,8 +126,8 @@ func main() {
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo)
 	libraryCataloguer.RunBackground()
 
-	logger.Info(nil, "Server starting at port: {port}", port)
-	err = s.Serve(fmt.Sprintf(":%v", port))
+	logger.Info(nil, "Server starting at {addr}", listenAddr)
+	err = s.Serve(listenAddr)
 	if err != nil {
 		logger.Error(err, "Server failed to start...")
 	}
