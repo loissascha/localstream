@@ -78,7 +78,7 @@ func (self *MovieMatcher) RunBackground() {
 					continue
 				}
 			} else {
-				err := self.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceNone)
+				err := self.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceEmpty)
 				if err != nil {
 					logger.Error(err, "Error Updating movie fetch source")
 					continue

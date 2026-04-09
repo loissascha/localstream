@@ -93,10 +93,13 @@ func (self *ShowMatcher) RunBackground() {
 				show.FetchSource = entity.FetchSourceMultiple
 				self.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceMultiple)
 				logger.Info(nil, "Found multiple results for show {Show} ({Year})", show.Name, show.Year)
-			} else {
+			} else if len(showSearchResults) == 1 {
 				show.FetchSource = entity.FetchSourceTVMaze
 				self.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
 				logger.Info(nil, "Found perfect match for show {Show} ({Year}): {Match}", show.Name, show.Year, showSearchResults[0])
+			} else {
+				show.FetchSource = entity.FetchSourceEmpty
+				self.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceEmpty)
 			}
 		}
 	}()
