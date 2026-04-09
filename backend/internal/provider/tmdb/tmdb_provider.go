@@ -22,6 +22,9 @@ func NewTMDBProvider() *TMDBProvider {
 
 func (self *TMDBProvider) SearchMovie(name string, year int) ([]provider.MovieResult, error) {
 	key := os.Getenv("TMDB_API_KEY")
+	if key == "" {
+		return nil, fmt.Errorf("No TMDB api key configured.")
+	}
 	params := url.Values{}
 	params.Add("api_key", key)
 	params.Add("query", name)
