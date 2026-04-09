@@ -87,7 +87,7 @@ func (l *LibraryCataloguer) extractShows(basePath string, input []fResult) map[s
 		pathStr = strings.TrimPrefix(pathStr, "/")
 		split := strings.SplitN(pathStr, "/", 3)
 		if len(split) != 3 {
-			logger.Error(nil, "Wrong length!")
+			logger.Error(nil, "For this path the format of [ShowName]/[SeasonName]/[Episode] is not met. Please correct it. Path: {Path}", pathStr)
 			continue
 		}
 
