@@ -1,10 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import {
-		type ShowInfo,
-		type LibraryListItem,
-		type MovieInfo
-	} from '$lib/types/export_types';
+	import { type ShowInfo, type LibraryListItem, type MovieInfo } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
 	import { loadLibraries } from '$lib/api/libraries';
@@ -98,9 +94,9 @@
 				<LibraryIcon />
 				Shows
 			</h2>
-			<div class="flex gap-4">
+			<div class="flex flex-wrap gap-4">
 				{#each shows as show (show.id)}
-					<ShowListItem show={show} />
+					<ShowListItem {show} />
 				{/each}
 			</div>
 		</section>
@@ -120,7 +116,7 @@
 						href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
 						class="w-60 cursor-pointer truncate rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
 					>
-						<MovieInfoDisplay movie={movie} />
+						<MovieInfoDisplay {movie} />
 					</a>
 				{/each}
 			</div>
