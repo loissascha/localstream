@@ -145,7 +145,7 @@
 			{#if loadingShowData}
 				<p>Loading stuff...</p>
 			{:else}
-				<h1 class="text-3xl mb-2">
+				<h1 class="mb-2 text-3xl">
 					{showData?.name}
 					{#if showData && showData.year > 0}
 						({showData.year})
@@ -176,7 +176,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="my-3 flex gap-4 overflow-y-scroll py-5">
+	<div class="my-3 flex flex-wrap gap-4 py-5">
 		{#each episodeData as episode (episode.id)}
 			<a
 				href={resolve(
