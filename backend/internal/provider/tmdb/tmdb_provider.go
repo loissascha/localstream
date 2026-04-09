@@ -25,7 +25,7 @@ func (self *TMDBProvider) SearchMovie(name string, year int) ([]provider.MovieRe
 	params := url.Values{}
 	params.Add("api_key", key)
 	params.Add("query", name)
-	params.Add("year", fmt.Sprintf("%n", year))
+	params.Add("year", fmt.Sprintf("%d", year))
 	encoded := params.Encode()
 
 	fullUrl := "https://api.themoviedb.org/3/search/movie?" + encoded
