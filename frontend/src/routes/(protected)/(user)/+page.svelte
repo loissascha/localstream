@@ -110,7 +110,7 @@
 				<LibraryIcon />
 				Movies
 			</h2>
-			<div class="flex gap-4">
+			<div class="flex flex-wrap gap-4">
 				{#each movies as movie (movie.id)}
 					<a
 						href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
