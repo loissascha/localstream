@@ -8,7 +8,7 @@
 
 <a
 	href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
-	class="w-60 cursor-pointer rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
+	class="flex cursor-pointer flex-col rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
 >
 	<ShowInfoDisplay {show} />
 </a>

@@ -5,6 +5,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateResponse } from '$lib/types/export_types';
+	import ItemGrid from './ItemGrid.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
 
 	let data = $state<WatchstateResponse[]>([]);
@@ -37,7 +38,7 @@
 		<ChevronRightIcon />
 		Continue Shows
 	</h2>
-	<div class="flex gap-4">
+	<ItemGrid>
 		{#each data as d}
 			<a
 				href={resolve(
@@ -48,7 +49,7 @@
 						episodeID: d.episode_id
 					}
 				)}
-				class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
+				class="flex cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
 				<ShowInfoDisplay show={d.show_info} />
 				<div>
@@ -59,5 +60,5 @@
 				</div>
 			</a>
 		{/each}
-	</div>
+	</ItemGrid>
 </section>

@@ -5,6 +5,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateMovieResponse } from '$lib/types/export_types';
+	import ItemGrid from './ItemGrid.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
 
 	let data = $state<WatchstateMovieResponse[]>([]);
@@ -37,13 +38,13 @@
 		<ChevronRightIcon />
 		Continue Movies
 	</h2>
-	<div class="flex gap-4">
+	<ItemGrid>
 		{#each data as d}
 			<a
 				href={resolve('/(protected)/(watch)/movies/[movieID]', {
 					movieID: d.movie_id
 				})}
-				class="flex w-60 cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
+				class="flex cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
 				<div>
 					<MovieInfoDisplay movie={d.movie_info} />
@@ -55,5 +56,5 @@
 				</div>
 			</a>
 		{/each}
-	</div>
+	</ItemGrid>
 </section>

@@ -10,6 +10,7 @@
 	import { loadShows } from '$lib/api/shows';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
 	import MovieInfoDisplay from '$lib/components/MovieInfoDisplay.svelte';
+	import ItemGrid from '$lib/components/ItemGrid.svelte';
 
 	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
@@ -94,11 +95,11 @@
 				<LibraryIcon />
 				Shows
 			</h2>
-			<div class="flex flex-wrap gap-4">
+			<ItemGrid>
 				{#each shows as show (show.id)}
 					<ShowListItem {show} />
 				{/each}
-			</div>
+			</ItemGrid>
 		</section>
 	{/if}
 
@@ -110,16 +111,16 @@
 				<LibraryIcon />
 				Movies
 			</h2>
-			<div class="flex flex-wrap gap-4">
+			<ItemGrid>
 				{#each movies as movie (movie.id)}
 					<a
 						href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
-						class="w-60 cursor-pointer truncate rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
+						class="flex flex-col cursor-pointer truncate rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
 					>
 						<MovieInfoDisplay {movie} />
 					</a>
 				{/each}
-			</div>
+			</ItemGrid>
 		</section>
 	{/if}
 </main>
