@@ -126,6 +126,9 @@ func main() {
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo)
 	libraryCataloguer.RunBackground()
 
+	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, movieRepo)
+	libraryUncataloguer.RunBackground()
+
 	logger.Info(nil, "Server starting at {addr}", listenAddr)
 	err = s.Serve(listenAddr)
 	if err != nil {
