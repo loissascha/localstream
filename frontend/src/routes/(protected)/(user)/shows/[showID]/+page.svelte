@@ -164,7 +164,7 @@
 		{#if loadingSeasons}
 			<p>Loading seasons...</p>
 		{:else}
-			<div class="flex gap-2">
+			<div class="flex flex-wrap gap-2">
 				{#each seasonData as season (season.id)}
 					<button
 						class={`cursor-pointer ${selectedSeason == season ? 'font-bold' : ''}`}
