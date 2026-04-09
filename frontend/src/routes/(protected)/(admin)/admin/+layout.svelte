@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import AdminLeftMenuButton from '$lib/components/admin/AdminLeftMenuButton.svelte';
+	import InstallAppButton from '$lib/components/InstallAppButton.svelte';
 
 	let { children } = $props();
 
@@ -28,7 +29,8 @@
 				Home
 			</a>
 		</div>
-		<div>
+		<div class="flex items-center gap-2">
+			<InstallAppButton />
 			<a
 				href={resolve('/logout')}
 				type="submit"

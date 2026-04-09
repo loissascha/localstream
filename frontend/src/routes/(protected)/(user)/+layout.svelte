@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { auth } from '$lib/auth.svelte';
 	import { resolve } from '$app/paths';
+	import InstallAppButton from '$lib/components/InstallAppButton.svelte';
 
 	let { children } = $props();
 </script>
@@ -22,6 +23,7 @@
 		</a>
 	</div>
 	<div class="flex items-center gap-2">
+		<InstallAppButton />
 		{#if auth.isAdmin}
 			<a
 				href={resolve('/(protected)/(admin)/admin')}
