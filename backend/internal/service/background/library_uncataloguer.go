@@ -72,7 +72,10 @@ func (l *LibraryUncataloguer) RunOnce() error {
 func (l *LibraryUncataloguer) RunForShow(ctx context.Context, show *entity.Show) error {
 	path := show.Path
 	if !isDir(path) {
-		// TODO: delete show from db
+		err := l.showRepo.DeleteByID(ctx, show.ID)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -82,7 +85,10 @@ func (l *LibraryUncataloguer) RunForShow(ctx context.Context, show *entity.Show)
 	}
 
 	for _, season := range seasons {
-		l.RunForSeason(ctx, &season)
+		err := l.RunForSeason(ctx, &season)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -90,18 +96,34 @@ func (l *LibraryUncataloguer) RunForShow(ctx context.Context, show *entity.Show)
 func (l *LibraryUncataloguer) RunForSeason(ctx context.Context, season *entity.Season) error {
 	path := season.Path
 	if !isDir(path) {
-		// TODO: delete season from db
+		err := l.seasonRepo.DeleteByID(ctx, season.ID)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
-	// TODO: check all the episodes
+	episodes, err := l.episodeRepo.ListBySeasonID(ctx, season.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, episode := range episodes {
+		err := l.RunForEpisode(ctx, &episode)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 func (l *LibraryUncataloguer) RunForEpisode(ctx context.Context, episode *entity.Episode) error {
 	path := episode.Path
 	if !isFile(path) {
-		// TODO: delete episode from db
+		err := l.episodeRepo.DeleteByID(ctx, episode.ID)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -109,7 +131,10 @@ func (l *LibraryUncataloguer) RunForEpisode(ctx context.Context, episode *entity
 func (l *LibraryUncataloguer) RunForMovie(ctx context.Context, movie *entity.Movie) error {
 	path := movie.Path
 	if !isFile(path) {
-		// TODO: deelte movie from db
+		err := l.movieRepo.DeleteByID(ctx, movie.ID)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
