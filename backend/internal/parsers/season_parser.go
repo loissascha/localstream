@@ -22,9 +22,9 @@ type SeasonInfo struct {
 
 var (
 	reSeasonEpisodeMarker = regexp.MustCompile(`(?i)(\bS\d{1,2}\s*E\d{1,3}\b|\b\d{1,2}\s*x\s*\d{1,3}\b)`)
-	reSeasonSpecials      = regexp.MustCompile(`(?i)^(specials?|sp)$`)
-	reSeasonWord          = regexp.MustCompile(`(?i)^season\s*(\d{1,2})$`)
-	reSeasonShort         = regexp.MustCompile(`(?i)^s\s*(\d{1,2})$`)
+	reSeasonSpecials      = regexp.MustCompile(`(?i)\b(specials?|sp)\b`)
+	reSeasonWord          = regexp.MustCompile(`(?i)\bseason\s*(\d{1,2})\b`)
+	reSeasonShort         = regexp.MustCompile(`(?i)\bs\s*(\d{1,2})\b`)
 	reSeasonNumber        = regexp.MustCompile(`^(\d{1,2})$`)
 )
 
@@ -46,14 +46,6 @@ func ParseSeasonFromName(name string) (*SeasonInfo, bool) {
 		return nil, false
 	}
 
-	if reSeasonSpecials.MatchString(base) {
-		return &SeasonInfo{
-			RawName: name,
-			Season:  0,
-			Type:    SeasonTypeSpecials,
-		}, true
-	}
-
 	season := -1
 	if m := reSeasonWord.FindStringSubmatch(base); m != nil {
 		n, err := strconv.Atoi(m[1])
@@ -73,12 +65,26 @@ func ParseSeasonFromName(name string) (*SeasonInfo, bool) {
 			return nil, false
 		}
 		season = n
+	} else if reSeasonSpecials.MatchString(base) {
+		return &SeasonInfo{
+			RawName: name,
+			Season:  0,
+			Type:    SeasonTypeSpecials,
+		}, true
 	} else {
 		return nil, false
 	}
 
-	if season <= 0 || season > 99 {
+	if season < 0 || season > 99 {
 		return nil, false
+	}
+
+	if season == 0 {
+		return &SeasonInfo{
+			RawName: name,
+			Season:  0,
+			Type:    SeasonTypeSpecials,
+		}, true
 	}
 
 	return &SeasonInfo{
