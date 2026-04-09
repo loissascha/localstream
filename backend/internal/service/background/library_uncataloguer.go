@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/loissascha/go-logger/logger"
@@ -10,14 +11,18 @@ import (
 )
 
 type LibraryUncataloguer struct {
-	showRepo  repository.ShowRepository
-	movieRepo repository.MovieRepository
+	showRepo    repository.ShowRepository
+	seasonRepo  repository.SeasonRepository
+	episodeRepo repository.EpisodeRepository
+	movieRepo   repository.MovieRepository
 }
 
-func NewLibraryUncataloguer(showRepo repository.ShowRepository, movieRepo repository.MovieRepository) *LibraryUncataloguer {
+func NewLibraryUncataloguer(showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository) *LibraryUncataloguer {
 	return &LibraryUncataloguer{
-		showRepo:  showRepo,
-		movieRepo: movieRepo,
+		showRepo:    showRepo,
+		seasonRepo:  seasonRepo,
+		episodeRepo: episodeRepo,
+		movieRepo:   movieRepo,
 	}
 }
 
@@ -43,7 +48,7 @@ func (l *LibraryUncataloguer) RunOnce() error {
 	}
 
 	for _, show := range shows {
-		err := l.RunForShow(&show)
+		err := l.RunForShow(ctx, &show)
 		if err != nil {
 			return err
 		}
@@ -55,7 +60,7 @@ func (l *LibraryUncataloguer) RunOnce() error {
 	}
 
 	for _, movie := range movies {
-		err := l.RunForMovie(&movie)
+		err := l.RunForMovie(ctx, &movie)
 		if err != nil {
 			return err
 		}
@@ -64,10 +69,63 @@ func (l *LibraryUncataloguer) RunOnce() error {
 	return nil
 }
 
-func (l *LibraryUncataloguer) RunForShow(show *entity.Show) error {
+func (l *LibraryUncataloguer) RunForShow(ctx context.Context, show *entity.Show) error {
+	path := show.Path
+	if !isDir(path) {
+		// TODO: delete show from db
+		return nil
+	}
+
+	seasons, err := l.seasonRepo.ListByShowID(ctx, show.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, season := range seasons {
+		l.RunForSeason(ctx, &season)
+	}
 	return nil
 }
 
-func (l *LibraryUncataloguer) RunForMovie(movie *entity.Movie) error {
+func (l *LibraryUncataloguer) RunForSeason(ctx context.Context, season *entity.Season) error {
+	path := season.Path
+	if !isDir(path) {
+		// TODO: delete season from db
+		return nil
+	}
+
+	// TODO: check all the episodes
 	return nil
+}
+
+func (l *LibraryUncataloguer) RunForEpisode(ctx context.Context, episode *entity.Episode) error {
+	path := episode.Path
+	if !isFile(path) {
+		// TODO: delete episode from db
+	}
+	return nil
+}
+
+func (l *LibraryUncataloguer) RunForMovie(ctx context.Context, movie *entity.Movie) error {
+	path := movie.Path
+	if !isFile(path) {
+		// TODO: deelte movie from db
+	}
+	return nil
+}
+
+func isFile(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func isDir(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
 }
