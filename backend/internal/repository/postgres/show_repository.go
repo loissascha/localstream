@@ -61,6 +61,29 @@ func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Sho
 	return &show, nil
 }
 
+func (r *ShowRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {
+	const query = `
+		DELETE FROM shows
+		WHERE id = $1
+	`
+
+	result, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("delete show by id: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("delete show by id rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrShowNotFound
+	}
+
+	return nil
+}
+
 func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Show, error) {
 	const query = `
 		SELECT id, name, year, path, created_at, fetch_source

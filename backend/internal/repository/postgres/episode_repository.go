@@ -66,6 +66,29 @@ func (r *EpisodeRepository) GetByID(ctx context.Context, episodeId uuid.UUID) (*
 	return &episode, nil
 }
 
+func (r *EpisodeRepository) DeleteByID(ctx context.Context, episodeId uuid.UUID) error {
+	const query = `
+		DELETE FROM episodes
+		WHERE id = $1
+	`
+
+	result, err := r.db.ExecContext(ctx, query, episodeId)
+	if err != nil {
+		return fmt.Errorf("delete episode by id: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("delete episode by id rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrEpisodeNotFound
+	}
+
+	return nil
+}
+
 func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path string, seasonId uuid.UUID) (*entity.Episode, error) {
 	const query = `
 		SELECT id, season_id, number, path, created_at, fetch_source

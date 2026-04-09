@@ -60,6 +60,29 @@ func (r *SeasonRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.S
 	return &season, nil
 }
 
+func (r *SeasonRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {
+	const query = `
+		DELETE FROM seasons
+		WHERE id = $1
+	`
+
+	result, err := r.db.ExecContext(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("delete season by id: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("delete season by id rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrSeasonNotFound
+	}
+
+	return nil
+}
+
 func (r *SeasonRepository) GetByPathAndShowID(ctx context.Context, path string, showId uuid.UUID) (*entity.Season, error) {
 	const query = `
 		SELECT id, show_id, number, path, created_at, fetch_source
