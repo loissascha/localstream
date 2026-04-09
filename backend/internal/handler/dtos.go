@@ -14,6 +14,7 @@ type MovieInfo struct {
 	Name        string `json:"name"`
 	Year        int    `json:"year"`
 	Description string `json:"description"`
+	FetchSource string `json:"fetch_source"`
 }
 
 type MovieListResponse struct {
@@ -21,9 +22,10 @@ type MovieListResponse struct {
 }
 
 type ShowInfo struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Year int    `json:"year"`
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Year        int    `json:"year"`
+	FetchSource string `json:"fetch_source"`
 }
 
 type ShowListResponse struct {
@@ -149,6 +151,7 @@ func toMovieInfo(m *entity.Movie) MovieInfo {
 		Name:        m.Name,
 		Year:        m.Year,
 		Description: m.Description,
+		FetchSource: string(m.FetchSource),
 	}
 }
 
@@ -180,9 +183,10 @@ func toEpisodeInfo(episode *entity.Episode, infos ...AnyInfoStruct) EpisodeInfo 
 
 func toShowInfo(show *entity.Show) ShowInfo {
 	return ShowInfo{
-		ID:   encoders.EncodeUUID(show.ID),
-		Name: show.Name,
-		Year: show.Year,
+		ID:          encoders.EncodeUUID(show.ID),
+		Name:        show.Name,
+		Year:        show.Year,
+		FetchSource: string(show.FetchSource),
 	}
 }
 

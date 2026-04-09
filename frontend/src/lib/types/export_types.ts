@@ -40,6 +40,7 @@ export interface MovieInfo {
   name: string;
   year: number;
   description: string;
+  fetch_source: string;
 }
 export interface MovieListResponse {
   movies: MovieInfo[];
@@ -79,6 +80,7 @@ export interface ShowInfo {
   id: string;
   name: string;
   year: number;
+  fetch_source: string;
 }
 export interface ShowListResponse {
   shows: ShowInfo[];
