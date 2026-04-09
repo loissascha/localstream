@@ -1,8 +1,9 @@
+import { API_URL } from '$lib/consts';
 import type { MovieListResponse } from '$lib/types/export_types';
 
 export async function listMovies(bearerToken: string): Promise<MovieListResponse> {
 	try {
-		const res = await fetch('/api/v1/movies/list', {
+		const res = await fetch(API_URL + '/api/v1/movies/list', {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

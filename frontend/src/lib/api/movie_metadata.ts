@@ -1,3 +1,4 @@
+import { API_URL } from '$lib/consts';
 import type { MovieMetadataInfo } from '$lib/types/export_types';
 
 export async function loadMovieMetadata(
@@ -5,7 +6,7 @@ export async function loadMovieMetadata(
 	movieId: string
 ): Promise<MovieMetadataInfo[]> {
 	try {
-		const res = await fetch('/api/v1/movie/metadata/' + movieId, {
+		const res = await fetch(API_URL + '/api/v1/movie/metadata/' + movieId, {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

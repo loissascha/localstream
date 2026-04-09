@@ -1,8 +1,9 @@
+import { API_URL } from "$lib/consts";
 import type { LibraryListResponse } from "$lib/types/export_types";
 
 export async function loadLibraries(bearerToken: string) {
 	try {
-		const res = await fetch('/api/libraries', {
+		const res = await fetch(API_URL + '/api/libraries', {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

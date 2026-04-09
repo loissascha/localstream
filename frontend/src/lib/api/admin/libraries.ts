@@ -1,8 +1,9 @@
+import { API_URL } from '$lib/consts';
 import type { CreateLibraryRequest, CreateLibraryResponse } from '$lib/types/export_types';
 
 export async function createLibrary(bearerToken: string, request: CreateLibraryRequest) {
 	try {
-		const res = await fetch('/api/admin/libraries/create', {
+		const res = await fetch(API_URL + '/api/admin/libraries/create', {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
