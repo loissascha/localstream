@@ -224,13 +224,21 @@ func toWatchstateInfo(watchstate *entity.UserWatchstate) WatchstateInfo {
 }
 
 func toWatchstateMovieResponse(watchstate entity.UserMovieWatchstate, movieInfo MovieInfo) WatchstateMovieResponse {
+	percent := 0.0
+	if watchstate.Duration > 0 {
+		percent = (100 / watchstate.Duration) * watchstate.Position
+	}
+	if watchstate.Finished {
+		percent = 100
+	}
 	return WatchstateMovieResponse{
-		ID:        encoders.EncodeUUID(watchstate.ID),
-		MovieID:   encoders.EncodeUUID(watchstate.MovieID),
-		Position:  watchstate.Position,
-		Duration:  watchstate.Duration,
-		Finished:  watchstate.Finished,
-		MovieInfo: movieInfo,
+		ID:         encoders.EncodeUUID(watchstate.ID),
+		MovieID:    encoders.EncodeUUID(watchstate.MovieID),
+		Position:   watchstate.Position,
+		Duration:   watchstate.Duration,
+		Finished:   watchstate.Finished,
+		Percentage: percent,
+		MovieInfo:  movieInfo,
 	}
 }
 
