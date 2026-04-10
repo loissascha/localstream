@@ -29,5 +29,8 @@
 {#if metadata == null || metadata.medium_image_url == ''}
 	<span class="font-bold">{movie.name}</span>
 {:else}
-	<img alt={movie.name} src={metadata.medium_image_url} />
+	<div>
+		<img alt={movie.name} class="rounded" src={metadata.medium_image_url} />
+		<div class="my-1 text-center font-bold">{movie.name}</div>
+	</div>
 {/if}

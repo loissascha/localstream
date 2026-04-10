@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { ShowInfo } from '$lib/types/export_types';
+	import ListItemA from './ListItemA.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
 
 	let { show }: { show: ShowInfo } = $props();
 </script>
 
-<a
-	href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
-	class="flex cursor-pointer flex-col rounded-lg bg-neutral-800 p-4 hover:bg-neutral-700"
->
+<ListItemA href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}>
 	<ShowInfoDisplay {show} />
-</a>
+</ListItemA>

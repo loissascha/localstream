@@ -6,6 +6,7 @@
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateResponse } from '$lib/types/export_types';
 	import ItemGrid from './ItemGrid.svelte';
+	import ListItemA from './ListItemA.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
 
 	let data = $state<WatchstateResponse[]>([]);
@@ -40,7 +41,7 @@
 	</h2>
 	<ItemGrid>
 		{#each data as d (d.id)}
-			<a
+			<ListItemA
 				href={resolve(
 					'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
 					{
@@ -49,7 +50,6 @@
 						episodeID: d.episode_id
 					}
 				)}
-				class="flex cursor-pointer flex-col justify-between gap-2 rounded bg-neutral-800 p-4 hover:bg-neutral-700"
 			>
 				<ShowInfoDisplay show={d.show_info} />
 				<div>
@@ -58,7 +58,7 @@
 						<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
 					</div>
 				</div>
-			</a>
+			</ListItemA>
 		{/each}
 	</ItemGrid>
 </section>
