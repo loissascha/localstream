@@ -54,14 +54,14 @@
 {/if}
 
 <section class="grid grid-cols-3 gap-4">
-	{#each shows as show}
+	{#each shows as show (show.id)}
 		{#if !hideSingle || show.fetch_source == 'none' || show.fetch_source == 'empty'}
 			<AdminShowMetadataBlock {show} />
 		{/if}
 	{/each}
 </section>
 <section class="mt-4 grid grid-cols-3 gap-4">
-	{#each movies as movie}
+	{#each movies as movie (movie.id)}
 		{#if !hideSingle || movie.fetch_source == 'none' || movie.fetch_source == 'empty'}
 			<AdminMovieMetadataBlock {movie} />
 		{/if}

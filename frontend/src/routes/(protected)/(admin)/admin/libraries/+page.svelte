@@ -29,7 +29,7 @@
 </section>
 
 <section id="libraries" class="flex justify-center gap-2">
-	{#each libraries as library}
+	{#each libraries as library (library.id)}
 		<div
 			class="flex h-40 w-80 flex-col items-end justify-between rounded border border-neutral-500 p-4"
 		>

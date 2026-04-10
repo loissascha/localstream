@@ -39,7 +39,7 @@
 		Continue Movies
 	</h2>
 	<ItemGrid>
-		{#each data as d}
+		{#each data as d (d.id)}
 			<a
 				href={resolve('/(protected)/(watch)/movies/[movieID]', {
 					movieID: d.movie_id

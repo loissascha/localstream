@@ -39,7 +39,7 @@
 		Continue Shows
 	</h2>
 	<ItemGrid>
-		{#each data as d}
+		{#each data as d (d.id)}
 			<a
 				href={resolve(
 					'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',

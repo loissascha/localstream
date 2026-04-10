@@ -82,7 +82,7 @@
 			<p>Error: {error}</p>
 		{:else}
 			<div class="my-8 flex items-center justify-center gap-2">
-				{#each data as item}
+				{#each data as item (item.id)}
 					<button
 						onclick={() => clickUser(item.username)}
 						class="h-22 w-22 cursor-pointer place-content-center place-items-center rounded border border-neutral-500 bg-neutral-700 text-center shadow shadow-neutral-600"

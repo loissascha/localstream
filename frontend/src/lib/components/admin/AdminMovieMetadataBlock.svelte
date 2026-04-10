@@ -52,7 +52,7 @@
 		</div>
 		{#if showMetadata}
 			<div class="mt-4 flex flex-col gap-2">
-				{#each metadata as m}
+				{#each metadata as m (m.id)}
 					<div class="">
 						<div class="font-bold">{m.id}</div>
 						<div class="font-bold">{m.name}</div>
