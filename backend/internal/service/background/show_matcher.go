@@ -51,36 +51,9 @@ func (self *ShowMatcher) RunBackground() {
 
 			hasError := false
 			for _, res := range showSearchResults {
-				fmt.Println(res)
-				mid, err := uuid.NewV7()
+				err := self.createShowMetadata(ctx, show, res)
 				if err != nil {
-					logger.Fatal(err, "Can't create uuid")
-					hasError = true
-					continue
-				}
-				description := ""
-				if res.Show.Summary != nil {
-					description = *res.Show.Summary
-				}
-				mediumImage := ""
-				originalImage := ""
-				if res.Show.Image != nil {
-					mediumImage = res.Show.Image.Medium
-					originalImage = res.Show.Image.Original
-				}
-				metadata := entity.ShowMetadata{
-					ID:               mid,
-					ShowID:           show.ID,
-					Name:             res.Show.Name,
-					Url:              res.Show.URL,
-					Description:      description,
-					MediumImageUrl:   mediumImage,
-					OriginalImageUrl: originalImage,
-					FetchSource:      entity.FetchSourceTVMaze,
-				}
-				err = self.showMetadataRepo.Create(ctx, &metadata)
-				if err != nil {
-					logger.Fatal(err, "Can't create show metadata")
+					logger.Error(err, "Error creating show metadata")
 					hasError = true
 				}
 			}
@@ -103,4 +76,38 @@ func (self *ShowMatcher) RunBackground() {
 			}
 		}
 	}()
+}
+
+func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Show, res provider.ShowSearchResult) error {
+	fmt.Println(res)
+	mid, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	description := ""
+	if res.Show.Summary != nil {
+		description = *res.Show.Summary
+	}
+	mediumImage := ""
+	originalImage := ""
+	if res.Show.Image != nil {
+		mediumImage = res.Show.Image.Medium
+		originalImage = res.Show.Image.Original
+	}
+	metadata := entity.ShowMetadata{
+		ID:               mid,
+		ShowID:           show.ID,
+		Name:             res.Show.Name,
+		Url:              res.Show.URL,
+		Description:      description,
+		MediumImageUrl:   mediumImage,
+		OriginalImageUrl: originalImage,
+		FetchSource:      entity.FetchSourceTVMaze,
+		FetchID:          res.Show.ID,
+	}
+	err = self.showMetadataRepo.Create(ctx, &metadata)
+	if err != nil {
+		return err
+	}
+	return nil
 }
