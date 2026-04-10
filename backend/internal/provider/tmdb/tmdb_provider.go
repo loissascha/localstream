@@ -13,6 +13,20 @@ import (
 	"github.com/loissascha/localstream/internal/provider"
 )
 
+type MovieAPISearchResult struct {
+	Page    int              `json:"page"`
+	Results []MovieAPIResult `json:"results"`
+}
+
+type MovieAPIResult struct {
+	Adult         bool   `json:"adult"`
+	OriginalTitle string `json:"original_title"`
+	Overview      string `json:"overview"`
+	ReleaseDate   string `json:"release_date"`
+	BackdropPath  string `json:"backdrop_path"`
+	PosterPath    string `json:"poster_path"`
+}
+
 type TMDBProvider struct {
 }
 
@@ -59,16 +73,32 @@ func (self *TMDBProvider) SearchMovie(name string, year int) ([]provider.MovieRe
 		return nil, err
 	}
 
-	var searchResults provider.MovieSearchResult
+	var searchResults MovieAPISearchResult
 	if err = json.Unmarshal(body, &searchResults); err != nil {
 		return nil, err
 	}
 
-	if len(searchResults.Results) == 0 {
-		return searchResults.Results, nil
+	var results = []provider.MovieResult{}
+	for _, sr := range searchResults.Results {
+		results = append(results, toMovieResult(sr))
 	}
 
-	return searchResults.Results, nil
+	if len(searchResults.Results) == 0 {
+		return results, nil
+	}
+
+	return results, nil
+}
+
+func toMovieResult(r MovieAPIResult) provider.MovieResult {
+	return provider.MovieResult{
+		Adult:        r.Adult,
+		Title:        r.OriginalTitle,
+		Description:  r.Overview,
+		ReleaseDate:  r.ReleaseDate,
+		BackdropPath: r.BackdropPath,
+		PosterPath:   r.PosterPath,
+	}
 }
 
 var _ provider.MovieMetadataProvider = (*TMDBProvider)(nil)

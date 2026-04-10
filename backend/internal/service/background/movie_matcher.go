@@ -101,8 +101,8 @@ func (self *MovieMatcher) createMovieMetadata(ctx context.Context, movie *entity
 		posterLink = "https://image.tmdb.org/t/p/w500" + r.PosterPath
 	}
 
-	logger.Debug(nil, "Title: {Title}", r.OriginalTitle)
-	logger.Debug(nil, "Description: {Desc}", r.Overview)
+	logger.Debug(nil, "Title: {Title}", r.Title)
+	logger.Debug(nil, "Description: {Desc}", r.Description)
 	logger.Debug(nil, "Backdrop Link: {URL}", backdropLink)
 	logger.Debug(nil, "Poster Link: {URL}", posterLink)
 
@@ -114,9 +114,9 @@ func (self *MovieMatcher) createMovieMetadata(ctx context.Context, movie *entity
 	err = self.movieMetaRepo.Create(ctx, &entity.MovieMetadata{
 		ID:               uuid,
 		MovieID:          movie.ID,
-		Name:             r.OriginalTitle,
+		Name:             r.Title,
 		Url:              "",
-		Description:      r.Overview,
+		Description:      r.Description,
 		MediumImageUrl:   posterLink,
 		BackdropImageUrl: backdropLink,
 		FetchSource:      entity.FetchSourceTMDB,
@@ -132,7 +132,7 @@ func (self *MovieMatcher) createMovieMetadata(ctx context.Context, movie *entity
 func (self *MovieMatcher) hasExactMatches(movie *entity.Movie, result []provider.MovieResult) []provider.MovieResult {
 	exactMatches := []provider.MovieResult{}
 	for _, r := range result {
-		if r.OriginalTitle == movie.Name {
+		if r.Title == movie.Name {
 			exactMatches = append(exactMatches, r)
 		}
 	}
