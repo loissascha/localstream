@@ -36,6 +36,12 @@ type TVMazeShow struct {
 }
 
 type TVMazeSeason struct {
+	ID           int              `json:"id"`
+	Url          string           `json:"url"`
+	Number       int              `json:"number"`
+	Summary      string           `json:"summary"`
+	PremiereDate string           `json:"premiereDate"`
+	Image        *TVMazeShowImage `json:"image"`
 }
 
 type TVMazeShowImage struct {
@@ -85,9 +91,34 @@ func (p *TVMazeProvider) SearchSeasons(showId int) ([]provider.SeasonMetadata, e
 		return []provider.SeasonMetadata{}, nil
 	}
 
-	// TODO: map result
+	mappedResults := make([]provider.SeasonMetadata, 0, len(searchResults))
+	for _, result := range searchResults {
+		mappedResults = append(mappedResults, toSeasonMetadata(result))
+	}
 
-	return nil, nil
+	return mappedResults, nil
+}
+
+func toSeasonMetadata(result TVMazeSeason) provider.SeasonMetadata {
+	mappedResult := provider.SeasonMetadata{
+		ID:           result.ID,
+		Url:          result.Url,
+		Number:       result.Number,
+		Summary:      result.Summary,
+		PremiereDate: result.PremiereDate,
+		Image:        toShowImage(result.Image),
+	}
+	return mappedResult
+}
+
+func toShowImage(i *TVMazeShowImage) *provider.ShowImage {
+	if i == nil {
+		return nil
+	}
+	return &provider.ShowImage{
+		Medium:   i.Medium,
+		Original: i.Original,
+	}
 }
 
 func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearchResult, error) {

@@ -16,7 +16,12 @@ type ShowMetadata struct {
 }
 
 type SeasonMetadata struct {
-	ID int
+	ID           int
+	Url          string
+	Number       int
+	Summary      string
+	PremiereDate string
+	Image        *ShowImage
 }
 
 type ShowImage struct {
