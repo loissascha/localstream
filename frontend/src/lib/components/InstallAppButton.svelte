@@ -48,13 +48,7 @@
 	});
 </script>
 
-{#if isStandalone}
-	<span
-		class="rounded-md border border-neutral-600 bg-neutral-700 px-3 py-1.5 text-sm text-neutral-200"
-	>
-		Installed
-	</span>
-{:else if deferredPrompt}
+{#if deferredPrompt}
 	<button
 		type="button"
 		onclick={installApp}
@@ -62,10 +56,4 @@
 	>
 		Install App
 	</button>
-{:else}
-	<span
-		class="rounded-md border border-neutral-600 bg-neutral-700 px-3 py-1.5 text-sm text-neutral-300"
-	>
-		Install unavailable
-	</span>
 {/if}
