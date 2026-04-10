@@ -53,7 +53,7 @@
 			>
 				<ShowInfoDisplay show={d.show_info} />
 				<div>
-					<div>S{d.season_info.number} E{d.episode_info.number}</div>
+					<div>S{d.season_info.number}:E{d.episode_info.number}</div>
 					<div class="bg-neutral-600">
 						<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
 					</div>
