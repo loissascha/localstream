@@ -15,6 +15,10 @@ type ShowMetadata struct {
 	Summary   *string
 }
 
+type SeasonMetadata struct {
+	ID int
+}
+
 type ShowImage struct {
 	Medium   string
 	Original string
@@ -22,5 +26,5 @@ type ShowImage struct {
 
 type TVMetadataProvider interface {
 	SearchShow(name string, year int) ([]ShowSearchResult, error)
-	SearchSeasons(showId int) error
+	SearchSeasons(showId int) ([]SeasonMetadata, error)
 }
