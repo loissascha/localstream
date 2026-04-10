@@ -1,8 +1,7 @@
-import { API_URL } from "$lib/consts";
 
 export async function setPrimaryMetadataForShow(bearerToken: string, showId: string, metadataId: string) {
 	try {
-		const res = await fetch(API_URL + '/api/v1/show/metadata/' + showId + '/set/primary/' + metadataId, {
+		const res = await fetch('/api/v1/show/metadata/' + showId + '/set/primary/' + metadataId, {
 			method: "POST",
 			headers: {
 				Authorization: 'Bearer ' + bearerToken

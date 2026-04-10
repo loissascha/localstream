@@ -44,10 +44,10 @@ func NewAuthHandler(s *server.Server, authService *service.AuthService, authMidd
 }
 
 func (h *AuthHandler) RegisterHandlers() {
-	h.s.GETI("/auth/users/list", h.listUsers, server.WithExportType[AuthUserResponse]())
-	h.s.POSTI("/auth/register", h.register, server.WithExportType[AuthResponse]())
-	h.s.POSTI("/auth/login", h.login, server.WithExportType[AuthResponse]())
-	h.s.GETI("/auth/user/admin", h.isAdmin, server.WithMiddlewares(h.authMiddleware.RequireAuth), server.WithExportType[AuthUserIsAdminResponse]())
+	h.s.GETI("/api/auth/users/list", h.listUsers, server.WithExportType[AuthUserResponse]())
+	h.s.POSTI("/api/auth/register", h.register, server.WithExportType[AuthResponse]())
+	h.s.POSTI("/api/auth/login", h.login, server.WithExportType[AuthResponse]())
+	h.s.GETI("/api/auth/user/admin", h.isAdmin, server.WithMiddlewares(h.authMiddleware.RequireAuth), server.WithExportType[AuthUserIsAdminResponse]())
 }
 
 func (h *AuthHandler) isAdmin(w http.ResponseWriter, r *http.Request) {

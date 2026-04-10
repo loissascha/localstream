@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { API_URL } from '$lib/consts';
 	import { setCookie } from '$lib/cookies';
 	import type { AuthResponse, AuthUserResponse } from '$lib/types/export_types';
 	import { auth, loadAuthFromCookies } from '$lib/auth.svelte';
@@ -12,7 +11,7 @@
 
 	async function load() {
 		try {
-			const res = await fetch(API_URL + '/auth/users/list');
+			const res = await fetch('/api/auth/users/list');
 
 			if (!res.ok) {
 				throw new Error('Request failed');
@@ -30,7 +29,7 @@
 	async function clickUser(username: string) {
 		console.log('user clicked ', username);
 		try {
-			const res = await fetch(API_URL + '/auth/login', {
+			const res = await fetch('/api/auth/login', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ username: username })

@@ -3,7 +3,6 @@
 	import { page } from '$app/state';
 	import { getWatchstateForMovie, updateWatchstateMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
-	import { API_URL } from '$lib/consts';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { onDestroy } from 'svelte';
 
@@ -13,8 +12,7 @@
 	var loadingWatchstate = $state(true);
 
 	const streamUrl = $derived(
-		API_URL +
-			`/api/movies/stream?id=${encodeURIComponent(movieId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
+		`/api/movies/stream?id=${encodeURIComponent(movieId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
 

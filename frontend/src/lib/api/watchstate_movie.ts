@@ -1,4 +1,3 @@
-import { API_URL } from '$lib/consts';
 import type {
 	SaveMovieWatchstateRequest,
 	WatchstateInfo,
@@ -11,7 +10,7 @@ export async function updateWatchstateMovie(
 	bearerToken: string,
 	body: SaveMovieWatchstateRequest
 ): Promise<WatchstateInfo> {
-	const response = await fetch(API_URL + '/api/v1/movie/watchstate', {
+	const response = await fetch('/api/v1/movie/watchstate', {
 		method: 'POST',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
@@ -29,7 +28,7 @@ export async function updateWatchstateMovie(
 export async function listLatestWatchstateByMovie(
 	bearerToken: string
 ): Promise<WatchstateMovieResponse[]> {
-	const response = await fetch(API_URL + '/api/v1/watchstate/movie/latest', {
+	const response = await fetch('/api/v1/watchstate/movie/latest', {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
@@ -47,7 +46,7 @@ export async function getWatchstateForMovie(
 	bearerToken: string,
 	movieId: string
 ): Promise<WatchstateInfo> {
-	const response = await fetch(API_URL + '/api/v1/watchstate/movie/' + movieId, {
+	const response = await fetch('/api/v1/watchstate/movie/' + movieId, {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken

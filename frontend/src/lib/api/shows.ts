@@ -1,9 +1,8 @@
-import { API_URL } from '$lib/consts';
 import type { ShowListResponse } from '$lib/types/export_types';
 
 export async function loadShows(bearerToken: string): Promise<ShowListResponse> {
 	try {
-		const res = await fetch(API_URL + '/api/shows', {
+		const res = await fetch('/api/shows', {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

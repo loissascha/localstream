@@ -1,4 +1,3 @@
-import { API_URL } from '$lib/consts';
 import type { ShowMetadataInfo } from '$lib/types/export_types';
 
 export async function loadShowMetadata(
@@ -6,7 +5,7 @@ export async function loadShowMetadata(
 	showId: string
 ): Promise<ShowMetadataInfo[]> {
 	try {
-		const res = await fetch(API_URL + '/api/v1/show/metadata/' + showId, {
+		const res = await fetch('/api/v1/show/metadata/' + showId, {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

@@ -1,4 +1,3 @@
-import { API_URL } from '$lib/consts';
 import type {
 	SaveWatchstateRequest,
 	WatchstateListResponse,
@@ -11,7 +10,7 @@ export async function setWatchstateFinished(
 	bearerToken: string,
 	episodeID: string
 ): Promise<WatchstateResponse> {
-	const response = await fetch(API_URL + '/api/watchstate/episode/' + episodeID + '/finished', {
+	const response = await fetch('/api/watchstate/episode/' + episodeID + '/finished', {
 		method: 'POST',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
@@ -29,7 +28,7 @@ export async function updateWatchstate(
 	bearerToken: string,
 	body: SaveWatchstateRequest
 ): Promise<WatchstateResponse> {
-	const response = await fetch(API_URL + '/api/watchstate', {
+	const response = await fetch('/api/watchstate', {
 		method: 'POST',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
@@ -47,7 +46,7 @@ export async function updateWatchstate(
 export async function listLatestWatchstateByShow(
 	bearerToken: string
 ): Promise<WatchstateResponse[]> {
-	const response = await fetch(API_URL + '/api/watchstate/latest/shows', {
+	const response = await fetch('/api/watchstate/latest/shows', {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken
@@ -65,7 +64,7 @@ export async function getWatchstateForEpisode(
 	bearerToken: string,
 	episodeId: string
 ): Promise<WatchstateResponse> {
-	const response = await fetch(API_URL + '/api/watchstate/episode/' + episodeId, {
+	const response = await fetch('/api/watchstate/episode/' + episodeId, {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken

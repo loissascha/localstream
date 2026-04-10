@@ -1,8 +1,7 @@
-import { API_URL } from '$lib/consts';
 import type { AuthUserIsAdminResponse } from '$lib/types/export_types';
 
 export async function checkIfUserIsAdmin(bearerToken: string): Promise<AuthUserIsAdminResponse> {
-	const response = await fetch(API_URL + '/auth/user/admin', {
+	const response = await fetch('/api/auth/user/admin', {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + bearerToken

@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/auth.svelte';
-	import { API_URL } from '$lib/consts';
 
 	let username = $state('');
 	let loading = $state(false);
@@ -12,7 +11,7 @@
 		loading = true;
 
 		try {
-			const res = await fetch(API_URL + '/auth/register', {
+			const res = await fetch('/api/auth/register', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ username: username })
