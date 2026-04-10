@@ -30,7 +30,7 @@
 	<span class="font-bold">{movie.name}</span>
 {:else}
 	<div>
-		<img alt={movie.name} class="rounded" src={metadata.medium_image_url} />
+		<img alt={movie.name} class="rounded w-full" src={metadata.medium_image_url} />
 		<div class="my-1 text-center font-bold">{movie.name}</div>
 	</div>
 {/if}

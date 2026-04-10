@@ -30,7 +30,7 @@
 	<span class="font-bold">{show.name}</span>
 {:else}
 	<div>
-		<img alt={show.name} class="rounded" src={metadata.medium_image_url} />
+		<img alt={show.name} class="rounded w-full" src={metadata.medium_image_url} />
 		<div class="text-center font-bold my-1">{show.name}</div>
 	</div>
 {/if}
