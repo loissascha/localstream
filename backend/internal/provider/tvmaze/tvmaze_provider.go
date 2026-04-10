@@ -44,6 +44,10 @@ func NewTVMazeProvider() *TVMazeProvider {
 	return &TVMazeProvider{}
 }
 
+func (p *TVMazeProvider) SearchSeasons(showId int) error {
+	return nil
+}
+
 func (p *TVMazeProvider) SearchShow(name string, year int) ([]provider.ShowSearchResult, error) {
 	params := url.Values{}
 	params.Add("q", name)

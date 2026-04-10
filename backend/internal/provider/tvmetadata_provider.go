@@ -22,4 +22,5 @@ type ShowImage struct {
 
 type TVMetadataProvider interface {
 	SearchShow(name string, year int) ([]ShowSearchResult, error)
+	SearchSeasons(showId int) error
 }
