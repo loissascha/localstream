@@ -15,11 +15,6 @@ Copy `.env.example` to `.env` and adjust if needed.
 
 Database migrations are run automatically on server startup using goose.
 
-## Milestone 01 Endpoints
-
-- `GET /api/videos`
-- `GET /api/videos/stream?id=<video-id>`
-
 ## Run
 
 ```bash
