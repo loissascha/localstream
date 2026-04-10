@@ -40,6 +40,7 @@ type EpisodeInfo struct {
 }
 
 type WatchstateMovieResponse struct {
+	ID         string    `json:"id"`
 	MovieID    string    `json:"movie_id"`
 	Position   float64   `json:"position"`
 	Duration   float64   `json:"duration"`
@@ -224,6 +225,7 @@ func toWatchstateInfo(watchstate *entity.UserWatchstate) WatchstateInfo {
 
 func toWatchstateMovieResponse(watchstate entity.UserMovieWatchstate, movieInfo MovieInfo) WatchstateMovieResponse {
 	return WatchstateMovieResponse{
+		ID:        encoders.EncodeUUID(watchstate.ID),
 		MovieID:   encoders.EncodeUUID(watchstate.MovieID),
 		Position:  watchstate.Position,
 		Duration:  watchstate.Duration,

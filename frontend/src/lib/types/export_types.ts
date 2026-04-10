@@ -114,6 +114,7 @@ export interface WatchstateListResponse {
   watchstates: WatchstateResponse[];
 }
 export interface WatchstateMovieResponse {
+  id: string;
   movie_id: string;
   position: number;
   duration: number;
