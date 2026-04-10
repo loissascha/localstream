@@ -109,5 +109,15 @@ func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Sh
 	if err != nil {
 		return err
 	}
+	self.createShowSeasonsMetadata(ctx, show, &metadata)
+	return nil
+}
+
+func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *entity.Show, metadata *entity.ShowMetadata) error {
+	// fetch metadata result for seasons for show
+
+	// for each season
+	// -> create season metadata
+	// -> createSeasonEpisodesMetadata func
 	return nil
 }
