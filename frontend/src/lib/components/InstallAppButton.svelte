@@ -48,7 +48,7 @@
 	});
 </script>
 
-{#if deferredPrompt}
+{#if deferredPrompt && !isStandalone}
 	<button
 		type="button"
 		onclick={installApp}
