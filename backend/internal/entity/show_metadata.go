@@ -10,5 +10,6 @@ type ShowMetadata struct {
 	Description      string      `db:"description"`
 	MediumImageUrl   string      `db:"medium_image_url"`
 	OriginalImageUrl string      `db:"original_image_url"`
+	FetchID          int         `db:"fetch_id"`
 	FetchSource      FetchSource `db:"fetch_source"`
 }
