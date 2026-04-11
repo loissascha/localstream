@@ -26,6 +26,19 @@ export interface EpisodeInfo {
 export interface EpisodeListResponse {
   episodes: EpisodeInfo[];
 }
+export interface EpisodeMetadataInfo {
+  id: string;
+  show_id: string;
+  season_metadata_id: string;
+  url: string;
+  name: string;
+  number: number;
+  summary: string;
+  medium_image_url: string;
+  original_image_url: string;
+  fetch_id: number;
+  fetch_source: string;
+}
 export interface LibraryListItem {
   id: string;
   name: string;
