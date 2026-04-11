@@ -14,7 +14,11 @@
 	const showsHref = resolve('/(protected)/(user)/shows');
 	const moviesHref = resolve('/(protected)/(user)/movies');
 
-	const isActive = (href: string) => page.url.pathname === href;
+	const isActive = (href: string, includeChildren = false) => {
+		if (page.url.pathname === href) return true;
+		if (!includeChildren) return false;
+		return page.url.pathname.startsWith(`${href}/`);
+	};
 </script>
 
 <section id="header" class="flex items-center justify-between px-4 py-4">
@@ -43,7 +47,7 @@
 		</a>
 	</div>
 </section>
-<section id="seletions" class="flex items-center justify-center gap-4 p-4">
+<section id="selections" class="hidden items-center justify-center gap-4 p-4 md:flex">
 	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
 		<a
 			href={homeHref}
@@ -55,7 +59,7 @@
 		<a
 			href={showsHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(showsHref)}
+			class:bg-neutral-700={isActive(showsHref, true)}
 		>
 			<LibraryIcon />
 			Shows
@@ -63,7 +67,7 @@
 		<a
 			href={moviesHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(moviesHref)}
+			class:bg-neutral-700={isActive(moviesHref, true)}
 		>
 			<LibraryIcon />
 			Movies
@@ -71,13 +75,57 @@
 		<a
 			href={moviesHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(moviesHref)}
+			class:bg-neutral-700={isActive(moviesHref, true)}
 		>
 			<LibraryIcon />
 			Collections
 		</a>
 	</div>
 </section>
-<section id="content" class="p-4">
+<section id="content" class="p-4 pb-24 md:pb-4">
 	{@render children()}
 </section>
+
+<nav
+	class="fixed right-0 bottom-0 left-0 border-t border-neutral-700 bg-neutral-900/95 px-2 pt-2 backdrop-blur-sm md:hidden"
+	style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));"
+>
+	<div class="grid grid-cols-4 gap-1">
+		<a
+			href={homeHref}
+			class="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs"
+			class:bg-neutral-800={isActive(homeHref)}
+			class:text-brand={isActive(homeHref)}
+		>
+			<HomeIcon />
+			<span>Home</span>
+		</a>
+		<a
+			href={showsHref}
+			class="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs"
+			class:bg-neutral-800={isActive(showsHref, true)}
+			class:text-brand={isActive(showsHref, true)}
+		>
+			<LibraryIcon />
+			<span>Shows</span>
+		</a>
+		<a
+			href={moviesHref}
+			class="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs"
+			class:bg-neutral-800={isActive(moviesHref, true)}
+			class:text-brand={isActive(moviesHref, true)}
+		>
+			<LibraryIcon />
+			<span>Movies</span>
+		</a>
+		<a
+			href={moviesHref}
+			class="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs"
+			class:bg-neutral-800={isActive(moviesHref, true)}
+			class:text-brand={isActive(moviesHref, true)}
+		>
+			<LibraryIcon />
+			<span>Collections</span>
+		</a>
+	</div>
+</nav>
