@@ -6,8 +6,15 @@
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
+	import { page } from '$app/state';
 
 	let { children } = $props();
+
+	const homeHref = resolve('/(protected)/(user)');
+	const showsHref = resolve('/(protected)/(user)/shows');
+	const moviesHref = resolve('/(protected)/(user)/movies');
+
+	const isActive = (href: string) => page.url.pathname === href;
 </script>
 
 <section id="header" class="flex items-center justify-between px-4 py-4">
@@ -39,21 +46,24 @@
 <section id="seletions" class="flex items-center justify-center gap-4 p-4">
 	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
 		<a
-			href={resolve('/(protected)/(user)')}
+			href={homeHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-700"
+			class:bg-neutral-700={isActive(homeHref)}
 		>
 			<HomeIcon /> Home
 		</a>
 		<a
-			href={resolve('/(protected)/(user)/shows')}
+			href={showsHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
+			class:bg-neutral-700={isActive(showsHref)}
 		>
 			<LibraryIcon />
 			Shows
 		</a>
 		<a
-			href={resolve('/(protected)/(user)/movies')}
+			href={moviesHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
+			class:bg-neutral-700={isActive(moviesHref)}
 		>
 			<LibraryIcon />
 			Movies

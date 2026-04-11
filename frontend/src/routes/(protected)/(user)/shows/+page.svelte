@@ -3,7 +3,6 @@
 	import { auth } from '$lib/auth.svelte';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
-	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import type { ShowInfo } from '$lib/types/export_types';
 
 	let shows = $state<ShowInfo[]>([]);
@@ -42,10 +41,6 @@
 		<p>Loading shows...</p>
 	{:else}
 		<section class="my-8">
-			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
-				<LibraryIcon />
-				Shows
-			</h2>
 			<ItemGrid>
 				{#each shows as show (show.id)}
 					<ShowListItem {show} />
