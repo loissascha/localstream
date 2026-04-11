@@ -4,6 +4,8 @@
 	import InstallAppButton from '$lib/components/InstallAppButton.svelte';
 	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
+	import HomeIcon from '$lib/icons/HomeIcon.svelte';
+	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 
 	let { children } = $props();
 </script>
@@ -35,23 +37,25 @@
 	</div>
 </section>
 <section id="seletions" class="flex items-center justify-center gap-4 p-4">
-	<div class="flex gap-2 rounded-full bg-neutral-700 px-3 py-2">
+	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
 		<a
 			href={resolve('/(protected)/(user)')}
-			class="cursor-pointer rounded-full bg-neutral-600 px-4 py-2 text-sm hover:bg-neutral-600"
+			class="flex cursor-pointer items-center gap-1 rounded-full bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-700"
 		>
-			Home
+			<HomeIcon /> Home
 		</a>
 		<a
 			href={resolve('/(protected)/(user)/shows')}
-			class="cursor-pointer rounded-full px-4 py-2 text-sm hover:bg-neutral-600"
+			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
 		>
+			<LibraryIcon />
 			Shows
 		</a>
 		<a
 			href={resolve('/(protected)/(user)/movies')}
-			class="cursor-pointer rounded-full px-4 py-2 text-sm hover:bg-neutral-600"
+			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
 		>
+			<LibraryIcon />
 			Movies
 		</a>
 	</div>
