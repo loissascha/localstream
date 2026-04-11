@@ -47,14 +47,14 @@
 	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
 		<a
 			href={homeHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full bg-neutral-700 px-4 py-2 text-lg hover:bg-neutral-700"
+			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg transition-all duration-100"
 			class:bg-neutral-700={isActive(homeHref)}
 		>
 			<HomeIcon /> Home
 		</a>
 		<a
 			href={showsHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
+			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg transition-all duration-100"
 			class:bg-neutral-700={isActive(showsHref)}
 		>
 			<LibraryIcon />
@@ -62,7 +62,7 @@
 		</a>
 		<a
 			href={moviesHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg hover:bg-neutral-700"
+			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-lg transition-all duration-100"
 			class:bg-neutral-700={isActive(moviesHref)}
 		>
 			<LibraryIcon />
