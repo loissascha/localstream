@@ -2,6 +2,8 @@
 	import { auth } from '$lib/auth.svelte';
 	import { resolve } from '$app/paths';
 	import InstallAppButton from '$lib/components/InstallAppButton.svelte';
+	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
+	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 
 	let { children } = $props();
 </script>
@@ -11,18 +13,6 @@
 		<a href={resolve('/(protected)/(user)')} class="text-2xl font-semibold tracking-wider"
 			>Localstream</a
 		>
-		<a
-			href={resolve('/(protected)/(user)/shows')}
-			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
-		>
-			Shows
-		</a>
-		<a
-			href={resolve('/(protected)/(user)/movies')}
-			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
-		>
-			Movies
-		</a>
 	</div>
 	<div class="flex items-center gap-2">
 		<InstallAppButton />
@@ -30,17 +20,39 @@
 			<a
 				href={resolve('/(protected)/(admin)/admin')}
 				type="submit"
-				class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
+				class="cursor-pointer px-3 py-1.5 text-sm hover:text-brand"
 			>
-				Admin
+				<SettingsIcon />
 			</a>
 		{/if}
 		<a
 			href={resolve('/logout')}
 			type="submit"
-			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
+			class="cursor-pointer px-3 py-1.5 text-sm hover:text-brand"
 		>
-			Log out
+			<LogoutIcon />
+		</a>
+	</div>
+</section>
+<section id="seletions" class="flex items-center justify-center gap-4 p-4">
+	<div class="flex gap-2 rounded-full bg-neutral-700 px-3 py-2">
+		<a
+			href={resolve('/(protected)/(user)')}
+			class="cursor-pointer rounded-full bg-neutral-600 px-4 py-2 text-sm hover:bg-neutral-600"
+		>
+			Home
+		</a>
+		<a
+			href={resolve('/(protected)/(user)/shows')}
+			class="cursor-pointer rounded-full px-4 py-2 text-sm hover:bg-neutral-600"
+		>
+			Shows
+		</a>
+		<a
+			href={resolve('/(protected)/(user)/movies')}
+			class="cursor-pointer rounded-full px-4 py-2 text-sm hover:bg-neutral-600"
+		>
+			Movies
 		</a>
 	</div>
 </section>
