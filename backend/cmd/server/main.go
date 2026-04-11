@@ -72,6 +72,7 @@ func main() {
 	showRepo := repopostgres.NewShowRepository(db)
 	showMetaRepo := repopostgres.NewShowMetadataRepository(db)
 	seasonMetaRepo := repopostgres.NewSeasonMetadataRepository(db)
+	episodeMetaRepo := repopostgres.NewEpisodeMetadataRepository(db)
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
@@ -90,6 +91,7 @@ func main() {
 	movieService := service.NewMovieService(movieRepo)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
+	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
 	movieMetaService := service.NewMovieMetadataService(movieMetaRepo, movieRepo)
 
 	// middleware
@@ -107,6 +109,7 @@ func main() {
 	movieH := handler.NewMovieHandler(s, authMiddleware, movieService)
 	showMetaH := handler.NewShowMetadataHandler(s, authMiddleware, showMetaService)
 	seasonMetaH := handler.NewSeasonMetadataHandler(s, authMiddleware, seasonMetaService)
+	episodeMetaH := handler.NewEpisodeMetadataHandler(s, authMiddleware, episodeMetaService)
 	movieMetaH := handler.NewMovieMetadataHandler(s, authMiddleware, movieMetaService)
 
 	// register routes
@@ -121,13 +124,14 @@ func main() {
 	userMovieWatchstateH.RegisterHandlers()
 	showMetaH.RegisterRoutes()
 	seasonMetaH.RegisterRoutes()
+	episodeMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
 
 	// metadata providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo)
 	libraryCataloguer.RunBackground()
 
 	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)

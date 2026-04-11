@@ -12,21 +12,23 @@ import (
 )
 
 type ShowMatcher struct {
-	Channel            chan *entity.Show
-	metadataProvider   provider.TVMetadataProvider
-	showRepo           repository.ShowRepository
-	showMetadataRepo   repository.ShowMetadataRepository
-	seasonMetadataRepo repository.SeasonMetadataRepository
+	Channel             chan *entity.Show
+	metadataProvider    provider.TVMetadataProvider
+	showRepo            repository.ShowRepository
+	showMetadataRepo    repository.ShowMetadataRepository
+	seasonMetadataRepo  repository.SeasonMetadataRepository
+	episodeMetadataRepo repository.EpisodeMetadataRepository
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository) *ShowMatcher {
+func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
-		Channel:            ch,
-		metadataProvider:   metadataProvider,
-		showRepo:           showRepo,
-		showMetadataRepo:   showMetadataRepo,
-		seasonMetadataRepo: seasonMetaRepo,
+		Channel:             ch,
+		metadataProvider:    metadataProvider,
+		showRepo:            showRepo,
+		showMetadataRepo:    showMetadataRepo,
+		seasonMetadataRepo:  seasonMetaRepo,
+		episodeMetadataRepo: episodeMetaRepo,
 	}
 }
 
@@ -167,12 +169,30 @@ func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *
 	}
 
 	for _, em := range episodeMetas {
-		mid, err := uuid.NewV7()
+		mediumImage := ""
+		originalImage := ""
+		if em.Image != nil {
+			mediumImage = em.Image.Medium
+			originalImage = em.Image.Original
+		}
+
+		m := entity.EpisodeMetadata{
+			ShowID:           show.ID,
+			SeasonMetadataID: metadata.ID,
+			Url:              em.Url,
+			Name:             em.Name,
+			Number:           em.Number,
+			Summary:          em.Summary,
+			MediumImageUrl:   mediumImage,
+			OriginalImageUrl: originalImage,
+			FetchSource:      entity.FetchSourceTVMaze,
+			FetchID:          em.ID,
+		}
+
+		err = self.episodeMetadataRepo.Create(ctx, &m)
 		if err != nil {
 			return err
 		}
-		var _ = mid
-		var _ = em
 	}
 	return nil
 }
