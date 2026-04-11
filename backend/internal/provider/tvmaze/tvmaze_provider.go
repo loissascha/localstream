@@ -44,6 +44,15 @@ type TVMazeSeason struct {
 	Image        *TVMazeShowImage `json:"image"`
 }
 
+type TVMazeEpisode struct {
+	ID      int              `json:"id"`
+	Url     string           `json:"url"`
+	Name    string           `json:"name"`
+	Number  int              `json:"number"`
+	Summary string           `json:"summary"`
+	Image   *TVMazeShowImage `json:"image"`
+}
+
 type TVMazeShowImage struct {
 	Medium   string `json:"medium"`
 	Original string `json:"original"`
@@ -51,6 +60,52 @@ type TVMazeShowImage struct {
 
 func NewTVMazeProvider() *TVMazeProvider {
 	return &TVMazeProvider{}
+}
+
+func (p *TVMazeProvider) SearchEpisodes(seasonId int) ([]provider.EpisodeMetadata, error) {
+	fullUrl := fmt.Sprintf("https://api.tvmaze.com/seasons/%d/episodes", seasonId)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("tvmaze search returned status %d", resp.StatusCode)
+		return nil, err
+	}
+
+	var searchResults []TVMazeEpisode
+	if err = json.Unmarshal(body, &searchResults); err != nil {
+		return nil, err
+	}
+
+	if len(searchResults) == 0 {
+		return []provider.EpisodeMetadata{}, nil
+	}
+
+	mappedResults := make([]provider.EpisodeMetadata, 0, len(searchResults))
+	for _, result := range searchResults {
+		mappedResults = append(mappedResults, toEpisodeMetadata(result))
+	}
+
+	return mappedResults, nil
 }
 
 func (p *TVMazeProvider) SearchSeasons(showId int) ([]provider.SeasonMetadata, error) {
@@ -97,6 +152,18 @@ func (p *TVMazeProvider) SearchSeasons(showId int) ([]provider.SeasonMetadata, e
 	}
 
 	return mappedResults, nil
+}
+
+func toEpisodeMetadata(result TVMazeEpisode) provider.EpisodeMetadata {
+	mappedResult := provider.EpisodeMetadata{
+		ID:      result.ID,
+		Url:     result.Url,
+		Name:    result.Name,
+		Number:  result.Number,
+		Summary: result.Summary,
+		Image:   toShowImage(result.Image),
+	}
+	return mappedResult
 }
 
 func toSeasonMetadata(result TVMazeSeason) provider.SeasonMetadata {
