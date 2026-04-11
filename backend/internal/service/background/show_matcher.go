@@ -124,14 +124,17 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 		return err
 	}
 
-	mid, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
-
 	for _, sm := range seasonMetadatas {
+		mid, err := uuid.NewV7()
+		if err != nil {
+			return err
+		}
 		mediumImage := ""
 		originalImage := ""
+		if sm.Image != nil {
+			mediumImage = sm.Image.Medium
+			originalImage = sm.Image.Original
+		}
 		m := entity.SeasonMetadata{
 			ID:               mid,
 			ShowID:           show.ID,
@@ -145,7 +148,7 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 			FetchSource:      entity.FetchSourceTVMaze,
 			FetchID:          sm.ID,
 		}
-		err := self.seasonMetadataRepo.Create(ctx, &m)
+		err = self.seasonMetadataRepo.Create(ctx, &m)
 		if err != nil {
 			return err
 		}
@@ -158,5 +161,18 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 }
 
 func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *entity.Show, metadata *entity.SeasonMetadata) error {
+	episodeMetas, err := self.metadataProvider.SearchEpisodes(metadata.FetchID)
+	if err != nil {
+		return err
+	}
+
+	for _, em := range episodeMetas {
+		mid, err := uuid.NewV7()
+		if err != nil {
+			return err
+		}
+		var _ = mid
+		var _ = em
+	}
 	return nil
 }
