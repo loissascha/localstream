@@ -120,6 +120,19 @@ type MovieMetadataInfo struct {
 	FetchSource      entity.FetchSource `json:"fetch_source"`
 }
 
+type SeasonMetadataInfo struct {
+	ID               string             `json:"id"`
+	ShowID           string             `json:"show_id"`
+	Url              string             `json:"url"`
+	Number           int                `json:"number"`
+	Summary          string             `json:"summary"`
+	PremiereDate     string             `json:"premiere_date"`
+	MediumImageUrl   string             `json:"medium_image_url"`
+	OriginalImageUrl string             `json:"original_image_url"`
+	FetchID          int                `json:"fetch_id"`
+	FetchSource      entity.FetchSource `json:"fetch_source"`
+}
+
 func toMovieMetadataInfo(m *entity.MovieMetadata) MovieMetadataInfo {
 	return MovieMetadataInfo{
 		ID:               encoders.EncodeUUID(m.ID),
@@ -142,6 +155,21 @@ func toShowMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {
 		Description:      m.Description,
 		MediumImageUrl:   m.MediumImageUrl,
 		OriginalImageUrl: m.OriginalImageUrl,
+		FetchSource:      m.FetchSource,
+	}
+}
+
+func toSeasonMetadataInfo(m *entity.SeasonMetadata) SeasonMetadataInfo {
+	return SeasonMetadataInfo{
+		ID:               encoders.EncodeUUID(m.ID),
+		ShowID:           encoders.EncodeUUID(m.ShowID),
+		Url:              m.Url,
+		Number:           m.Number,
+		Summary:          m.Summary,
+		PremiereDate:     m.PremiereDate,
+		MediumImageUrl:   m.MediumImageUrl,
+		OriginalImageUrl: m.OriginalImageUrl,
+		FetchID:          m.FetchID,
 		FetchSource:      m.FetchSource,
 	}
 }
