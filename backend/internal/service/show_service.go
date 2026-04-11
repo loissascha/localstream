@@ -24,6 +24,10 @@ func (s *ShowService) GetByID(ctx context.Context, id string) (*entity.Show, err
 	return s.showRepo.GetByID(ctx, iduu)
 }
 
+func (s *ShowService) ListLatest(ctx context.Context) ([]entity.Show, error) {
+	return s.showRepo.ListLatest(ctx)
+}
+
 func (s *ShowService) List(ctx context.Context) ([]entity.Show, error) {
 	return s.showRepo.List(ctx)
 }

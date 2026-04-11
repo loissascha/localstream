@@ -35,26 +35,28 @@
 </script>
 
 <section class="my-4">
-	<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
-		<ChevronRightIcon />
-		Continue Movies
-	</h2>
-	<ItemGrid>
-		{#each data as d (d.id)}
-			<ListItemA
-				href={resolve('/(protected)/(watch)/movies/[movieID]', {
-					movieID: d.movie_id
-				})}
-			>
-				<div>
-					<MovieInfoDisplay movie={d.movie_info} />
-				</div>
-				<div>
-					<div class="bg-neutral-600">
-						<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
+	{#if data.length > 0}
+		<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
+			<ChevronRightIcon />
+			Continue Movies
+		</h2>
+		<ItemGrid>
+			{#each data as d (d.id)}
+				<ListItemA
+					href={resolve('/(protected)/(watch)/movies/[movieID]', {
+						movieID: d.movie_id
+					})}
+				>
+					<div>
+						<MovieInfoDisplay movie={d.movie_info} />
 					</div>
-				</div>
-			</ListItemA>
-		{/each}
-	</ItemGrid>
+					<div>
+						<div class="bg-neutral-600">
+							<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
+						</div>
+					</div>
+				</ListItemA>
+			{/each}
+		</ItemGrid>
+	{/if}
 </section>

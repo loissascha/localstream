@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -52,7 +53,15 @@ func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
-	shows, err := h.showSerivce.List(r.Context())
+	limit := strings.TrimSpace(r.URL.Query().Get("limit"))
+
+	var shows []entity.Show
+	var err error
+	if limit == "latest" {
+		shows, err = h.showSerivce.ListLatest(r.Context())
+	} else {
+		shows, err = h.showSerivce.List(r.Context())
+	}
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read shows"})
 		return

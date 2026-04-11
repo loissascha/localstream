@@ -130,10 +130,25 @@ func (r *ShowRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fe
 
 	return nil
 }
+func (r *ShowRepository) ListLatest(ctx context.Context) ([]entity.Show, error) {
+	const query = `
+		SELECT *
+		FROM shows
+		ORDER BY created_at DESC
+		LIMIT 10
+	`
+
+	var shows []entity.Show
+	if err := r.db.SelectContext(ctx, &shows, query); err != nil {
+		return nil, fmt.Errorf("list shows: %w", err)
+	}
+
+	return shows, nil
+}
 
 func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	const query = `
-		SELECT id, name, year, path, created_at, fetch_source
+		SELECT *
 		FROM shows
 	`
 

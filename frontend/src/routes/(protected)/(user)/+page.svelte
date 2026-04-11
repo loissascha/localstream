@@ -36,7 +36,7 @@
 	async function loadShowsList() {
 		try {
 			if (!auth.token) return;
-			const data = await loadShows(auth.token);
+			const data = await loadShows(auth.token, true);
 			shows = data.shows;
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
@@ -92,7 +92,7 @@
 		<section class="my-8">
 			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 				<LibraryIcon />
-				Shows
+				Recent Shows
 			</h2>
 			<ItemGrid>
 				{#each shows as show (show.id)}
@@ -108,7 +108,7 @@
 		<section class="my-8">
 			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 				<LibraryIcon />
-				Movies
+				Recent Movies
 			</h2>
 			<ItemGrid>
 				{#each movies as movie (movie.id)}

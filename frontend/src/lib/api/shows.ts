@@ -1,8 +1,15 @@
 import type { ShowListResponse } from '$lib/types/export_types';
 
-export async function loadShows(bearerToken: string): Promise<ShowListResponse> {
+export async function loadShows(
+	bearerToken: string,
+	latest: boolean = false
+): Promise<ShowListResponse> {
 	try {
-		const res = await fetch('/api/shows', {
+		var q = '';
+		if (latest) {
+			q = '?limit=latest';
+		}
+		const res = await fetch('/api/shows' + q, {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}

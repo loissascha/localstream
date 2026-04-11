@@ -17,4 +17,5 @@ type ShowRepository interface {
 	GetByPath(ctx context.Context, path string) (*entity.Show, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 	List(ctx context.Context) ([]entity.Show, error)
+	ListLatest(ctx context.Context) ([]entity.Show, error)
 }
