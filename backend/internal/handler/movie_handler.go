@@ -12,6 +12,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/service"
 )
@@ -118,7 +119,15 @@ func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
-	movies, err := h.movieService.List(r.Context())
+	limit := strings.TrimSpace(r.URL.Query().Get("limit"))
+
+	var movies []entity.Movie
+	var err error
+	if limit == "latest" {
+		movies, err = h.movieService.ListLatest(r.Context())
+	} else {
+		movies, err = h.movieService.List(r.Context())
+	}
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read movies: " + err.Error()})
 		return

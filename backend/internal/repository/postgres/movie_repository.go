@@ -81,6 +81,22 @@ func (r *MovieRepository) GetByPath(ctx context.Context, path string) (*entity.M
 	return &movie, nil
 }
 
+func (r *MovieRepository) ListLatest(ctx context.Context) ([]entity.Movie, error) {
+	const query = `
+		SELECT *
+		FROM movies
+		ORDER BY created_at DESC
+		LIMIT 10
+		`
+
+	var movies []entity.Movie
+	if err := r.db.SelectContext(ctx, &movies, query); err != nil {
+		return nil, fmt.Errorf("list movies: %w", err)
+	}
+
+	return movies, nil
+}
+
 func (r *MovieRepository) List(ctx context.Context) ([]entity.Movie, error) {
 	const query = `
 		SELECT *

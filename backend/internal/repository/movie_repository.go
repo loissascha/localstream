@@ -16,5 +16,6 @@ type MovieRepository interface {
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPath(ctx context.Context, path string) (*entity.Movie, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
+	ListLatest(ctx context.Context) ([]entity.Movie, error)
 	List(ctx context.Context) ([]entity.Movie, error)
 }

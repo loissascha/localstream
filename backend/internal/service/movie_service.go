@@ -18,6 +18,10 @@ func NewMovieService(movieRepo repository.MovieRepository) *MovieService {
 	}
 }
 
+func (s *MovieService) ListLatest(ctx context.Context) ([]entity.Movie, error) {
+	return s.movieRepo.ListLatest(ctx)
+}
+
 func (s *MovieService) List(ctx context.Context) ([]entity.Movie, error) {
 	return s.movieRepo.List(ctx)
 }
