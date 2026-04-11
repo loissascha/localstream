@@ -29,9 +29,9 @@ type LibraryCataloguer struct {
 	movieMatcher       *MovieMatcher
 }
 
-func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, movieMetadataProvider provider.MovieMetadataProvider, showMetadataRepo repository.ShowMetadataRepository, movieMetadataRepo repository.MovieMetadataRepository) *LibraryCataloguer {
+func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, movieMetadataProvider provider.MovieMetadataProvider, showMetadataRepo repository.ShowMetadataRepository, movieMetadataRepo repository.MovieMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository) *LibraryCataloguer {
 
-	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo)
+	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo, seasonMetaRepo)
 	showMatcher.RunBackground()
 
 	movieMatcher := NewMovieMatcher(movieMetadataProvider, movieRepo, movieMetadataRepo)

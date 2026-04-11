@@ -13,19 +13,21 @@ import (
 )
 
 type ShowMatcher struct {
-	Channel          chan *entity.Show
-	metadataProvider provider.TVMetadataProvider
-	showRepo         repository.ShowRepository
-	showMetadataRepo repository.ShowMetadataRepository
+	Channel            chan *entity.Show
+	metadataProvider   provider.TVMetadataProvider
+	showRepo           repository.ShowRepository
+	showMetadataRepo   repository.ShowMetadataRepository
+	seasonMetadataRepo repository.SeasonMetadataRepository
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository) *ShowMatcher {
+func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
-		Channel:          ch,
-		metadataProvider: metadataProvider,
-		showRepo:         showRepo,
-		showMetadataRepo: showMetadataRepo,
+		Channel:            ch,
+		metadataProvider:   metadataProvider,
+		showRepo:           showRepo,
+		showMetadataRepo:   showMetadataRepo,
+		seasonMetadataRepo: seasonMetaRepo,
 	}
 }
 
@@ -120,11 +122,33 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 		return err
 	}
 
+	mid, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
 	// for each season
 	// -> create season metadata
 	// -> createSeasonEpisodesMetadata func
 	for _, sm := range seasonMetadatas {
-
+		mediumImage := ""
+		originalImage := ""
+		m := entity.SeasonMetadata{
+			ID:               mid,
+			ShowID:           show.ID,
+			Url:              sm.Url,
+			Number:           sm.Number,
+			Summary:          sm.Summary,
+			PremiereDate:     sm.PremiereDate,
+			MediumImageUrl:   mediumImage,
+			OriginalImageUrl: originalImage,
+			FetchSource:      entity.FetchSourceTVMaze,
+			FetchID:          sm.ID,
+		}
+		err := self.seasonMetadataRepo.Create(ctx, &m)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

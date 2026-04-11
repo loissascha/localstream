@@ -127,7 +127,7 @@ func main() {
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo)
 	libraryCataloguer.RunBackground()
 
 	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
