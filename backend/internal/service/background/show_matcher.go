@@ -2,7 +2,6 @@ package background
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -52,12 +51,14 @@ func (self *ShowMatcher) RunBackground() {
 			defer cancel()
 
 			hasError := false
+			createdMetadata := []*entity.ShowMetadata{}
 			for _, res := range showSearchResults {
-				err := self.createShowMetadata(ctx, show, res)
+				m, err := self.createShowMetadata(ctx, show, res)
 				if err != nil {
 					logger.Error(err, "Error creating show metadata")
 					hasError = true
 				}
+				createdMetadata = append(createdMetadata, m)
 			}
 
 			if hasError {
@@ -80,11 +81,10 @@ func (self *ShowMatcher) RunBackground() {
 	}()
 }
 
-func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Show, res provider.ShowSearchResult) error {
-	fmt.Println(res)
+func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Show, res provider.ShowSearchResult) (*entity.ShowMetadata, error) {
 	mid, err := uuid.NewV7()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	description := ""
 	if res.Show.Summary != nil {
@@ -109,14 +109,16 @@ func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Sh
 	}
 	err = self.showMetadataRepo.Create(ctx, &metadata)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	self.createShowSeasonsMetadata(ctx, show, &metadata)
-	return nil
+	err = self.createShowSeasonsMetadata(ctx, show, &metadata)
+	if err != nil {
+		return nil, err
+	}
+	return &metadata, nil
 }
 
 func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *entity.Show, metadata *entity.ShowMetadata) error {
-	// fetch metadata result for seasons for show
 	seasonMetadatas, err := self.metadataProvider.SearchSeasons(metadata.FetchID)
 	if err != nil {
 		return err
@@ -127,15 +129,13 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 		return err
 	}
 
-	// for each season
-	// -> create season metadata
-	// -> createSeasonEpisodesMetadata func
 	for _, sm := range seasonMetadatas {
 		mediumImage := ""
 		originalImage := ""
 		m := entity.SeasonMetadata{
 			ID:               mid,
 			ShowID:           show.ID,
+			ShowMetadataID:   metadata.ID,
 			Url:              sm.Url,
 			Number:           sm.Number,
 			Summary:          sm.Summary,
@@ -149,6 +149,14 @@ func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *en
 		if err != nil {
 			return err
 		}
+		err = self.createSeasonEpisodeMetadata(ctx, show, &m)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
+}
+
+func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *entity.Show, metadata *entity.SeasonMetadata) error {
 	return nil
 }

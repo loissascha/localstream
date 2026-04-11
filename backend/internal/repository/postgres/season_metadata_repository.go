@@ -20,8 +20,8 @@ func NewSeasonMetadataRepository(db *sqlx.DB) *SeasonMetadataRepository {
 
 func (r *SeasonMetadataRepository) Create(ctx context.Context, metadata *entity.SeasonMetadata) error {
 	const query = `
-		INSERT INTO season_metadata (show_id, url, number, summary, premiere_date, medium_image_url, original_image_url, fetch_id, fetch_source)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO season_metadata (show_id, show_metadata_id, url, number, summary, premiere_date, medium_image_url, original_image_url, fetch_id, fetch_source)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id
 	`
 
@@ -29,6 +29,7 @@ func (r *SeasonMetadataRepository) Create(ctx context.Context, metadata *entity.
 		ctx,
 		query,
 		metadata.ShowID,
+		metadata.ShowMetadataID,
 		metadata.Url,
 		metadata.Number,
 		metadata.Summary,

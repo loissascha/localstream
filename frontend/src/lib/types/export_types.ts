@@ -76,6 +76,18 @@ export interface SeasonInfo {
 export interface SeasonListResponse {
   seasons: SeasonInfo[];
 }
+export interface SeasonMetadataInfo {
+  id: string;
+  show_id: string;
+  url: string;
+  number: number;
+  summary: string;
+  premiere_date: string;
+  medium_image_url: string;
+  original_image_url: string;
+  fetch_id: number;
+  fetch_source: string;
+}
 export interface ShowInfo {
   id: string;
   name: string;
