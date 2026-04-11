@@ -14,6 +14,11 @@
 			if (!auth.token) return;
 			const data = await listMovies(auth.token);
 			movies = data.movies;
+			movies.sort((a, b) => {
+				if (a.name > b.name) return 1;
+				if (a.name < b.name) return -1;
+				return 0;
+			});
 		} catch (e) {
 			const m = (e as Error).message;
 			alert(m);

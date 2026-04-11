@@ -15,6 +15,11 @@
 			if (!auth.token) return;
 			const data = await loadShows(auth.token);
 			shows = data.shows;
+			shows.sort((a, b) => {
+				if (a.name > b.name) return 1;
+				if (a.name < b.name) return -1;
+				return 0;
+			});
 		} catch (error) {
 			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
 		} finally {
