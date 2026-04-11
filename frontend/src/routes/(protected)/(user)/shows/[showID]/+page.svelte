@@ -133,7 +133,7 @@
 		<p>{errorMessage}</p>
 	{/if}
 
-	<div class="flex gap-2">
+	<div class="flex flex-col gap-2 md:flex-row">
 		<div class="shrink-0">
 			{#if metadata != null}
 				<div>
@@ -154,7 +154,7 @@
 			{/if}
 			{#if metadata != null}
 				<div>
-					{metadata.description}
+					{metadata.description.replaceAll('<p>', '').replaceAll('</p>', '')}
 				</div>
 			{/if}
 		</div>
@@ -176,7 +176,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="my-3 flex flex-wrap gap-4 py-5">
+	<div class="my-3 grid grid-cols-3 md:flex md:flex-wrap gap-4 py-5">
 		{#each episodeData as episode (episode.id)}
 			<a
 				href={resolve(
@@ -187,7 +187,7 @@
 						episodeID: episode.id
 					}
 				)}
-				class="flex h-34 w-34 shrink-0 flex-col justify-between rounded bg-neutral-800"
+				class="flex md:w-34 aspect-square shrink-0 flex-col justify-between rounded bg-neutral-800"
 			>
 				<div>
 					<div class="flex justify-end px-2 py-1">
