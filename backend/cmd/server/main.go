@@ -71,6 +71,7 @@ func main() {
 	libraryRepo := repopostgres.NewLibraryRepository(db)
 	showRepo := repopostgres.NewShowRepository(db)
 	showMetaRepo := repopostgres.NewShowMetadataRepository(db)
+	seasonMetaRepo := repopostgres.NewSeasonMetadataRepository(db)
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
@@ -88,6 +89,7 @@ func main() {
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
+	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	movieMetaService := service.NewMovieMetadataService(movieMetaRepo, movieRepo)
 
 	// middleware
@@ -104,6 +106,7 @@ func main() {
 	userMovieWatchstateH := handler.NewUserMovieWatchstateHandler(s, authMiddleware, userMovieWatchstateServiced, movieService)
 	movieH := handler.NewMovieHandler(s, authMiddleware, movieService)
 	showMetaH := handler.NewShowMetadataHandler(s, authMiddleware, showMetaService)
+	seasonMetaH := handler.NewSeasonMetadataHandler(s, authMiddleware, seasonMetaService)
 	movieMetaH := handler.NewMovieMetadataHandler(s, authMiddleware, movieMetaService)
 
 	// register routes
@@ -117,6 +120,7 @@ func main() {
 	movieH.RegisterRoutes()
 	userMovieWatchstateH.RegisterHandlers()
 	showMetaH.RegisterRoutes()
+	seasonMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
 
 	// metadata providers
