@@ -12,11 +12,13 @@
 			>Localstream</a
 		>
 		<a
+			href={resolve('/(protected)/(user)/shows')}
 			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
 		>
 			Shows
 		</a>
 		<a
+			href={resolve('/(protected)/(user)/movies')}
 			class="cursor-pointer rounded-md border border-neutral-500 bg-neutral-600 px-3 py-1.5 text-sm hover:bg-neutral-500"
 		>
 			Movies
