@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { type ShowInfo, type LibraryListItem, type MovieInfo } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
@@ -9,7 +8,6 @@
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import { loadShows } from '$lib/api/shows';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
-	import MovieInfoDisplay from '$lib/components/MovieInfoDisplay.svelte';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 
@@ -25,7 +23,7 @@
 	async function loadMovies() {
 		try {
 			if (!auth.token) return;
-			const data = await listMovies(auth.token);
+			const data = await listMovies(auth.token, true);
 			movies = data.movies;
 		} catch (e) {
 			const m = (e as Error).message;

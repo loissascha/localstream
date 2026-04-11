@@ -1,8 +1,15 @@
 import type { MovieListResponse } from '$lib/types/export_types';
 
-export async function listMovies(bearerToken: string): Promise<MovieListResponse> {
+export async function listMovies(
+	bearerToken: string,
+	latest: boolean = false
+): Promise<MovieListResponse> {
 	try {
-		const res = await fetch('/api/v1/movies/list', {
+		var q = '';
+		if (latest) {
+			q = '?limit=latest';
+		}
+		const res = await fetch('/api/v1/movies/list' + q, {
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
 			}
