@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { getEpisodeDetails, getNextEpisode } from '$lib/api/episode';
+	import { getEpisodeDetails, getEpisodeMetadata, getNextEpisode } from '$lib/api/episode';
 	import { getSeasonDetails } from '$lib/api/seasons';
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
@@ -9,7 +9,11 @@
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	import { type SeasonInfo, type EpisodeInfo } from '$lib/types/export_types';
+	import {
+		type SeasonInfo,
+		type EpisodeInfo,
+		type EpisodeMetadataInfo
+	} from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -21,6 +25,7 @@
 	var loadingWatchstate = $state(true);
 	var almostDone = $state(false);
 
+	var episodeMetadataDetails = $state<EpisodeMetadataInfo | null>(null);
 	var episodeDetails = $state<EpisodeInfo | null>(null);
 	var seasonDetails = $state<SeasonInfo | null>(null);
 	var nextEpisode = $state<EpisodeInfo | null>(null);
@@ -151,6 +156,24 @@
 	});
 
 	$effect(() => {
+		episodeDetails;
+		seasonDetails;
+		showId;
+		if (!auth.initialized) return;
+		if (!auth.token) return;
+		if (!seasonDetails) return;
+		if (!episodeDetails) return;
+		getEpisodeMetadata(auth.token, showId, seasonDetails.number, episodeDetails.number)
+			.then((r) => {
+				episodeMetadataDetails = r;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+	});
+
+	$effect(() => {
 		if (!auth.token) {
 			return;
 		}
@@ -183,7 +206,7 @@
 			<ChevronLeftIcon />
 		</a>
 		<span>
-			S{seasonDetails?.number}:E{episodeDetails?.number}
+			S{seasonDetails?.number}:E{episodeDetails?.number} - {episodeMetadataDetails?.name}
 		</span>
 	</header>
 

@@ -1,4 +1,4 @@
-import type { EpisodeInfo } from '$lib/types/export_types';
+import type { EpisodeInfo, EpisodeMetadataInfo } from '$lib/types/export_types';
 
 export async function getEpisodeDetails(
 	bearerToken: string,
@@ -33,5 +33,28 @@ export async function getNextEpisode(
 		throw new Error('Error: ' + response.status);
 	}
 	const result = (await response.json()) as EpisodeInfo;
+	return result;
+}
+
+export async function getEpisodeMetadata(
+	bearerToken: string,
+	showID: string,
+	seasonNumber: number,
+	episodeNumber: number
+): Promise<EpisodeMetadataInfo> {
+	const response = await fetch(
+		`/api/v1/episode/metadata/${showID}/${seasonNumber}/${episodeNumber}`,
+		{
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + bearerToken
+			}
+		}
+	);
+	if (response.status !== 200) {
+		console.error(response);
+		throw new Error('Error: ' + response.status);
+	}
+	const result = (await response.json()) as EpisodeMetadataInfo;
 	return result;
 }
