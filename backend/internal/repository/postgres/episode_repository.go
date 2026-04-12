@@ -143,4 +143,32 @@ func (r *EpisodeRepository) GetBySeasonIDAndNumber(ctx context.Context, seasonId
 	return &episode, nil
 }
 
+func (r *EpisodeRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+	if fetchSource == "" {
+		fetchSource = entity.FetchSourceNone
+	}
+
+	const query = `
+		UPDATE episodes
+		SET fetch_source = $1
+		WHERE id = $2
+	`
+
+	result, err := r.db.ExecContext(ctx, query, fetchSource, id)
+	if err != nil {
+		return fmt.Errorf("update episode fetch source: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("update episode fetch source rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrEpisodeNotFound
+	}
+
+	return nil
+}
+
 var _ repository.EpisodeRepository = (*EpisodeRepository)(nil)

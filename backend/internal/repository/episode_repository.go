@@ -17,4 +17,5 @@ type EpisodeRepository interface {
 	GetByID(ctx context.Context, episodeId uuid.UUID) (*entity.Episode, error)
 	DeleteByID(ctx context.Context, episodeId uuid.UUID) error
 	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*entity.Episode, error)
+	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 }
