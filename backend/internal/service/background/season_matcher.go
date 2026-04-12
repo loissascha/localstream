@@ -54,7 +54,6 @@ func (self *SeasonMatcher) getMetadataResultCacheOrLive(fetchID int) ([]provider
 		if time.Now().UTC().Sub(cachefile.created) > 24*time.Hour {
 			return self.getMetadataResultLive(fetchID)
 		}
-		logger.Debug(nil, "Load season metadata from cache")
 		return cachefile.metadata, nil
 	}
 
@@ -74,7 +73,7 @@ func (self *SeasonMatcher) RunBackground() {
 
 			show, err := self.showRepo.GetByID(ctx, season.ShowID)
 			if err != nil {
-				logger.Error(err, "Can't find show")
+				logger.Error(err, "[SeasonMatcher] Can't find show")
 				continue
 			}
 
@@ -85,17 +84,17 @@ func (self *SeasonMatcher) RunBackground() {
 
 			showMetadata, err := self.showMetadataRepo.GetByShowID(ctx, show.ID)
 			if err != nil {
-				logger.Error(err, "Can't get show metadata")
+				logger.Error(err, "[SeasonMatcher] Can't get show metadata")
 				continue
 			}
 			if len(showMetadata) != 1 {
-				logger.Error(nil, "Show has wrong amount of metadatas: {Len}", len(showMetadata))
+				logger.Error(nil, "[SeasonMatcher] Show has wrong amount of metadatas: {Len}", len(showMetadata))
 				continue
 			}
 
 			seasonMetadataResult, err := self.getMetadataResultCacheOrLive(showMetadata[0].FetchID)
 			if err != nil {
-				logger.Error(err, "Can't get season metadatas")
+				logger.Error(err, "[SeasonMatcher] Can't get season metadatas")
 				continue
 			}
 
@@ -104,7 +103,7 @@ func (self *SeasonMatcher) RunBackground() {
 				if smr.Number == season.Number {
 					err := self.createSeasonMetadata(ctx, season, &smr)
 					if err != nil {
-						logger.Error(err, "Error creating metadata for season")
+						logger.Error(err, "[SeasonMatcher] Error creating metadata for season")
 						hasError = true
 					}
 					break
@@ -115,7 +114,7 @@ func (self *SeasonMatcher) RunBackground() {
 				season.FetchSource = entity.FetchSourceTVMaze
 				err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
 				if err != nil {
-					logger.Error(err, "Error updating fetch source of season")
+					logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
 					continue
 				}
 			}

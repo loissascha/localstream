@@ -58,7 +58,7 @@ func (self *EpisodeMatcher) getMetadataResultCacheOrLive(fetchID int) ([]provide
 		if time.Now().UTC().Sub(cachefile.created) > 24*time.Hour {
 			return self.getMetadataResultLive(fetchID)
 		}
-		logger.Debug(nil, "Load episode metadata from cache")
+		// logger.Debug(nil, "Load episode metadata from cache")
 		return cachefile.metadata, nil
 	}
 
@@ -78,30 +78,33 @@ func (self *EpisodeMatcher) RunBackground() {
 
 			season, err := self.seasonRepo.GetByID(ctx, episode.SeasonID)
 			if err != nil {
-				logger.Error(err, "Can't find season")
+				logger.Error(err, "[EpisodeMatcher] Can't find season")
 				continue
 			}
 
 			show, err := self.showRepo.GetByID(ctx, season.ShowID)
 			if err != nil {
-				logger.Error(err, "Can't find show")
+				logger.Error(err, "[EpisodeMatcher] Can't find show")
 				continue
 			}
 
-			// show has multiple fetch sources -> wait until it's clear before loading any metadata
+			// show | season has multiple fetch sources -> wait until it's clear before loading any metadata
 			if show.FetchSource.IsEmpty() || show.FetchSource.IsMultiple() || show.FetchSource.IsNone() {
+				continue
+			}
+			if season.FetchSource.IsEmpty() || season.FetchSource.IsNone() || season.FetchSource.IsMultiple() {
 				continue
 			}
 
 			seasonMetadata, err := self.seasonMetadataRepo.GetBySeasonID(ctx, season.ID)
 			if err != nil || seasonMetadata == nil {
-				logger.Error(err, "Can't get season metadata")
+				logger.Error(err, "[EpisodeMatcher] Can't get season metadata")
 				continue
 			}
 
 			episodeMetadataResult, err := self.getMetadataResultCacheOrLive(seasonMetadata.FetchID)
 			if err != nil {
-				logger.Error(err, "Can't get episode metadata")
+				logger.Error(err, "[EpisodeMatcher] Can't get episode metadata")
 				continue
 			}
 
@@ -110,7 +113,7 @@ func (self *EpisodeMatcher) RunBackground() {
 				if emr.Number == episode.Number {
 					err := self.createEpisodeMetadata(ctx, episode, &emr)
 					if err != nil {
-						logger.Error(err, "Error creating metadata for episode")
+						logger.Error(err, "[EpisodeMatcher] Error creating metadata for episode")
 						hasError = true
 					}
 					break
@@ -121,7 +124,7 @@ func (self *EpisodeMatcher) RunBackground() {
 				episode.FetchSource = entity.FetchSourceTVMaze
 				err := self.episodeRepo.UpdateFetchSource(ctx, episode.ID, episode.FetchSource)
 				if err != nil {
-					logger.Error(err, "Error updating fetch source of episode")
+					logger.Error(err, "[EpisodeMatcher] Error updating fetch source of episode")
 					continue
 				}
 			}
