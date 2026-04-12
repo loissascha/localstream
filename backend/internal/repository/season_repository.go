@@ -16,4 +16,5 @@ type SeasonRepository interface {
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPathAndShowID(ctx context.Context, path string, showId uuid.UUID) (*entity.Season, error)
 	ListByShowID(ctx context.Context, showId uuid.UUID) ([]entity.Season, error)
+	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 }

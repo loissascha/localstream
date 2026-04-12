@@ -83,7 +83,12 @@ func (self *SeasonMatcher) RunBackground() {
 			}
 
 			if !hasError {
-				// TODO: update season fetch source
+				season.FetchSource = entity.FetchSourceTVMaze
+				err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
+				if err != nil {
+					logger.Error(err, "Error updating fetch source of season")
+					continue
+				}
 			}
 		}
 	}()

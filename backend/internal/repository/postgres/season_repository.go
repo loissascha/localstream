@@ -118,4 +118,32 @@ func (r *SeasonRepository) ListByShowID(ctx context.Context, showId uuid.UUID) (
 	return seasons, nil
 }
 
+func (r *SeasonRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+	if fetchSource == "" {
+		fetchSource = entity.FetchSourceNone
+	}
+
+	const query = `
+		UPDATE seasons
+		SET fetch_source = $1
+		WHERE id = $2
+	`
+
+	result, err := r.db.ExecContext(ctx, query, fetchSource, id)
+	if err != nil {
+		return fmt.Errorf("update season fetch source: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("update season fetch source rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrSeasonNotFound
+	}
+
+	return nil
+}
+
 var _ repository.SeasonRepository = (*SeasonRepository)(nil)
