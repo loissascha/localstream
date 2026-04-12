@@ -27,6 +27,7 @@ type LibraryCataloguer struct {
 	movieRepo          repository.MovieRepository
 	showMatcher        *ShowMatcher
 	movieMatcher       *MovieMatcher
+	seasonMatcher      *SeasonMatcher
 }
 
 func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, movieMetadataProvider provider.MovieMetadataProvider, showMetadataRepo repository.ShowMetadataRepository, movieMetadataRepo repository.MovieMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository) *LibraryCataloguer {
@@ -37,6 +38,9 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 	movieMatcher := NewMovieMatcher(movieMetadataProvider, movieRepo, movieMetadataRepo)
 	movieMatcher.RunBackground()
 
+	seasonMatcher := NewSeasonMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo)
+	seasonMatcher.RunBackground()
+
 	return &LibraryCataloguer{
 		libService:         libService,
 		tvmetadataProvider: tvmaze.NewTVMazeProvider(),
@@ -46,6 +50,7 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 		movieRepo:          movieRepo,
 		showMatcher:        showMatcher,
 		movieMatcher:       movieMatcher,
+		seasonMatcher:      seasonMatcher,
 	}
 }
 
@@ -141,6 +146,7 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 		return nil, err
 	}
 	if season != nil {
+		l.seasonMatcher.Channel <- season
 		return season, nil
 	}
 
@@ -157,6 +163,7 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 		logger.Error(err, "Error creating season")
 		return nil, err
 	}
+	l.seasonMatcher.Channel <- season
 	return season, nil
 }
 

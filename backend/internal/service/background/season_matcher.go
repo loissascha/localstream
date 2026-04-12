@@ -36,6 +36,9 @@ func (self *SeasonMatcher) RunBackground() {
 	go func() {
 		for {
 			season := <-self.Channel
+			if !season.FetchSource.IsNone() {
+				continue
+			}
 
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 			defer cancel()
@@ -67,14 +70,20 @@ func (self *SeasonMatcher) RunBackground() {
 				continue
 			}
 
+			hasError := false
 			for _, smr := range seasonMetadataResult {
 				if smr.Number == season.Number {
 					err := self.createSeasonMetadata(ctx, season, &smr)
 					if err != nil {
 						logger.Error(err, "Error creating metadata for season")
+						hasError = true
 					}
 					break
 				}
+			}
+
+			if !hasError {
+				// TODO: update season fetch source
 			}
 		}
 	}()
