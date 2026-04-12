@@ -145,6 +145,7 @@ func (self *EpisodeMatcher) createEpisodeMetadata(ctx context.Context, episode *
 		ID:               mid,
 		EpisodeID:        episode.ID,
 		Url:              metadata.Url,
+		Name:             metadata.Name,
 		Number:           metadata.Number,
 		Summary:          metadata.Summary,
 		MediumImageUrl:   mediumImage,
