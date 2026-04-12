@@ -113,86 +113,86 @@ func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Sh
 	if err != nil {
 		return nil, err
 	}
-	err = self.createShowSeasonsMetadata(ctx, show, &metadata)
+	// err = self.createShowSeasonsMetadata(ctx, show, &metadata)
 	if err != nil {
 		return nil, err
 	}
 	return &metadata, nil
 }
 
-func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *entity.Show, metadata *entity.ShowMetadata) error {
-	seasonMetadatas, err := self.metadataProvider.SearchSeasons(metadata.FetchID)
-	if err != nil {
-		return err
-	}
-
-	for _, sm := range seasonMetadatas {
-		mid, err := uuid.NewV7()
-		if err != nil {
-			return err
-		}
-		mediumImage := ""
-		originalImage := ""
-		if sm.Image != nil {
-			mediumImage = sm.Image.Medium
-			originalImage = sm.Image.Original
-		}
-		m := entity.SeasonMetadata{
-			ID:               mid,
-			ShowID:           show.ID,
-			ShowMetadataID:   metadata.ID,
-			Url:              sm.Url,
-			Number:           sm.Number,
-			Summary:          sm.Summary,
-			PremiereDate:     sm.PremiereDate,
-			MediumImageUrl:   mediumImage,
-			OriginalImageUrl: originalImage,
-			FetchSource:      entity.FetchSourceTVMaze,
-			FetchID:          sm.ID,
-		}
-		err = self.seasonMetadataRepo.Create(ctx, &m)
-		if err != nil {
-			return err
-		}
-		err = self.createSeasonEpisodeMetadata(ctx, show, &m)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *entity.Show, metadata *entity.SeasonMetadata) error {
-	episodeMetas, err := self.metadataProvider.SearchEpisodes(metadata.FetchID)
-	if err != nil {
-		return err
-	}
-
-	for _, em := range episodeMetas {
-		mediumImage := ""
-		originalImage := ""
-		if em.Image != nil {
-			mediumImage = em.Image.Medium
-			originalImage = em.Image.Original
-		}
-
-		m := entity.EpisodeMetadata{
-			ShowID:           show.ID,
-			SeasonMetadataID: metadata.ID,
-			Url:              em.Url,
-			Name:             em.Name,
-			Number:           em.Number,
-			Summary:          em.Summary,
-			MediumImageUrl:   mediumImage,
-			OriginalImageUrl: originalImage,
-			FetchSource:      entity.FetchSourceTVMaze,
-			FetchID:          em.ID,
-		}
-
-		err = self.episodeMetadataRepo.Create(ctx, &m)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
+// func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *entity.Show, metadata *entity.ShowMetadata) error {
+// 	seasonMetadatas, err := self.metadataProvider.SearchSeasons(metadata.FetchID)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	for _, sm := range seasonMetadatas {
+// 		mid, err := uuid.NewV7()
+// 		if err != nil {
+// 			return err
+// 		}
+// 		mediumImage := ""
+// 		originalImage := ""
+// 		if sm.Image != nil {
+// 			mediumImage = sm.Image.Medium
+// 			originalImage = sm.Image.Original
+// 		}
+// 		m := entity.SeasonMetadata{
+// 			ID:               mid,
+// 			ShowID:           show.ID,
+// 			ShowMetadataID:   metadata.ID,
+// 			Url:              sm.Url,
+// 			Number:           sm.Number,
+// 			Summary:          sm.Summary,
+// 			PremiereDate:     sm.PremiereDate,
+// 			MediumImageUrl:   mediumImage,
+// 			OriginalImageUrl: originalImage,
+// 			FetchSource:      entity.FetchSourceTVMaze,
+// 			FetchID:          sm.ID,
+// 		}
+// 		err = self.seasonMetadataRepo.Create(ctx, &m)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		err = self.createSeasonEpisodeMetadata(ctx, show, &m)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }
+//
+// func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *entity.Show, metadata *entity.SeasonMetadata) error {
+// 	episodeMetas, err := self.metadataProvider.SearchEpisodes(metadata.FetchID)
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	for _, em := range episodeMetas {
+// 		mediumImage := ""
+// 		originalImage := ""
+// 		if em.Image != nil {
+// 			mediumImage = em.Image.Medium
+// 			originalImage = em.Image.Original
+// 		}
+//
+// 		m := entity.EpisodeMetadata{
+// 			ShowID:           show.ID,
+// 			SeasonMetadataID: metadata.ID,
+// 			Url:              em.Url,
+// 			Name:             em.Name,
+// 			Number:           em.Number,
+// 			Summary:          em.Summary,
+// 			MediumImageUrl:   mediumImage,
+// 			OriginalImageUrl: originalImage,
+// 			FetchSource:      entity.FetchSourceTVMaze,
+// 			FetchID:          em.ID,
+// 		}
+//
+// 		err = self.episodeMetadataRepo.Create(ctx, &m)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }

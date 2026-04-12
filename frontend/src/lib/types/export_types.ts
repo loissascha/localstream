@@ -28,8 +28,7 @@ export interface EpisodeListResponse {
 }
 export interface EpisodeMetadataInfo {
   id: string;
-  show_id: string;
-  season_metadata_id: string;
+  episode_id: string;
   url: string;
   name: string;
   number: number;

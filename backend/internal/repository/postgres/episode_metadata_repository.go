@@ -22,16 +22,15 @@ func NewEpisodeMetadataRepository(db *sqlx.DB) *EpisodeMetadataRepository {
 
 func (r *EpisodeMetadataRepository) Create(ctx context.Context, metadata *entity.EpisodeMetadata) error {
 	const query = `
-		INSERT INTO episode_metadata (show_id, season_metadata_id, url, name, number, summary, medium_image_url, original_image_url, fetch_id, fetch_source)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		INSERT INTO episode_metadata (episode_id, url, name, number, summary, medium_image_url, original_image_url, fetch_id, fetch_source)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id
 	`
 
 	err := r.db.QueryRowxContext(
 		ctx,
 		query,
-		metadata.ShowID,
-		metadata.SeasonMetadataID,
+		metadata.EpisodeID,
 		metadata.Url,
 		metadata.Name,
 		metadata.Number,
@@ -50,10 +49,12 @@ func (r *EpisodeMetadataRepository) Create(ctx context.Context, metadata *entity
 
 func (r *EpisodeMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.EpisodeMetadata, error) {
 	const query = `
-		SELECT *
-		FROM episode_metadata
-		WHERE show_id = $1
-		ORDER BY number ASC
+		SELECT em.*
+		FROM episode_metadata em
+		INNER JOIN episodes e ON e.id = em.episode_id
+		INNER JOIN seasons s ON s.id = e.season_id
+		WHERE s.show_id = $1
+		ORDER BY s.number ASC, e.number ASC
 	`
 
 	var metadata []entity.EpisodeMetadata
@@ -68,8 +69,9 @@ func (r *EpisodeMetadataRepository) GetByShowIDAndSeasonNumberAndEpisodeNumber(c
 	const query = `
 		SELECT em.*
 		FROM episode_metadata em
-		INNER JOIN season_metadata sm ON sm.id = em.season_metadata_id
-		WHERE em.show_id = $1 AND sm.number = $2 AND em.number = $3
+		INNER JOIN episodes e ON e.id = em.episode_id
+		INNER JOIN seasons s ON s.id = e.season_id
+		WHERE s.show_id = $1 AND s.number = $2 AND e.number = $3
 		ORDER BY em.id ASC
 		LIMIT 1
 	`

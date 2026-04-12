@@ -17,13 +17,13 @@ func NewEpisodeMetadataService(episodeMetadataRepo repository.EpisodeMetadataRep
 	return &EpisodeMetadataService{episodeMetadataRepo: episodeMetadataRepo}
 }
 
-func (s *EpisodeMetadataService) Create(ctx context.Context, showID string, metadata *entity.EpisodeMetadata) error {
-	showUUID, err := encoders.DecodeUUID(showID)
+func (s *EpisodeMetadataService) Create(ctx context.Context, episodeID string, metadata *entity.EpisodeMetadata) error {
+	episodeUUID, err := encoders.DecodeUUID(episodeID)
 	if err != nil {
-		return fmt.Errorf("parse show id: %w", err)
+		return fmt.Errorf("parse episode id: %w", err)
 	}
 
-	metadata.ShowID = showUUID
+	metadata.EpisodeID = episodeUUID
 
 	if err := s.episodeMetadataRepo.Create(ctx, metadata); err != nil {
 		return fmt.Errorf("create episode metadata: %w", err)
