@@ -47,6 +47,25 @@ func (r *EpisodeMetadataRepository) Create(ctx context.Context, metadata *entity
 	return nil
 }
 
+func (r *EpisodeMetadataRepository) GetByEpisodeID(ctx context.Context, episodeID uuid.UUID) (*entity.EpisodeMetadata, error) {
+	const query = `
+		SELECT *
+		FROM episode_metadata
+		WHERE episode_id = $1
+		LIMIT 1
+	`
+
+	var metadata entity.EpisodeMetadata
+	if err := r.db.GetContext(ctx, &metadata, query, episodeID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get episode metadata by episode id: %w", err)
+	}
+
+	return &metadata, nil
+}
+
 func (r *EpisodeMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.EpisodeMetadata, error) {
 	const query = `
 		SELECT em.*

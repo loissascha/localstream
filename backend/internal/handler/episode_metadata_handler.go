@@ -25,6 +25,12 @@ func NewEpisodeMetadataHandler(s *server.Server, authM *middleware.AuthMiddlewar
 }
 
 func (h *EpisodeMetadataHandler) RegisterRoutes() {
+	h.s.GETI("/api/v1/episode/metadata/by-episode/{episodeID}",
+		h.getByEpisodeID,
+		server.WithExportType[EpisodeMetadataInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
 	h.s.GETI("/api/v1/episode/metadata/{showID}",
 		h.listByShow,
 		server.WithExportType[EpisodeMetadataInfo](),
@@ -52,6 +58,22 @@ func (h *EpisodeMetadataHandler) listByShow(w http.ResponseWriter, r *http.Reque
 	}
 
 	respond.JSON(w, http.StatusOK, result)
+}
+
+func (h *EpisodeMetadataHandler) getByEpisodeID(w http.ResponseWriter, r *http.Request) {
+	episodeID := r.PathValue("episodeID")
+	metadata, err := h.episodeMetaService.GetByEpisodeID(r.Context(), episodeID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	if metadata == nil {
+		respond.JSON(w, http.StatusNotFound, map[string]string{"error": "episode metadata not found"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toEpisodeMetadataInfo(metadata))
 }
 
 func (h *EpisodeMetadataHandler) getByShowAndSeasonAndEpisodeNumber(w http.ResponseWriter, r *http.Request) {

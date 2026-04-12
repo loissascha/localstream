@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -43,6 +45,25 @@ func (r *SeasonMetadataRepository) Create(ctx context.Context, metadata *entity.
 	}
 
 	return nil
+}
+
+func (r *SeasonMetadataRepository) GetBySeasonID(ctx context.Context, seasonID uuid.UUID) (*entity.SeasonMetadata, error) {
+	const query = `
+		SELECT *
+		FROM season_metadata
+		WHERE season_id = $1
+		LIMIT 1
+	`
+
+	var metadata entity.SeasonMetadata
+	if err := r.db.GetContext(ctx, &metadata, query, seasonID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get season metadata by season id: %w", err)
+	}
+
+	return &metadata, nil
 }
 
 func (r *SeasonMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.SeasonMetadata, error) {

@@ -12,6 +12,7 @@ var ErrEpisodeMetadataNotFound = errors.New("episode metadata not found")
 
 type EpisodeMetadataRepository interface {
 	Create(ctx context.Context, metadata *entity.EpisodeMetadata) error
+	GetByEpisodeID(ctx context.Context, episodeID uuid.UUID) (*entity.EpisodeMetadata, error)
 	GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.EpisodeMetadata, error)
 	GetByShowIDAndSeasonNumberAndEpisodeNumber(ctx context.Context, showID uuid.UUID, seasonNumber int, episodeNumber int) (*entity.EpisodeMetadata, error)
 	DeleteOne(ctx context.Context, id uuid.UUID) error

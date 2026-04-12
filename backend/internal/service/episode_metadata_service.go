@@ -32,6 +32,20 @@ func (s *EpisodeMetadataService) Create(ctx context.Context, episodeID string, m
 	return nil
 }
 
+func (s *EpisodeMetadataService) GetByEpisodeID(ctx context.Context, episodeID string) (*entity.EpisodeMetadata, error) {
+	episodeUUID, err := encoders.DecodeUUID(episodeID)
+	if err != nil {
+		return nil, fmt.Errorf("parse episode id: %w", err)
+	}
+
+	metadata, err := s.episodeMetadataRepo.GetByEpisodeID(ctx, episodeUUID)
+	if err != nil {
+		return nil, fmt.Errorf("get episode metadata by episode id: %w", err)
+	}
+
+	return metadata, nil
+}
+
 func (s *EpisodeMetadataService) GetByShowID(ctx context.Context, showID string) ([]entity.EpisodeMetadata, error) {
 	showUUID, err := encoders.DecodeUUID(showID)
 	if err != nil {

@@ -32,6 +32,20 @@ func (s *SeasonMetadataService) Create(ctx context.Context, seasonID string, met
 	return nil
 }
 
+func (s *SeasonMetadataService) GetBySeasonID(ctx context.Context, seasonID string) (*entity.SeasonMetadata, error) {
+	seasonUUID, err := encoders.DecodeUUID(seasonID)
+	if err != nil {
+		return nil, fmt.Errorf("parse season id: %w", err)
+	}
+
+	metadata, err := s.seasonMetadataRepo.GetBySeasonID(ctx, seasonUUID)
+	if err != nil {
+		return nil, fmt.Errorf("get season metadata by season id: %w", err)
+	}
+
+	return metadata, nil
+}
+
 func (s *SeasonMetadataService) GetByShowID(ctx context.Context, showID string) ([]entity.SeasonMetadata, error) {
 	showUUID, err := encoders.DecodeUUID(showID)
 	if err != nil {
