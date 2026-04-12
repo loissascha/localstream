@@ -58,7 +58,7 @@ func (self *EpisodeMatcher) getMetadataResultCacheOrLive(fetchID int) ([]provide
 		if time.Now().UTC().Sub(cachefile.created) > 24*time.Hour {
 			return self.getMetadataResultLive(fetchID)
 		}
-		logger.Debug(nil, "Load season metadata from cache")
+		logger.Debug(nil, "Load episode metadata from cache")
 		return cachefile.metadata, nil
 	}
 
