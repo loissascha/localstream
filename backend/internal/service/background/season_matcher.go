@@ -11,25 +11,54 @@ import (
 	"github.com/loissascha/localstream/internal/repository"
 )
 
+type seasonMetadataCache struct {
+	created  time.Time
+	metadata []provider.SeasonMetadata
+}
+
 type SeasonMatcher struct {
-	Channel            chan *entity.Season
-	metadataProvider   provider.TVMetadataProvider
-	seasonRepo         repository.SeasonRepository
-	seasonMetadataRepo repository.SeasonMetadataRepository
-	showRepo           repository.ShowRepository
-	showMetadataRepo   repository.ShowMetadataRepository
+	Channel             chan *entity.Season
+	seasonMetadataCache map[int]seasonMetadataCache
+	metadataProvider    provider.TVMetadataProvider
+	seasonRepo          repository.SeasonRepository
+	seasonMetadataRepo  repository.SeasonMetadataRepository
+	showRepo            repository.ShowRepository
+	showMetadataRepo    repository.ShowMetadataRepository
 }
 
 func NewSeasonMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository) *SeasonMatcher {
 	ch := make(chan *entity.Season)
 	return &SeasonMatcher{
-		Channel:            ch,
-		metadataProvider:   metadataProvider,
-		seasonRepo:         seasonRepo,
-		seasonMetadataRepo: seasonMetaRepo,
-		showRepo:           showRepo,
-		showMetadataRepo:   showMetaRepo,
+		Channel:             ch,
+		seasonMetadataCache: make(map[int]seasonMetadataCache),
+		metadataProvider:    metadataProvider,
+		seasonRepo:          seasonRepo,
+		seasonMetadataRepo:  seasonMetaRepo,
+		showRepo:            showRepo,
+		showMetadataRepo:    showMetaRepo,
 	}
+}
+
+func (self *SeasonMatcher) getMetadataResultLive(fetchID int) ([]provider.SeasonMetadata, error) {
+	seasonMetadataResult, err := self.metadataProvider.SearchSeasons(fetchID)
+	self.seasonMetadataCache[fetchID] = seasonMetadataCache{
+		created:  time.Now().UTC(),
+		metadata: seasonMetadataResult,
+	}
+	return seasonMetadataResult, err
+}
+
+func (self *SeasonMatcher) getMetadataResultCacheOrLive(fetchID int) ([]provider.SeasonMetadata, error) {
+	cachefile, ok := self.seasonMetadataCache[fetchID]
+	if ok {
+		if time.Now().UTC().Sub(cachefile.created) > 24*time.Hour {
+			return self.getMetadataResultLive(fetchID)
+		}
+		logger.Debug(nil, "Load season metadata from cache")
+		return cachefile.metadata, nil
+	}
+
+	return self.getMetadataResultLive(fetchID)
 }
 
 func (self *SeasonMatcher) RunBackground() {
@@ -64,7 +93,7 @@ func (self *SeasonMatcher) RunBackground() {
 				continue
 			}
 
-			seasonMetadataResult, err := self.metadataProvider.SearchSeasons(showMetadata[0].FetchID)
+			seasonMetadataResult, err := self.getMetadataResultCacheOrLive(showMetadata[0].FetchID)
 			if err != nil {
 				logger.Error(err, "Can't get season metadatas")
 				continue
