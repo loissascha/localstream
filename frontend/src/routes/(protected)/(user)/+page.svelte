@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { type ShowInfo, type LibraryListItem, type MovieInfo } from '$lib/types/export_types';
+	import { type ShowInfo, type MovieInfo } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
-	import { loadLibraries } from '$lib/api/libraries';
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { listMovies } from '$lib/api/movies';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
@@ -11,11 +10,8 @@
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 
-	let libraries = $state<LibraryListItem[]>([]);
 	let shows = $state<ShowInfo[]>([]);
 	let movies = $state<MovieInfo[]>([]);
-	let selectedLibrary = $state<LibraryListItem | null>(null);
-	let loading = $state(true);
 	let loadingShows = $state(true);
 	let loadingMovies = $state(true);
 	let errorMessage = $state('');
@@ -45,34 +41,8 @@
 		}
 	}
 
-	async function loadLibrariesData() {
-		try {
-			if (!auth.token) {
-				throw new Error('Auth token not loaded.');
-			}
-			const data = await loadLibraries(auth.token);
-			libraries = data.libraries;
-			console.log('libraries', data);
-
-			if (selectedLibrary == null) {
-				if (libraries.length > 0) {
-					selectLibrary(libraries[0]);
-				}
-			}
-		} catch (error) {
-			errorMessage = error instanceof Error ? error.message : 'Unknown error while loading videos';
-		} finally {
-			loading = false;
-		}
-	}
-
-	function selectLibrary(lib: LibraryListItem | null) {
-		selectedLibrary = lib;
-	}
-
 	$effect(() => {
 		if (!auth.initialized) return;
-		loadLibrariesData();
 		loadShowsList();
 		loadMovies();
 	});
