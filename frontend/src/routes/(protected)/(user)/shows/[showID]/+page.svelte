@@ -13,6 +13,7 @@
 	import { goto } from '$app/navigation';
 	import { setWatchstateFinished } from '$lib/api/watchstate';
 	import { loadShowMetadata } from '$lib/api/show_metadata';
+	import { loadSeasonsForShow } from '$lib/api/seasons';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -54,16 +55,8 @@
 
 	async function loadSeasons() {
 		try {
-			const res = await fetch('/api/seasons/' + showId, {
-				headers: {
-					Authorization: 'Bearer ' + auth.token
-				}
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to load seasons: ${res.status}`);
-			}
-
-			const r = (await res.json()) as SeasonListResponse;
+			if (!auth.token) return;
+			const r = await loadSeasonsForShow(auth.token, showId);
 			seasonData = r.seasons;
 
 			if (selectedSeason == null && seasonData.length > 0) {
@@ -176,7 +169,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="my-3 grid grid-cols-3 md:flex md:flex-wrap gap-4 py-5">
+	<div class="my-3 grid grid-cols-3 gap-4 py-5 md:flex md:flex-wrap">
 		{#each episodeData as episode (episode.id)}
 			<a
 				href={resolve(
@@ -187,7 +180,7 @@
 						episodeID: episode.id
 					}
 				)}
-				class="flex md:w-34 aspect-square shrink-0 flex-col justify-between rounded bg-neutral-800"
+				class="flex aspect-square shrink-0 flex-col justify-between rounded bg-neutral-800 md:w-34"
 			>
 				<div>
 					<div class="flex justify-end px-2 py-1">

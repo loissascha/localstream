@@ -2,13 +2,14 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { getEpisodeDetails, getNextEpisode } from '$lib/api/episode';
+	import { getSeasonDetails } from '$lib/api/seasons';
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	import { type EpisodeInfo } from '$lib/types/export_types';
+	import { type SeasonInfo, type EpisodeInfo } from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -21,6 +22,7 @@
 	var almostDone = $state(false);
 
 	var episodeDetails = $state<EpisodeInfo | null>(null);
+	var seasonDetails = $state<SeasonInfo | null>(null);
 	var nextEpisode = $state<EpisodeInfo | null>(null);
 
 	const streamUrl = $derived(
@@ -33,6 +35,12 @@
 		if (!auth.token) return;
 		const data = await getEpisodeDetails(auth.token, episodeId);
 		episodeDetails = data;
+	}
+
+	async function loadSeasonDetails() {
+		if (!auth.token) return;
+		const data = await getSeasonDetails(auth.token, seasonId);
+		seasonDetails = data;
 	}
 
 	function stopPlaybackLogging() {
@@ -123,10 +131,17 @@
 	});
 
 	$effect(() => {
+		episodeId;
 		if (!auth.initialized) return;
 		if (!auth.token) return;
-		episodeId;
 		loadEpisodeDetails();
+	});
+
+	$effect(() => {
+		seasonId;
+		if (!auth.initialized) return;
+		if (!auth.token) return;
+		loadSeasonDetails();
 	});
 
 	$effect(() => {
@@ -168,7 +183,7 @@
 			<ChevronLeftIcon />
 		</a>
 		<span>
-			{episodeDetails?.number}
+			S{seasonDetails?.number}:E{episodeDetails?.number}
 		</span>
 	</header>
 

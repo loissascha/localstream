@@ -26,12 +26,30 @@ func NewSeasonHandler(s *server.Server, authMiddleware *middleware.AuthMiddlewar
 }
 
 func (h *SeasonHandler) RegisterRoutes() {
-	h.s.GET("/api/seasons/{showID}",
+	h.s.GET("/api/v1/seasons/show/{showID}",
 		h.listSeasons,
 		server.WithExportType[SeasonInfo](),
 		server.WithExportType[SeasonListResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+
+	h.s.GET("/api/v1/seasons/{seasonID}",
+		h.seasonDetails,
+		server.WithExportType[SeasonInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+}
+
+func (h *SeasonHandler) seasonDetails(w http.ResponseWriter, r *http.Request) {
+	seasonID := r.PathValue("seasonID")
+	season, err := h.seasonService.GetByID(r.Context(), seasonID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read season"})
+		return
+	}
+
+	result := toSeasonInfo(season)
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *SeasonHandler) listSeasons(w http.ResponseWriter, r *http.Request) {
