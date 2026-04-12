@@ -17,13 +17,13 @@ func NewSeasonMetadataService(seasonMetadataRepo repository.SeasonMetadataReposi
 	return &SeasonMetadataService{seasonMetadataRepo: seasonMetadataRepo}
 }
 
-func (s *SeasonMetadataService) Create(ctx context.Context, showID string, metadata *entity.SeasonMetadata) error {
-	showUUID, err := encoders.DecodeUUID(showID)
+func (s *SeasonMetadataService) Create(ctx context.Context, seasonID string, metadata *entity.SeasonMetadata) error {
+	seasonUUID, err := encoders.DecodeUUID(seasonID)
 	if err != nil {
-		return fmt.Errorf("parse show id: %w", err)
+		return fmt.Errorf("parse season id: %w", err)
 	}
 
-	metadata.ShowID = showUUID
+	metadata.SeasonID = seasonUUID
 
 	if err := s.seasonMetadataRepo.Create(ctx, metadata); err != nil {
 		return fmt.Errorf("create season metadata: %w", err)

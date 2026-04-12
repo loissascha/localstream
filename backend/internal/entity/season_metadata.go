@@ -4,8 +4,7 @@ import "github.com/google/uuid"
 
 type SeasonMetadata struct {
 	ID               uuid.UUID   `db:"id"`
-	ShowID           uuid.UUID   `db:"show_id"`
-	ShowMetadataID   uuid.UUID   `db:"show_metadata_id"`
+	SeasonID         uuid.UUID   `db:"season_id"`
 	Url              string      `db:"url"`
 	Number           int         `db:"number"`
 	Summary          string      `db:"summary"`

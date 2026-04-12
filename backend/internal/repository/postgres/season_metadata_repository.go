@@ -20,16 +20,15 @@ func NewSeasonMetadataRepository(db *sqlx.DB) *SeasonMetadataRepository {
 
 func (r *SeasonMetadataRepository) Create(ctx context.Context, metadata *entity.SeasonMetadata) error {
 	const query = `
-		INSERT INTO season_metadata (show_id, show_metadata_id, url, number, summary, premiere_date, medium_image_url, original_image_url, fetch_id, fetch_source)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		INSERT INTO season_metadata (season_id, url, number, summary, premiere_date, medium_image_url, original_image_url, fetch_id, fetch_source)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING id
 	`
 
 	err := r.db.QueryRowxContext(
 		ctx,
 		query,
-		metadata.ShowID,
-		metadata.ShowMetadataID,
+		metadata.SeasonID,
 		metadata.Url,
 		metadata.Number,
 		metadata.Summary,
@@ -48,10 +47,11 @@ func (r *SeasonMetadataRepository) Create(ctx context.Context, metadata *entity.
 
 func (r *SeasonMetadataRepository) GetByShowID(ctx context.Context, showID uuid.UUID) ([]entity.SeasonMetadata, error) {
 	const query = `
-		SELECT *
-		FROM season_metadata
-		WHERE show_id = $1
-		ORDER BY number ASC
+		SELECT sm.*
+		FROM season_metadata sm
+		INNER JOIN seasons s ON s.id = sm.season_id
+		WHERE s.show_id = $1
+		ORDER BY s.number ASC
 	`
 
 	var metadata []entity.SeasonMetadata

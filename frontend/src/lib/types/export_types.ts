@@ -90,7 +90,7 @@ export interface SeasonListResponse {
 }
 export interface SeasonMetadataInfo {
   id: string;
-  show_id: string;
+  season_id: string;
   url: string;
   number: number;
   summary: string;

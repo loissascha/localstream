@@ -122,7 +122,7 @@ type MovieMetadataInfo struct {
 
 type SeasonMetadataInfo struct {
 	ID               string             `json:"id"`
-	ShowID           string             `json:"show_id"`
+	SeasonID         string             `json:"season_id"`
 	Url              string             `json:"url"`
 	Number           int                `json:"number"`
 	Summary          string             `json:"summary"`
@@ -175,7 +175,7 @@ func toShowMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {
 func toSeasonMetadataInfo(m *entity.SeasonMetadata) SeasonMetadataInfo {
 	return SeasonMetadataInfo{
 		ID:               encoders.EncodeUUID(m.ID),
-		ShowID:           encoders.EncodeUUID(m.ShowID),
+		SeasonID:         encoders.EncodeUUID(m.SeasonID),
 		Url:              m.Url,
 		Number:           m.Number,
 		Summary:          m.Summary,
