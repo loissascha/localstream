@@ -49,6 +49,12 @@ func (h *EpisodeHandler) RegisterRoutes() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
+	h.s.GET("/api/v1/episodes/{episodeID}",
+		h.episodeDetails,
+		server.WithExportType[EpisodeInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
 	h.s.GET("/api/episodes/stream",
 		h.streamVideo,
 		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
@@ -122,6 +128,19 @@ func (h *EpisodeHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", strconv.FormatInt(chunkSize, 10))
 	w.WriteHeader(http.StatusPartialContent)
 	_, _ = io.CopyN(w, file, chunkSize)
+}
+
+func (h *EpisodeHandler) episodeDetails(w http.ResponseWriter, r *http.Request) {
+	episodeID := r.PathValue("episodeID")
+
+	episode, err := h.episodeService.GetByID(r.Context(), episodeID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	episodeInfo := toEpisodeInfo(episode)
+	respond.JSON(w, http.StatusOK, episodeInfo)
 }
 
 func (h *EpisodeHandler) nextEpisode(w http.ResponseWriter, r *http.Request) {
