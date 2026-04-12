@@ -28,10 +28,10 @@ type LibraryCataloguer struct {
 	showMatcher        *ShowMatcher
 	movieMatcher       *MovieMatcher
 	seasonMatcher      *SeasonMatcher
+	episodeMatcher     *EpisodeMatcher
 }
 
 func NewLibraryCataloguer(libService *service.LibraryService, showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository, metadataProvider provider.TVMetadataProvider, movieMetadataProvider provider.MovieMetadataProvider, showMetadataRepo repository.ShowMetadataRepository, movieMetadataRepo repository.MovieMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository) *LibraryCataloguer {
-
 	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo, seasonMetaRepo, episodeMetaRepo)
 	showMatcher.RunBackground()
 
@@ -40,6 +40,9 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 
 	seasonMatcher := NewSeasonMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo)
 	seasonMatcher.RunBackground()
+
+	episodeMatcher := NewEpisodeMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo, episodeRepo, episodeMetaRepo)
+	episodeMatcher.RunBackground()
 
 	return &LibraryCataloguer{
 		libService:         libService,
@@ -51,6 +54,7 @@ func NewLibraryCataloguer(libService *service.LibraryService, showRepo repositor
 		showMatcher:        showMatcher,
 		movieMatcher:       movieMatcher,
 		seasonMatcher:      seasonMatcher,
+		episodeMatcher:     episodeMatcher,
 	}
 }
 
@@ -117,6 +121,7 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 		return nil, err
 	}
 	if episode != nil {
+		l.episodeMatcher.Channel <- episode
 		return episode, nil
 	}
 
@@ -133,6 +138,7 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 		logger.Error(err, "Error creating episode")
 		return nil, err
 	}
+	l.episodeMatcher.Channel <- episode
 	return episode, nil
 }
 
