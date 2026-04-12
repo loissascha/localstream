@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { getNextEpisode } from '$lib/api/episode';
+	import { getEpisodeDetails, getNextEpisode } from '$lib/api/episode';
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import { API_URL } from '$lib/consts';
@@ -16,8 +16,11 @@
 	const showId = $derived(page.params.showID ?? '');
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
+
 	var loadingWatchstate = $state(true);
 	var almostDone = $state(false);
+
+	var episodeDetails = $state<EpisodeInfo | null>(null);
 	var nextEpisode = $state<EpisodeInfo | null>(null);
 
 	const streamUrl = $derived(
@@ -25,6 +28,12 @@
 			`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
+
+	async function loadEpisodeDetails() {
+		if (!auth.token) return;
+		const data = await getEpisodeDetails(auth.token, episodeId);
+		episodeDetails = data;
+	}
 
 	function stopPlaybackLogging() {
 		if (logTimer !== null) {
@@ -114,6 +123,13 @@
 	});
 
 	$effect(() => {
+		if (!auth.initialized) return;
+		if (!auth.token) return;
+		episodeId;
+		loadEpisodeDetails();
+	});
+
+	$effect(() => {
 		episodeId;
 		almostDone = false;
 		nextEpisode = null;
@@ -151,6 +167,9 @@
 		>
 			<ChevronLeftIcon />
 		</a>
+		<span>
+			{episodeDetails?.number}
+		</span>
 	</header>
 
 	<section class="min-h-0 bg-orange-100">
