@@ -9,6 +9,8 @@
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
+	import ShowIcon from '$lib/icons/ShowIcon.svelte';
+	import MovieIcon from '$lib/icons/MovieIcon.svelte';
 
 	let shows = $state<ShowInfo[]>([]);
 	let movies = $state<MovieInfo[]>([]);
@@ -61,7 +63,7 @@
 	{:else}
 		<section class="my-8">
 			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
-				<LibraryIcon />
+				<ShowIcon />
 				Recent Shows
 			</h2>
 			<ItemGrid>
@@ -77,7 +79,7 @@
 	{:else}
 		<section class="my-8">
 			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
-				<LibraryIcon />
+				<MovieIcon />
 				Recent Movies
 			</h2>
 			<ItemGrid>

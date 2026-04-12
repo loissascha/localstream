@@ -7,6 +7,9 @@
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { page } from '$app/state';
+	import ShowIcon from '$lib/icons/ShowIcon.svelte';
+	import MovieIcon from '$lib/icons/MovieIcon.svelte';
+	import CollectionIcon from '$lib/icons/CollectionIcon.svelte';
 
 	let { children } = $props();
 
@@ -55,14 +58,15 @@
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
 			class:bg-neutral-700={isActive(homeHref)}
 		>
-			<HomeIcon /> Home
+			<HomeIcon />
+			Home
 		</a>
 		<a
 			href={showsHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
 			class:bg-neutral-700={isActive(showsHref, true)}
 		>
-			<LibraryIcon />
+			<ShowIcon />
 			Shows
 		</a>
 		<a
@@ -70,7 +74,7 @@
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
 			class:bg-neutral-700={isActive(moviesHref, true)}
 		>
-			<LibraryIcon />
+			<MovieIcon />
 			Movies
 		</a>
 		<a
@@ -78,7 +82,7 @@
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
 			class:bg-neutral-700={isActive(collectionsHref, true)}
 		>
-			<LibraryIcon />
+			<CollectionIcon />
 			Collections
 		</a>
 	</div>
