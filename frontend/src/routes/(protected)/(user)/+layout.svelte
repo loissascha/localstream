@@ -13,6 +13,7 @@
 	const homeHref = resolve('/(protected)/(user)');
 	const showsHref = resolve('/(protected)/(user)/shows');
 	const moviesHref = resolve('/(protected)/(user)/movies');
+	const collectionsHref = resolve('/(protected)/(user)/collections');
 
 	const isActive = (href: string, includeChildren = false) => {
 		if (page.url.pathname === href) return true;
@@ -73,9 +74,9 @@
 			Movies
 		</a>
 		<a
-			href={moviesHref}
+			href={collectionsHref}
 			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(moviesHref, true)}
+			class:bg-neutral-700={isActive(collectionsHref, true)}
 		>
 			<LibraryIcon />
 			Collections
@@ -119,10 +120,10 @@
 			<span>Movies</span>
 		</a>
 		<a
-			href={moviesHref}
+			href={collectionsHref}
 			class="flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs"
-			class:bg-neutral-800={isActive(moviesHref, true)}
-			class:text-brand={isActive(moviesHref, true)}
+			class:bg-neutral-800={isActive(collectionsHref, true)}
+			class:text-brand={isActive(collectionsHref, true)}
 		>
 			<LibraryIcon />
 			<span>Collections</span>
