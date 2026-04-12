@@ -111,7 +111,7 @@
 			class:bg-neutral-800={isActive(showsHref, true)}
 			class:text-brand={isActive(showsHref, true)}
 		>
-			<LibraryIcon />
+			<ShowIcon />
 			<span>Shows</span>
 		</a>
 		<a
@@ -120,7 +120,7 @@
 			class:bg-neutral-800={isActive(moviesHref, true)}
 			class:text-brand={isActive(moviesHref, true)}
 		>
-			<LibraryIcon />
+			<MovieIcon />
 			<span>Movies</span>
 		</a>
 		<a
@@ -129,7 +129,7 @@
 			class:bg-neutral-800={isActive(collectionsHref, true)}
 			class:text-brand={isActive(collectionsHref, true)}
 		>
-			<LibraryIcon />
+			<CollectionIcon />
 			<span>Collections</span>
 		</a>
 	</div>
