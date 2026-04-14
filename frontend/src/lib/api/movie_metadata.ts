@@ -21,6 +21,26 @@ export async function loadMovieMetadata(
 	}
 }
 
+export async function setPrimaryMovieMetadataByFetchID(
+	bearerToken: string,
+	movieID: string,
+	fetchID: number
+) {
+	try {
+		const res = await fetch(`/api/v1/movie/metadata/${movieID}/set/primary/by-fetchid/${fetchID}`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + bearerToken
+			}
+		});
+		if (!res.ok) {
+			throw new Error(`Failed to set fetch id: ${res.status}`);
+		}
+	} catch (e) {
+		throw e;
+	}
+}
+
 export async function searchMovieMetadata(bearerToken: string, searchQuery: string) {
 	try {
 		const res = await fetch('/api/v1/movie/metadata/search?q=' + searchQuery, {

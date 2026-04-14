@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { loadMovieMetadata, searchMovieMetadata } from '$lib/api/movie_metadata';
+	import {
+		loadMovieMetadata,
+		searchMovieMetadata,
+		setPrimaryMovieMetadataByFetchID
+	} from '$lib/api/movie_metadata';
 	import { getMovie } from '$lib/api/movies';
 	import { auth } from '$lib/auth.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
@@ -105,6 +109,17 @@
 							</div>
 							<div>
 								<button
+									onclick={() => {
+										if (!auth.token) return;
+										setPrimaryMovieMetadataByFetchID(auth.token, movieID, result.id)
+											.then(() => {
+												loadMetadata();
+											})
+											.catch((e) => {
+												const m = (e as Error).message;
+												alert(m);
+											});
+									}}
 									class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
 									>Select as Primary</button
 								>
