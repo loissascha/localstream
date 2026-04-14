@@ -67,6 +67,14 @@ export interface MovieMetadataInfo {
   backdrop_image_url: string;
   fetch_source: string;
 }
+export interface MovieResult {
+  adult: boolean;
+  original_title: string;
+  overview: string;
+  release_date: string;
+  backdrop_path: string;
+  poster_path: string;
+}
 export interface SaveMovieWatchstateRequest {
   movie_id: string;
   position: number;

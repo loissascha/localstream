@@ -2,10 +2,12 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/service"
 )
 
@@ -34,6 +36,26 @@ func (h *MovieMetadataHandler) RegisterRoutes() {
 		h.setPrimary,
 		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
+
+	h.s.POSTI("/api/v1/movie/metadata/search",
+		h.search,
+		server.WithExportType[provider.MovieResult](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
+	)
+}
+
+func (h *MovieMetadataHandler) search(w http.ResponseWriter, r *http.Request) {
+	searchQuery := strings.TrimSpace(r.URL.Query().Get("q"))
+	if searchQuery == "" {
+		http.Error(w, "missing search parameter", http.StatusBadRequest)
+		return
+	}
+	result, err := h.movieMetaService.Search(r.Context(), searchQuery)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *MovieMetadataHandler) setPrimary(w http.ResponseWriter, r *http.Request) {

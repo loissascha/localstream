@@ -66,6 +66,10 @@ func main() {
 		panic(err)
 	}
 
+	// metadata providers
+	tvMazeProvider := tvmaze.NewTVMazeProvider()
+	tmdbProvider := tmdb.NewTMDBProvider()
+
 	// repositories
 	userRepo := repopostgres.NewUserRepository(db)
 	libraryRepo := repopostgres.NewLibraryRepository(db)
@@ -92,7 +96,7 @@ func main() {
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
-	movieMetaService := service.NewMovieMetadataService(movieMetaRepo, movieRepo)
+	movieMetaService := service.NewMovieMetadataService(movieMetaRepo, movieRepo, tmdbProvider)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -126,10 +130,6 @@ func main() {
 	seasonMetaH.RegisterRoutes()
 	episodeMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
-
-	// metadata providers
-	tvMazeProvider := tvmaze.NewTVMazeProvider()
-	tmdbProvider := tmdb.NewTMDBProvider()
 
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo)
 	libraryCataloguer.RunBackground()

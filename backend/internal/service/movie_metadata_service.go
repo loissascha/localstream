@@ -6,19 +6,26 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
 type MovieMetadataService struct {
-	movieRepo         repository.MovieRepository
-	movieMetadataRepo repository.MovieMetadataRepository
+	movieRepo             repository.MovieRepository
+	movieMetadataRepo     repository.MovieMetadataRepository
+	movieMetadataProvider provider.MovieMetadataProvider
 }
 
-func NewMovieMetadataService(movieMetadataRepo repository.MovieMetadataRepository, movieRepo repository.MovieRepository) *MovieMetadataService {
+func NewMovieMetadataService(movieMetadataRepo repository.MovieMetadataRepository, movieRepo repository.MovieRepository, movieMetadataProvider provider.MovieMetadataProvider) *MovieMetadataService {
 	return &MovieMetadataService{
-		movieMetadataRepo: movieMetadataRepo,
-		movieRepo:         movieRepo,
+		movieMetadataRepo:     movieMetadataRepo,
+		movieRepo:             movieRepo,
+		movieMetadataProvider: movieMetadataProvider,
 	}
+}
+
+func (s *MovieMetadataService) Search(ctx context.Context, searchQuery string) ([]provider.MovieResult, error) {
+	return s.movieMetadataProvider.SearchMovie(searchQuery, 0)
 }
 
 func (s *MovieMetadataService) Create(ctx context.Context, movieID string, metadata *entity.MovieMetadata) error {
