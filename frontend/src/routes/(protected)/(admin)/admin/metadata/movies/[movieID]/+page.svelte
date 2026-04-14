@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { loadMovieMetadata } from '$lib/api/movie_metadata';
 	import { auth } from '$lib/auth.svelte';
+	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { MovieMetadataInfo } from '$lib/types/export_types';
 
 	const movieID = $derived(page.params.movieID ?? '');
@@ -37,5 +38,15 @@ Details Movie {movieID}
 {:else if metadata.length == 0}
 	<section id="metadata-search" class="my-8">
 		<h2 class="text-2xl font-bold">Search Metadata</h2>
+		<form class="flex items-center gap-2">
+			<input
+				type="text"
+				class="my-4 w-full rounded bg-neutral-800 px-4 py-2"
+				placeholder="Search by Name"
+			/>
+			<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 hover:bg-neutral-600 px-4 py-2">
+				<SearchIcon /> Search
+			</button>
+		</form>
 	</section>
 {/if}
