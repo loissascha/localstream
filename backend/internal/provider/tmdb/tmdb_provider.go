@@ -40,7 +40,10 @@ func (self *TMDBProvider) GetMovieByID(id int) (*provider.MovieResult, error) {
 	if key == "" {
 		return nil, fmt.Errorf("No TMDB api key configured.")
 	}
-	fullUrl := fmt.Sprintf("https://api.themoviedb.org/3/movie/%d", id)
+	params := url.Values{}
+	params.Add("api_key", key)
+	encoded := params.Encode()
+	fullUrl := fmt.Sprintf("https://api.themoviedb.org/3/movie/%d?%s", id, encoded)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
