@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { setPrimaryMetadataForMovie } from '$lib/api/admin/movie_metadata';
 	import { loadMovieMetadata } from '$lib/api/movie_metadata';
 	import { auth } from '$lib/auth.svelte';
@@ -37,6 +38,13 @@
 			<span>
 				Metadata: {metadata.length}
 			</span>
+			<a
+				href={resolve('/(protected)/(admin)/admin/metadata/movies/[movieID]', {
+					movieID: movie.id
+				})}
+			>
+				Details</a
+			>
 		</div>
 		<div class="mt-4 flex flex-col gap-2">
 			{#each metadata as m (m.id)}
