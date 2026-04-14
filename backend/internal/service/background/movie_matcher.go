@@ -4,11 +4,11 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 type MovieMatcher struct {
@@ -16,15 +16,17 @@ type MovieMatcher struct {
 	metadataProvider provider.MovieMetadataProvider
 	movieRepo        repository.MovieRepository
 	movieMetaRepo    repository.MovieMetadataRepository
+	movieMetaService *service.MovieMetadataService
 }
 
-func NewMovieMatcher(metadataProvider provider.MovieMetadataProvider, movieRepo repository.MovieRepository, movieMetaRepo repository.MovieMetadataRepository) *MovieMatcher {
+func NewMovieMatcher(metadataProvider provider.MovieMetadataProvider, movieRepo repository.MovieRepository, movieMetaRepo repository.MovieMetadataRepository, movieMetaService *service.MovieMetadataService) *MovieMatcher {
 	ch := make(chan *entity.Movie)
 	return &MovieMatcher{
 		Channel:          ch,
 		metadataProvider: metadataProvider,
 		movieRepo:        movieRepo,
 		movieMetaRepo:    movieMetaRepo,
+		movieMetaService: movieMetaService,
 	}
 }
 
@@ -51,7 +53,7 @@ func (self *MovieMatcher) RunBackground() {
 			exactMatches := self.hasExactMatches(movie, result)
 			// if exactly one exact match -> create only the metadata for that one
 			if len(exactMatches) == 1 {
-				self.createMovieMetadata(ctx, movie, exactMatches[0])
+				self.movieMetaService.CreateMovieMetadata(ctx, movie, exactMatches[0])
 				err := self.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceTMDB)
 				if err != nil {
 					logger.Error(err, "Error Updating movie fetch source")
@@ -61,7 +63,7 @@ func (self *MovieMatcher) RunBackground() {
 			}
 
 			for _, r := range result {
-				self.createMovieMetadata(ctx, movie, r)
+				self.movieMetaService.CreateMovieMetadata(ctx, movie, r)
 			}
 
 			// update movie fetch source based on amount of result
@@ -87,46 +89,6 @@ func (self *MovieMatcher) RunBackground() {
 			logger.Debug(nil, "_______________________________")
 		}
 	}()
-}
-
-func (self *MovieMatcher) createMovieMetadata(ctx context.Context, movie *entity.Movie, r provider.MovieResult) error {
-	logger.Debug(nil, "------------ RESULT ------------ ")
-
-	backdropLink := ""
-	posterLink := ""
-	if r.BackdropPath != "" {
-		backdropLink = "https://image.tmdb.org/t/p/w780" + r.BackdropPath
-	}
-	if r.PosterPath != "" {
-		posterLink = "https://image.tmdb.org/t/p/w500" + r.PosterPath
-	}
-
-	logger.Debug(nil, "Title: {Title}", r.Title)
-	logger.Debug(nil, "Description: {Desc}", r.Description)
-	logger.Debug(nil, "Backdrop Link: {URL}", backdropLink)
-	logger.Debug(nil, "Poster Link: {URL}", posterLink)
-
-	uuid, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
-
-	err = self.movieMetaRepo.Create(ctx, &entity.MovieMetadata{
-		ID:               uuid,
-		MovieID:          movie.ID,
-		Name:             r.Title,
-		Url:              "",
-		Description:      r.Description,
-		MediumImageUrl:   posterLink,
-		BackdropImageUrl: backdropLink,
-		FetchSource:      entity.FetchSourceTMDB,
-	})
-	if err != nil {
-		return err
-	}
-
-	logger.Debug(nil, "------------------------------- ")
-	return nil
 }
 
 func (self *MovieMatcher) hasExactMatches(movie *entity.Movie, result []provider.MovieResult) []provider.MovieResult {

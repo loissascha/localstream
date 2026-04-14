@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
+	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
@@ -64,6 +66,46 @@ func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context
 	// delete all the current existing metadata for the movie (and reset the fetch state)
 	// create new metadata from the provider result
 	// set the fetch result
+	return nil
+}
+
+func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie *entity.Movie, r provider.MovieResult) error {
+	logger.Debug(nil, "------------ RESULT ------------ ")
+
+	backdropLink := ""
+	posterLink := ""
+	if r.BackdropPath != "" {
+		backdropLink = "https://image.tmdb.org/t/p/w780" + r.BackdropPath
+	}
+	if r.PosterPath != "" {
+		posterLink = "https://image.tmdb.org/t/p/w500" + r.PosterPath
+	}
+
+	logger.Debug(nil, "Title: {Title}", r.Title)
+	logger.Debug(nil, "Description: {Desc}", r.Description)
+	logger.Debug(nil, "Backdrop Link: {URL}", backdropLink)
+	logger.Debug(nil, "Poster Link: {URL}", posterLink)
+
+	uuid, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
+	err = self.movieMetadataRepo.Create(ctx, &entity.MovieMetadata{
+		ID:               uuid,
+		MovieID:          movie.ID,
+		Name:             r.Title,
+		Url:              "",
+		Description:      r.Description,
+		MediumImageUrl:   posterLink,
+		BackdropImageUrl: backdropLink,
+		FetchSource:      entity.FetchSourceTMDB,
+	})
+	if err != nil {
+		return err
+	}
+
+	logger.Debug(nil, "------------------------------- ")
 	return nil
 }
 
