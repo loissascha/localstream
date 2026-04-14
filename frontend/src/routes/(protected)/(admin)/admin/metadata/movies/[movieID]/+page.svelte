@@ -7,6 +7,7 @@
 	} from '$lib/api/movie_metadata';
 	import { getMovie } from '$lib/api/movies';
 	import { auth } from '$lib/auth.svelte';
+	import AdminMovieMetadataBlock from '$lib/components/admin/AdminMovieMetadataBlock.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import {
 		type MovieResult,
@@ -71,71 +72,74 @@
 
 <h1 class="text-2xl font-bold">{movie?.name}</h1>
 
+{#if movie != null}
+	<AdminMovieMetadataBlock {movie} />
+{/if}
+
 {#if loadingMetadata}
 	Loading...
-{:else if metadata.length == 0}
-	<section id="metadata-search" class="my-8">
-		<h2 class="text-xl font-bold">Search Metadata</h2>
-		<form
-			onsubmit={(e) => {
-				e.preventDefault();
-				if (searchingMetadata) return;
-				submitMetadataSearchForm();
-			}}
-			class="flex items-center gap-2"
-		>
-			<input
-				bind:value={searchQuery}
-				type="text"
-				class="my-4 w-full rounded bg-neutral-800 px-4 py-2"
-				placeholder="Search by Name"
-			/>
-			<button
-				class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
-			>
-				<SearchIcon /> Search
-			</button>
-		</form>
-		{#if searchingMetadata}
-			Searching...
-		{:else}
-			{#each searchResults as result (result.id)}
-				<div class="my-4 rounded border border-neutral-500 p-4">
-					<div class="grid grid-cols-2">
-						<div>
-							<div>{result.original_title}</div>
-							<div class="my-2">
-								{result.overview}
-							</div>
-							<div>
-								<button
-									onclick={() => {
-										if (!auth.token) return;
-										setPrimaryMovieMetadataByFetchID(auth.token, movieID, result.id)
-											.then(() => {
-												loadMetadata();
-											})
-											.catch((e) => {
-												const m = (e as Error).message;
-												alert(m);
-											});
-									}}
-									class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
-									>Select as Primary</button
-								>
-							</div>
+{/if}
+<section id="metadata-search" class="my-8">
+	<h2 class="text-xl font-bold">Search Metadata</h2>
+	<form
+		onsubmit={(e) => {
+			e.preventDefault();
+			if (searchingMetadata) return;
+			submitMetadataSearchForm();
+		}}
+		class="flex items-center gap-2"
+	>
+		<input
+			bind:value={searchQuery}
+			type="text"
+			class="my-4 w-full rounded bg-neutral-800 px-4 py-2"
+			placeholder="Search by Name"
+		/>
+		<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600">
+			<SearchIcon /> Search
+		</button>
+	</form>
+	{#if searchingMetadata}
+		Searching...
+	{:else}
+		{#each searchResults as result (result.id)}
+			<div class="my-4 rounded border border-neutral-500 p-4">
+				<div class="grid grid-cols-2">
+					<div>
+						<div>{result.original_title}</div>
+						<div class="my-2">
+							{result.overview}
 						</div>
 						<div>
-							{#if result.poster_path != ''}
-								<img
-									alt={'movie ' + result.id}
-									src={`https://image.tmdb.org/t/p/w500/${result.poster_path}`}
-								/>
-							{/if}
+							<button
+								onclick={() => {
+									if (!auth.token) return;
+									setPrimaryMovieMetadataByFetchID(auth.token, movieID, result.id)
+										.then(() => {
+											loadMetadata();
+											searchResults = [];
+											searchQuery = '';
+										})
+										.catch((e) => {
+											const m = (e as Error).message;
+											alert(m);
+										});
+								}}
+								class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
+								>Select as Primary</button
+							>
 						</div>
 					</div>
+					<div>
+						{#if result.poster_path != ''}
+							<img
+								alt={'movie ' + result.id}
+								src={`https://image.tmdb.org/t/p/w500/${result.poster_path}`}
+							/>
+						{/if}
+					</div>
 				</div>
-			{/each}
-		{/if}
-	</section>
-{/if}
+			</div>
+		{/each}
+	{/if}
+</section>
