@@ -73,7 +73,12 @@ func (h *MovieMetadataHandler) setPrimaryByFetchID(w http.ResponseWriter, r *htt
 		return
 	}
 
-	h.movieMetaService.SetPrimaryForMovieIDByFetchID(r.Context(), movieId, idint)
+	err = h.movieMetaService.SetPrimaryForMovieIDByFetchID(r.Context(), movieId, idint)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
 	respond.JSON(w, http.StatusOK, movieId)
 }
 
