@@ -11,5 +11,6 @@ type MovieResult struct {
 }
 
 type MovieMetadataProvider interface {
+	GetMovieByID(id int) (*MovieResult, error)
 	SearchMovie(name string, year int) ([]MovieResult, error)
 }
