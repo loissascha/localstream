@@ -12,6 +12,7 @@
 	let movie = $state<MovieInfo | null>(null);
 	let loadingMovie = $state(true);
 	let loadingMetadata = $state(true);
+	let searchingMetadata = $state(false);
 
 	async function loadMovieData() {
 		try {
@@ -46,7 +47,9 @@
 		loadMetadata();
 	});
 
-	async function submitMetadataSearchForm() {}
+	async function submitMetadataSearchForm() {
+		searchingMetadata = true;
+	}
 </script>
 
 <h1 class="text-2xl font-bold">{movie?.name}</h1>
@@ -59,6 +62,7 @@
 		<form
 			onsubmit={(e) => {
 				e.preventDefault();
+				if (searchingMetadata) return;
 				submitMetadataSearchForm();
 			}}
 			class="flex items-center gap-2"
@@ -74,5 +78,8 @@
 				<SearchIcon /> Search
 			</button>
 		</form>
+		{#if searchingMetadata}
+			Searching...
+		{/if}
 	</section>
 {/if}
