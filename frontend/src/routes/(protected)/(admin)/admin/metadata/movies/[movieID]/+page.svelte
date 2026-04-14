@@ -1,10 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { loadMovieMetadata } from '$lib/api/movie_metadata';
+	import { loadMovieMetadata, searchMovieMetadata } from '$lib/api/movie_metadata';
 	import { getMovie } from '$lib/api/movies';
 	import { auth } from '$lib/auth.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
-	import { type MovieInfo, type MovieMetadataInfo } from '$lib/types/export_types';
+	import {
+		type MovieResult,
+		type MovieInfo,
+		type MovieMetadataInfo
+	} from '$lib/types/export_types';
 
 	const movieID = $derived(page.params.movieID ?? '');
 
@@ -13,6 +17,8 @@
 	let loadingMovie = $state(true);
 	let loadingMetadata = $state(true);
 	let searchingMetadata = $state(false);
+	let searchQuery = $state('');
+	let searchResults = $state<MovieResult[]>([]);
 
 	async function loadMovieData() {
 		try {
@@ -48,7 +54,14 @@
 	});
 
 	async function submitMetadataSearchForm() {
+		if (!auth.token) return;
 		searchingMetadata = true;
+		if (searchQuery == '') {
+			alert('No query');
+			return;
+		}
+		searchResults = await searchMovieMetadata(auth.token, searchQuery);
+		searchingMetadata = false;
 	}
 </script>
 
@@ -68,6 +81,7 @@
 			class="flex items-center gap-2"
 		>
 			<input
+				bind:value={searchQuery}
 				type="text"
 				class="my-4 w-full rounded bg-neutral-800 px-4 py-2"
 				placeholder="Search by Name"
@@ -80,6 +94,13 @@
 		</form>
 		{#if searchingMetadata}
 			Searching...
+		{:else}
+			{#each searchResults as result}
+				<div>
+					<div>{result.original_title}</div>
+					<div>{result.poster_path}</div>
+				</div>
+			{/each}
 		{/if}
 	</section>
 {/if}
