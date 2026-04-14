@@ -80,7 +80,18 @@ func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context
 		return fmt.Errorf("movie not found (metadata provider)")
 	}
 
-	// TODO: delete all the current existing metadata for the movie (and reset the fetch state)
+	// delete all the current existing metadata for the movie (and reset the fetch state)
+	// TODO: make this more performant by adding a bulk delete by movie ID
+	metadatas, err := s.movieMetadataRepo.GetByMovieID(ctx, movie.ID)
+	if err != nil {
+		return err
+	}
+	for _, m := range metadatas {
+		err := s.movieMetadataRepo.DeleteOne(ctx, m.ID)
+		if err != nil {
+			return err
+		}
+	}
 
 	// create new metadata from the provider result
 	err = s.CreateMovieMetadata(ctx, movie, *movieResult)
