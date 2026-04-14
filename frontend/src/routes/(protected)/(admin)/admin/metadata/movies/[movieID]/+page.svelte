@@ -111,10 +111,12 @@
 							</div>
 						</div>
 						<div>
-							<img
-								alt={'movie ' + result.id}
-								src={`https://image.tmdb.org/t/p/w500/${result.poster_path}`}
-							/>
+							{#if result.poster_path != ''}
+								<img
+									alt={'movie ' + result.id}
+									src={`https://image.tmdb.org/t/p/w500/${result.poster_path}`}
+								/>
+							{/if}
 						</div>
 					</div>
 				</div>
