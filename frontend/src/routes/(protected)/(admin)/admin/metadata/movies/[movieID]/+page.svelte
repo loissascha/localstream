@@ -95,10 +95,25 @@
 		{#if searchingMetadata}
 			Searching...
 		{:else}
-			{#each searchResults as result}
-				<div>
-					<div>{result.original_title}</div>
-					<div>{result.poster_path}</div>
+			{#each searchResults as result (result.id)}
+				<div class="rounded my-4 border border-neutral-500 p-4">
+					<div class="grid grid-cols-2">
+						<div>
+							<div>{result.original_title}</div>
+							<div>
+								<button
+									class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
+									>Select as Primary</button
+								>
+							</div>
+						</div>
+						<div>
+							<img
+								alt={'movie ' + result.id}
+								src={`https://image.tmdb.org/t/p/w500/${result.poster_path}`}
+							/>
+						</div>
+					</div>
 				</div>
 			{/each}
 		{/if}

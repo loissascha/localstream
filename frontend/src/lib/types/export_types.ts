@@ -68,6 +68,7 @@ export interface MovieMetadataInfo {
   fetch_source: string;
 }
 export interface MovieResult {
+  id: number;
   adult: boolean;
   original_title: string;
   overview: string;

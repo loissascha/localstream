@@ -1,6 +1,7 @@
 package provider
 
 type MovieResult struct {
+	FetchID      int    `json:"id"`
 	Adult        bool   `json:"adult"`
 	Title        string `json:"original_title"`
 	Description  string `json:"overview"`

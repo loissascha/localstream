@@ -19,6 +19,7 @@ type MovieAPISearchResult struct {
 }
 
 type MovieAPIResult struct {
+	ID            int    `json:"id"`
 	Adult         bool   `json:"adult"`
 	OriginalTitle string `json:"original_title"`
 	Overview      string `json:"overview"`
@@ -92,6 +93,7 @@ func (self *TMDBProvider) SearchMovie(name string, year int) ([]provider.MovieRe
 
 func toMovieResult(r MovieAPIResult) provider.MovieResult {
 	return provider.MovieResult{
+		FetchID:      r.ID,
 		Adult:        r.Adult,
 		Title:        r.OriginalTitle,
 		Description:  r.Overview,
