@@ -13,13 +13,15 @@ import (
 )
 
 type MovieMetadataService struct {
+	movieService          *MovieService
 	movieRepo             repository.MovieRepository
 	movieMetadataRepo     repository.MovieMetadataRepository
 	movieMetadataProvider provider.MovieMetadataProvider
 }
 
-func NewMovieMetadataService(movieMetadataRepo repository.MovieMetadataRepository, movieRepo repository.MovieRepository, movieMetadataProvider provider.MovieMetadataProvider) *MovieMetadataService {
+func NewMovieMetadataService(movieService *MovieService, movieMetadataRepo repository.MovieMetadataRepository, movieRepo repository.MovieRepository, movieMetadataProvider provider.MovieMetadataProvider) *MovieMetadataService {
 	return &MovieMetadataService{
+		movieService:          movieService,
 		movieMetadataRepo:     movieMetadataRepo,
 		movieRepo:             movieRepo,
 		movieMetadataProvider: movieMetadataProvider,
@@ -60,12 +62,37 @@ func (s *MovieMetadataService) GetByMovieID(ctx context.Context, movieID string)
 }
 
 func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context, movieID string, id int) error {
+	movie, err := s.movieService.GetById(ctx, movieID)
+	if err != nil {
+		return err
+	}
+	if movie == nil {
+		return fmt.Errorf("movie not found")
+	}
+
 	// get the data from the provider
+	movieResult, err := s.movieMetadataProvider.GetMovieByID(id)
 	// if none -> error
+	if err != nil {
+		return err
+	}
+	if movieResult == nil {
+		return fmt.Errorf("movie not found (metadata provider)")
+	}
 
 	// delete all the current existing metadata for the movie (and reset the fetch state)
+
 	// create new metadata from the provider result
+	err = s.CreateMovieMetadata(ctx, movie, *movieResult)
+	if err != nil {
+		return err
+	}
+
 	// set the fetch result
+	err = s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceTMDB)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

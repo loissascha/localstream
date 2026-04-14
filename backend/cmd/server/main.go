@@ -96,7 +96,7 @@ func main() {
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
-	movieMetaService := service.NewMovieMetadataService(movieMetaRepo, movieRepo, tmdbProvider)
+	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
