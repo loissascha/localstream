@@ -39,6 +39,12 @@ func (h *MovieHandler) RegisterRoutes() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
+	h.s.GETI("/api/v1/movies/{movieID}",
+		h.single,
+		server.WithExportType[MovieInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
 	h.s.GET("/api/movies/stream",
 		h.streamVideo,
 		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
@@ -116,6 +122,22 @@ func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", strconv.FormatInt(chunkSize, 10))
 	w.WriteHeader(http.StatusPartialContent)
 	_, _ = io.CopyN(w, file, chunkSize)
+}
+
+func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
+	movieId := r.PathValue("movieID")
+
+	movie, err := h.movieService.GetById(r.Context(), movieId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get movie: " + err.Error()})
+		return
+	}
+	if movie == nil {
+		respond.JSON(w, http.StatusNotFound, map[string]string{"error": "failed to find movie"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toMovieInfo(movie))
 }
 
 func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
