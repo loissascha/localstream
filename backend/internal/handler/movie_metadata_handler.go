@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/loissascha/go-http-server/respond"
@@ -37,6 +38,11 @@ func (h *MovieMetadataHandler) RegisterRoutes() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
 
+	h.s.POSTI("/api/v1/movie/metadata/{movieID}/set/primary/by-fetchid/{id}",
+		h.setPrimaryByFetchID,
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
+	)
+
 	h.s.POSTI("/api/v1/movie/metadata/search",
 		h.search,
 		server.WithExportType[provider.MovieResult](),
@@ -56,6 +62,19 @@ func (h *MovieMetadataHandler) search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respond.JSON(w, http.StatusOK, result)
+}
+
+func (h *MovieMetadataHandler) setPrimaryByFetchID(w http.ResponseWriter, r *http.Request) {
+	movieId := r.PathValue("movieID")
+	id := r.PathValue("id")
+	idint, err := strconv.Atoi(id)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	h.movieMetaService.SetPrimaryForMovieIDByFetchID(r.Context(), movieId, idint)
+	respond.JSON(w, http.StatusOK, movieId)
 }
 
 func (h *MovieMetadataHandler) setPrimary(w http.ResponseWriter, r *http.Request) {

@@ -57,6 +57,16 @@ func (s *MovieMetadataService) GetByMovieID(ctx context.Context, movieID string)
 	return metadata, nil
 }
 
+func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context, movieID string, id int) error {
+	// get the data from the provider
+	// if none -> error
+
+	// delete all the current existing metadata for the movie (and reset the fetch state)
+	// create new metadata from the provider result
+	// set the fetch result
+	return nil
+}
+
 func (s *MovieMetadataService) SetPrimaryForMovieID(ctx context.Context, movieID string, id string) error {
 	uuid, err := encoders.DecodeUUID(id)
 	if err != nil {
