@@ -96,10 +96,13 @@
 			Searching...
 		{:else}
 			{#each searchResults as result (result.id)}
-				<div class="rounded my-4 border border-neutral-500 p-4">
+				<div class="my-4 rounded border border-neutral-500 p-4">
 					<div class="grid grid-cols-2">
 						<div>
 							<div>{result.original_title}</div>
+							<div class="my-2">
+								{result.overview}
+							</div>
 							<div>
 								<button
 									class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
