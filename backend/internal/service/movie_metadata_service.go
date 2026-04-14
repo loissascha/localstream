@@ -80,7 +80,7 @@ func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context
 		return fmt.Errorf("movie not found (metadata provider)")
 	}
 
-	// delete all the current existing metadata for the movie (and reset the fetch state)
+	// TODO: delete all the current existing metadata for the movie (and reset the fetch state)
 
 	// create new metadata from the provider result
 	err = s.CreateMovieMetadata(ctx, movie, *movieResult)
