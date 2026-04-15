@@ -32,10 +32,12 @@
 	let muted = $state(false);
 	let volume = $state(1);
 	let isFullscreen = $state(false);
+	let seekValue = $state(0);
 
 	function syncState() {
 		if (!videoEl) return;
 		currentTime = videoEl.currentTime;
+		seekValue = videoEl.currentTime;
 		duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
 		paused = videoEl.paused;
 		muted = videoEl.muted;
@@ -70,6 +72,7 @@
 		const boundedValue = Math.min(Math.max(value, 0), duration || 0);
 		videoEl.currentTime = boundedValue;
 		currentTime = boundedValue;
+		seekValue = boundedValue;
 		syncState();
 	}
 
@@ -124,6 +127,7 @@
 		if (videoEl && Math.abs(videoEl.currentTime - currentTime) > 0.25) {
 			videoEl.currentTime = currentTime;
 		}
+		seekValue = currentTime;
 	});
 
 	$effect(() => {
@@ -185,7 +189,7 @@
 				min="0"
 				max={duration || 0}
 				step="0.1"
-				value={currentTime}
+				value={seekValue}
 				oninput={(event) => seekTo(Number((event.currentTarget as HTMLInputElement).value))}
 				class="h-1 w-full cursor-pointer accent-white"
 				aria-label="Seek"
