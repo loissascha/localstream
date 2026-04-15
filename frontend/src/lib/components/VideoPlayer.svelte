@@ -76,6 +76,8 @@
 		syncState();
 	}
 
+	const seekMax = $derived(Math.max(duration, currentTime, seekValue, 0));
+
 	function seekBy(seconds: number) {
 		seekTo(currentTime + seconds);
 	}
@@ -187,9 +189,9 @@
 			<input
 				type="range"
 				min="0"
-				max={duration || 0}
+				max={seekMax}
 				step="0.1"
-				value={seekValue}
+				bind:value={seekValue}
 				oninput={(event) => seekTo(Number((event.currentTarget as HTMLInputElement).value))}
 				class="h-1 w-full cursor-pointer accent-white"
 				aria-label="Seek"
