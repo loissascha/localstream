@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, type Snippet } from 'svelte';
 	import FullscreenIcon from '$lib/icons/FullscreenIcon.svelte';
 	import MuteIcon from '$lib/icons/MuteIcon.svelte';
 	import PauseIcon from '$lib/icons/PauseIcon.svelte';
@@ -8,6 +8,13 @@
 	import SkipPreviousIcon from '$lib/icons/SkipPreviousIcon.svelte';
 	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
 
+	interface OverlayState {
+		currentTime: number;
+		duration: number;
+		paused: boolean;
+		isFullscreen: boolean;
+	}
+
 	interface Props {
 		href: string;
 		duration?: number;
@@ -15,6 +22,7 @@
 		onplay?: () => void;
 		onpause?: () => void;
 		onended?: () => void;
+		overlay?: Snippet<[OverlayState]>;
 	}
 
 	let {
@@ -22,6 +30,7 @@
 		onplay,
 		onpause,
 		onended,
+		overlay,
 		duration = $bindable(0),
 		currentTime = $bindable(0)
 	}: Props = $props();
@@ -178,6 +187,12 @@
 			>
 				<PlayIcon size={40} />
 			</button>
+		</div>
+	{/if}
+
+	{#if overlay}
+		<div class="absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]">
+			{@render overlay({ currentTime, duration, paused, isFullscreen })}
 		</div>
 	{/if}
 
