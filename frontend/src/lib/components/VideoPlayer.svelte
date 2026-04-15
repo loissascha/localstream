@@ -172,6 +172,64 @@
 		revealControls();
 	}
 
+	function isInteractiveTarget(target: EventTarget | null) {
+		return target instanceof HTMLElement && target.closest('button, input, a') !== null;
+	}
+
+	function focusContainer() {
+		containerEl?.focus({ preventScroll: true });
+	}
+
+	function handlePointerDown(event: PointerEvent) {
+		handleInteraction();
+		if (!isInteractiveTarget(event.target)) {
+			focusContainer();
+		}
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (isInteractiveTarget(event.target)) {
+			return;
+		}
+
+		switch (event.key) {
+			case ' ':
+			case 'k':
+			case 'K':
+				event.preventDefault();
+				void togglePlay();
+				break;
+			case 'ArrowLeft':
+				if (event.shiftKey) return;
+				event.preventDefault();
+				seekBy(-10);
+				break;
+			case 'ArrowRight':
+				if (event.shiftKey) return;
+				event.preventDefault();
+				seekBy(10);
+				break;
+			case 'ArrowUp':
+				event.preventDefault();
+				setVolume((muted ? 0 : volume) + 0.05);
+				break;
+			case 'ArrowDown':
+				event.preventDefault();
+				setVolume((muted ? 0 : volume) - 0.05);
+				break;
+			case 'm':
+			case 'M':
+				event.preventDefault();
+				toggleMute();
+				break;
+			case 'f':
+			case 'F':
+				event.preventDefault();
+				void toggleFullscreen();
+				break;
+		}
+	}
+
 	$effect(() => {
 		if (videoEl && Math.abs(videoEl.currentTime - currentTime) > 0.25) {
 			videoEl.currentTime = currentTime;
@@ -196,13 +254,18 @@
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
 	bind:this={containerEl}
-	class="relative h-full w-full overflow-hidden bg-black"
+	tabindex="0"
+	role="application"
+	aria-label="Video player"
+	class={`relative h-full w-full overflow-hidden bg-black outline-none ${showControls || paused ? 'cursor-default' : 'cursor-none'}`}
 	onmousemove={handleInteraction}
-	onpointerdown={handleInteraction}
+	onpointerdown={handlePointerDown}
 	ontouchstart={handleInteraction}
+	onkeydown={handleKeydown}
 >
 	<video
 		bind:this={videoEl}
