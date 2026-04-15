@@ -102,9 +102,9 @@
 		</a>
 	</header>
 
-	<section class="min-h-0 bg-orange-100">
+	<section class="min-h-0">
 		<!-- svelte-ignore a11y_media_has_caption -->
-		<div class="h-full w-full bg-green-100">
+		<div class="h-full w-full">
 			<video
 				bind:this={videoEl}
 				class="h-full w-full bg-black object-contain"
