@@ -3,14 +3,16 @@
 	import { page } from '$app/state';
 	import { getWatchstateForMovie, updateWatchstateMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
+	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 	import { API_URL } from '$lib/consts';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { onDestroy } from 'svelte';
 
-	let videoEl = $state<HTMLVideoElement | null>(null);
-
 	const movieId = $derived(page.params.movieID ?? '');
 	var loadingWatchstate = $state(true);
+
+	let duration = $state(0);
+	let currentTime = $state(0);
 
 	const streamUrl = $derived(
 		API_URL +
@@ -28,16 +30,12 @@
 
 	async function logPlaybackStatus() {
 		console.log('log playback status 1');
-		if (!videoEl) {
-			return;
-		}
 		console.log('log playback status 2');
 		if (loadingWatchstate) {
 			return;
 		}
 
-		const duration = Number.isFinite(videoEl.duration) ? Number(videoEl.duration.toFixed(2)) : 0;
-		const position = Number(videoEl.currentTime.toFixed(2));
+		const position = Number(currentTime.toFixed(2));
 		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
 
 		if (auth.token) {
@@ -70,13 +68,12 @@
 		if (!auth.token) {
 			return;
 		}
-		if (videoEl == null) return;
 		loadingWatchstate = true;
 		getWatchstateForMovie(auth.token, movieId)
 			.then((res) => {
 				console.log('watchstate res:', res);
 				if (!res.finished) {
-					videoEl!.currentTime = res.position;
+					currentTime = res.position;
 					loadingWatchstate = false;
 				} else {
 					alert('already watched');
@@ -103,18 +100,13 @@
 	</header>
 
 	<section class="min-h-0">
-		<!-- svelte-ignore a11y_media_has_caption -->
-		<div class="h-full w-full">
-			<video
-				bind:this={videoEl}
-				class="h-full w-full bg-black object-contain"
-				controls
-				preload="metadata"
-				src={streamUrl}
-				onplay={startPlaybackLogging}
-				onpause={stopPlaybackLogging}
-				onended={stopPlaybackLogging}
-			></video>
-		</div>
+		<VideoPlayer
+			href={streamUrl}
+			onplay={startPlaybackLogging}
+			onpause={stopPlaybackLogging}
+			onended={stopPlaybackLogging}
+			bind:currentTime
+			bind:duration
+		/>
 	</section>
 </main>

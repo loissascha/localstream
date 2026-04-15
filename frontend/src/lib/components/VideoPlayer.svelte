@@ -1,13 +1,34 @@
 <script lang="ts">
 	interface Props {
 		href: string;
-		onplay: () => void;
-		onpause: () => void;
-		onended: () => void;
+		duration?: number;
+		currentTime?: number;
+		onplay?: () => void;
+		onpause?: () => void;
+		onended?: () => void;
 	}
-	let { href, onplay, onpause, onended }: Props = $props();
+	let {
+		href,
+		onplay,
+		onpause,
+		onended,
+		duration = $bindable(0),
+		currentTime = $bindable(0)
+	}: Props = $props();
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
+
+	function syncState() {
+		if (!videoEl) return;
+		currentTime = videoEl.currentTime;
+		duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
+	}
+
+	$effect(() => {
+		if (videoEl && Math.abs(videoEl.currentTime - currentTime) > 0.25) {
+			videoEl.currentTime = currentTime;
+		}
+	});
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -21,5 +42,7 @@
 		{onplay}
 		{onpause}
 		{onended}
+		ontimeupdate={syncState}
+		onloadedmetadata={syncState}
 	></video>
 </div>
