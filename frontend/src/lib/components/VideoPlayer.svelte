@@ -70,6 +70,7 @@
 		const boundedValue = Math.min(Math.max(value, 0), duration || 0);
 		videoEl.currentTime = boundedValue;
 		currentTime = boundedValue;
+		syncState();
 	}
 
 	function seekBy(seconds: number) {
@@ -158,6 +159,7 @@
 		onseeked={syncState}
 		onvolumechange={syncState}
 		ontimeupdate={syncState}
+		onseeking={syncState}
 	></video>
 
 	{#if paused}
