@@ -42,6 +42,8 @@
 	let volume = $state(1);
 	let isFullscreen = $state(false);
 	let seekValue = $state(0);
+	let showControls = $state(true);
+	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
 
 	function syncState() {
 		if (!videoEl) return;
@@ -51,6 +53,27 @@
 		paused = videoEl.paused;
 		muted = videoEl.muted;
 		volume = videoEl.volume;
+	}
+
+	function clearHideControlsTimer() {
+		if (hideControlsTimer !== null) {
+			clearTimeout(hideControlsTimer);
+			hideControlsTimer = null;
+		}
+	}
+
+	function scheduleHideControls() {
+		clearHideControlsTimer();
+		if (paused) return;
+		hideControlsTimer = setTimeout(() => {
+			showControls = false;
+			hideControlsTimer = null;
+		}, 2000);
+	}
+
+	function revealControls() {
+		showControls = true;
+		scheduleHideControls();
 	}
 
 	function formatTime(value: number) {
@@ -68,6 +91,7 @@
 	}
 
 	async function togglePlay() {
+		revealControls();
 		if (!videoEl) return;
 		if (videoEl.paused) {
 			await videoEl.play();
@@ -77,6 +101,7 @@
 	}
 
 	function seekTo(value: number) {
+		revealControls();
 		if (!videoEl) return;
 		const boundedValue = Math.min(Math.max(value, 0), duration || 0);
 		videoEl.currentTime = boundedValue;
@@ -92,6 +117,7 @@
 	}
 
 	function setVolume(value: number) {
+		revealControls();
 		if (!videoEl) return;
 		const boundedValue = Math.min(Math.max(value, 0), 1);
 		videoEl.volume = boundedValue;
@@ -101,12 +127,14 @@
 	}
 
 	function toggleMute() {
+		revealControls();
 		if (!videoEl) return;
 		videoEl.muted = !videoEl.muted;
 		muted = videoEl.muted;
 	}
 
 	async function toggleFullscreen() {
+		revealControls();
 		if (!containerEl) return;
 		if (document.fullscreenElement === containerEl) {
 			await document.exitFullscreen();
@@ -117,21 +145,31 @@
 
 	function handlePlay() {
 		syncState();
+		revealControls();
 		onplay?.();
 	}
 
 	function handlePause() {
 		syncState();
+		showControls = true;
+		clearHideControlsTimer();
 		onpause?.();
 	}
 
 	function handleEnded() {
 		syncState();
+		showControls = true;
+		clearHideControlsTimer();
 		onended?.();
 	}
 
 	function handleFullscreenChange() {
 		isFullscreen = document.fullscreenElement === containerEl;
+		revealControls();
+	}
+
+	function handleInteraction() {
+		revealControls();
 	}
 
 	$effect(() => {
@@ -150,6 +188,7 @@
 	});
 
 	onDestroy(() => {
+		clearHideControlsTimer();
 		if (document.fullscreenElement === containerEl) {
 			document.exitFullscreen().catch(() => {});
 		}
@@ -157,7 +196,14 @@
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
-<div bind:this={containerEl} class="relative h-full w-full overflow-hidden bg-black">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	bind:this={containerEl}
+	class="relative h-full w-full overflow-hidden bg-black"
+	onmousemove={handleInteraction}
+	onpointerdown={handleInteraction}
+	ontouchstart={handleInteraction}
+>
 	<video
 		bind:this={videoEl}
 		class="h-full w-full bg-black object-contain"
@@ -197,7 +243,7 @@
 	{/if}
 
 	<div
-		class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white"
+		class={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
 		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
