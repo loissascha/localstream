@@ -284,6 +284,7 @@
 		onvolumechange={syncState}
 		ontimeupdate={syncState}
 		onseeking={syncState}
+		disablepictureinpicture
 	></video>
 
 	{#if paused}
