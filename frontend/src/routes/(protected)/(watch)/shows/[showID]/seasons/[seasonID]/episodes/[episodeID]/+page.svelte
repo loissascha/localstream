@@ -65,7 +65,7 @@
 		const normalizedDuration = Number.isFinite(duration) ? Number(duration.toFixed(2)) : 0;
 		const finished = normalizedDuration > 0 && position >= Math.max(normalizedDuration - 10, 0);
 		const almostDoneStatus =
-			normalizedDuration > 0 && position >= Math.max(normalizedDuration - 120, 0);
+			normalizedDuration > 0 && position >= Math.max(normalizedDuration - 180, 0);
 		console.log('almost done status:', almostDoneStatus);
 		almostDone = almostDoneStatus;
 
