@@ -123,10 +123,9 @@ In production, the frontend is built into `src/frontend/build` and served by the
 
 ```bash
 cp src/.env.example src/.env
-cp src/frontend/.env.example src/frontend/.env
 ```
 
-Set at least `PORT` and `DATABASE_URL` in `src/.env`. Set `APP_ENV=production` and configure `ALLOWED_ORIGINS` as needed. Set `VITE_API_URL` in `src/frontend/.env` to the public backend origin.
+Set at least `PORT` and `DATABASE_URL` in `src/.env`. Set `APP_ENV=production` and configure `ALLOWED_ORIGINS` as needed.
 
 2) Install dependencies
 
