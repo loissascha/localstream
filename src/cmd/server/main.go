@@ -49,7 +49,7 @@ func main() {
 	}
 
 	s, err := server.NewServer(
-		server.SetExportTypesLocation("../frontend/src/lib/types/export_types.ts"),
+		server.SetExportTypesLocation("frontend/src/lib/types/export_types.ts"),
 		server.EnableExportTypes(env == "development"),
 	)
 	if err != nil {

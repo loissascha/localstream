@@ -90,6 +90,10 @@ export interface SaveWatchstateRequest {
   duration: number;
   finished: boolean;
 }
+export interface SearchResponse {
+  shows: ShowInfo[];
+  movies: MovieInfo[];
+}
 export interface SeasonInfo {
   id: string;
   number: number;
