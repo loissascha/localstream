@@ -43,7 +43,7 @@ export async function setPrimaryMovieMetadataByFetchID(
 
 export async function searchMovieMetadata(bearerToken: string, searchQuery: string) {
 	try {
-		const res = await fetch('/api/v1/movie/metadata/search?q=' + searchQuery, {
+		const res = await fetch('/api/v1/movie/metadata/search?q=' + encodeURIComponent(searchQuery), {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer ' + bearerToken
