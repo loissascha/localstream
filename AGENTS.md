@@ -1,45 +1,36 @@
 # AGENTS Guide
 
-## Repo Boundaries
-- `backend/`: Go API server, PostgreSQL access, and goose migrations.
-- `frontend/`: SvelteKit 5 app (SPA/static build).
+## Working Roots
+- The real app lives under `src/`, not repo root.
+- Run Go/backend commands from `src/`.
+- Run Svelte/frontend commands from `src/frontend/`.
+- There is no root-level task runner or workspace manifest.
 
-## Working Directory Rules
-- Run backend commands from `backend/`.
-- Run frontend commands from `frontend/`.
-- No root-level task runner is configured.
+## Backend
+- Main entrypoint: `src/cmd/server/main.go`.
+- Usual commands from `src/`: `go mod download`, `go run ./cmd/server`, `go build ./...`, `go test ./...`, `go vet ./...`, `gofmt -w .`.
+- Focused parser tests live in `src/internal/parsers/`. Useful examples: `go test ./internal/parsers -run '^TestParseMovieFromFilename$'` and `go test ./internal/parsers -run 'TestParseSeasonFromName/specials' -count=1`.
+- `godotenv.Load()` is called in the server, so backend env comes from `src/.env` when running from `src/`.
+- Backend startup runs goose migrations automatically from `src/migrations/`.
+- In development, the backend generates frontend API types at `src/frontend/src/lib/types/export_types.ts`; do not hand-edit that file.
+- The backend also serves the built frontend from `src/frontend/build`, so production-like verification needs a frontend build first.
 
-## Backend Commands (from `backend/`)
-- Setup: `go mod download`
-- Run server: `go run ./cmd/server`
-- Build: `go build ./...`
-- Verify: `go test ./...` and `go vet ./...`
-- Format (when editing Go): `gofmt -w .`
+## Frontend
+- Usual commands from `src/frontend/`: `bun install`, `bun run dev`, `bun run check`, `bun run lint`, `bun run build`, `bun run format`.
+- There is no frontend test runner configured in `src/frontend/package.json`.
+- `src/frontend/svelte.config.js` uses `@sveltejs/adapter-static` with `fallback: 'index.html'`.
+- `src/frontend/src/routes/+layout.ts` sets `ssr = false`; treat the app as client-rendered.
+- `VITE_API_URL` is used both by client code (`src/frontend/src/lib/consts.ts`) and the Vite `/api` proxy (`src/frontend/vite.config.ts`). Default local backend is `http://localhost:42069`.
 
-## Focused Backend Tests
-- Single parser test: `go test ./internal/parsers -run '^TestParseMovieFromFilename$'`
-- Single subtest: `go test ./internal/parsers -run '^TestParseSeasonFromName$/specials$'`
-- Disable test cache while iterating: `go test ./internal/parsers -run '^TestParseSeasonFromName$' -count=1`
+## Env Files
+- Backend template: `src/.env.example`.
+- Frontend template: `src/frontend/.env.example`.
+- Backend requires `PORT` and `DATABASE_URL`; frontend requires `VITE_API_URL`.
 
-## Frontend Commands (from `frontend/`)
-- Install deps: `bun install`
-- Dev server: `bun run dev`
-- Type/Svelte checks: `bun run check`
-- Lint (Prettier check + ESLint): `bun run lint`
-- Build: `bun run build`
-- No frontend test runner is configured in `frontend/package.json`.
+## Structure
+- Backend packages are organized under `src/internal/` with the main flow split across `handler/`, `middleware/`, `service/`, `repository/`, `provider/`, and `database/`.
+- Frontend routes are grouped under `src/frontend/src/routes/(auth)` and `src/frontend/src/routes/(protected)`; API helpers live under `src/frontend/src/lib/api/`.
 
-## Env + Runtime Gotchas
-- Copy `backend/.env.example` to `backend/.env` and `frontend/.env.example` to `frontend/.env`.
-- Backend requires `PORT` and `DATABASE_URL`; migrations run automatically on server startup.
-- Backend exports API types only in development (`APP_ENV=development`) to `frontend/src/lib/types/export_types.ts`.
-- Do not hand-edit `frontend/src/lib/types/export_types.ts` unless changing generation flow.
-
-## Frontend API Wiring
-- App API clients use `VITE_API_URL` (`frontend/src/lib/consts.ts`) for backend calls.
-- Vite dev proxy for relative `/api` requests is controlled by `VITE_BACKEND_ORIGIN` in `frontend/vite.config.ts` (default `http://localhost:42069`).
-- `frontend/src/routes/+layout.ts` sets `ssr = false`; treat frontend as client-rendered.
-
-## Agent Verification Expectations
-- Backend changes: run `go test ./...` and `go vet ./...`.
-- Frontend changes: run `bun run check` and `bun run lint`.
+## Verification
+- Backend changes: run `go test ./...` and `go vet ./...` from `src/`.
+- Frontend changes: run `bun run check` and `bun run lint` from `src/frontend/`.
