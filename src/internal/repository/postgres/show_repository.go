@@ -146,6 +146,7 @@ func (r *ShowRepository) ListLatest(ctx context.Context) ([]entity.Show, error) 
 	return shows, nil
 }
 
+// TODO: SELECT s.id, s.name as "localname", m.name, s.fetch_source, s.path, m.description, m.medium_image_url from shows s LEFT JOIN show_metadata m ON m.show_id=s.id AND s.fetch_source!='multiple';
 func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	const query = `
 		SELECT *
