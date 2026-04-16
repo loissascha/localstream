@@ -117,6 +117,7 @@ func main() {
 	seasonMetaH := handler.NewSeasonMetadataHandler(s, authMiddleware, seasonMetaService)
 	episodeMetaH := handler.NewEpisodeMetadataHandler(s, authMiddleware, episodeMetaService)
 	movieMetaH := handler.NewMovieMetadataHandler(s, authMiddleware, movieMetaService)
+	searchH := handler.NewSearchHandler(s, authMiddleware, showSerivce, movieService)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -132,6 +133,7 @@ func main() {
 	seasonMetaH.RegisterRoutes()
 	episodeMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
+	searchH.RegisterRoutes()
 
 	frontendBuildDir := "./frontend/build"
 	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))
