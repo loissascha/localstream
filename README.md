@@ -21,8 +21,12 @@ This is an actively evolving side project, not a production-hardened platform.
 
 ## Repository layout
 
-- `backend/` - API server, migrations, media scanning/streaming logic
-- `frontend/` - SvelteKit app
+- `src/` - Go application root
+- `src/cmd/server/` - main server entrypoint
+- `src/internal/` - backend packages
+- `src/migrations/` - database migrations
+- `src/frontend/` - SvelteKit frontend
+- `src/frontend/build/` - built frontend assets served by the Go server in production
 
 ## Quick start
 
@@ -35,15 +39,15 @@ Prerequisites:
 1) Configure backend env
 
 ```bash
-cp backend/.env.example backend/.env
+cp src/.env.example src/.env
 ```
 
-At minimum, set `DATABASE_URL` and `PORT` in `backend/.env`.
+At minimum, set `DATABASE_URL` and `PORT` in `src/.env`.
 
 2) Configure frontend env
 
 ```bash
-cp frontend/.env.example frontend/.env
+cp src/frontend/.env.example src/frontend/.env
 ```
 
 Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:42069`).
@@ -52,23 +56,23 @@ Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:
 
 ```bash
 # backend
-cd backend && go mod download
+cd src && go mod download
 
 # frontend
-cd ../frontend && bun install
+cd frontend && bun install
 ```
 
 4) Run backend
 
 ```bash
-cd backend
+cd src
 go run ./cmd/server
 ```
 
 5) Run frontend
 
 ```bash
-cd frontend
+cd src/frontend
 bun run dev
 ```
 
@@ -76,22 +80,25 @@ Open the app at Vite's dev URL (typically `http://localhost:5173`).
 
 ## Useful commands
 
-Backend (run from `backend/`):
+Backend (run from `src/`):
 
 - `go run ./cmd/server`
+- `go build ./...`
 - `go test ./...`
 - `go vet ./...`
+- `gofmt -w .`
 
-Frontend (run from `frontend/`):
+Frontend (run from `src/frontend/`):
 
 - `bun run dev`
 - `bun run check`
 - `bun run lint`
 - `bun run build`
+- `bun run format`
 
 ## Environment variables
 
-Backend (`backend/.env`):
+Backend (`src/.env`):
 
 - `PORT` (required)
 - `DATABASE_URL` (required)
@@ -104,14 +111,59 @@ Backend (`backend/.env`):
 - `TMDB_API_KEY` (optional; needed for TMDB movie metadata)
 - `ALLOWED_ORIGINS` (required for production environment. set to '*' to allow all hosts or set to frontend url for proper CORS handling)
 
-Frontend (`frontend/.env`):
+Frontend (`src/frontend/.env`):
 
 - `VITE_API_URL` (backend base URL used by frontend API calls)
+
+## Production
+
+In production, the frontend is built into `src/frontend/build` and served by the main Go server. There is no separate frontend server process.
+
+1) Configure environment files
+
+```bash
+cp src/.env.example src/.env
+cp src/frontend/.env.example src/frontend/.env
+```
+
+Set at least `PORT` and `DATABASE_URL` in `src/.env`. Set `APP_ENV=production` and configure `ALLOWED_ORIGINS` as needed. Set `VITE_API_URL` in `src/frontend/.env` to the public backend origin.
+
+2) Install dependencies
+
+```bash
+cd src && go mod download
+cd frontend && bun install
+```
+
+3) Build the frontend
+
+```bash
+cd src/frontend
+bun run build
+```
+
+4) Start the Go server
+
+```bash
+cd src
+go run ./cmd/server
+```
+
+Or build a binary first:
+
+```bash
+cd src
+go build -o localstream ./cmd/server
+./localstream
+```
+
+The Go server serves the built frontend from `src/frontend/build`, serves the API from the same process, and falls back to `index.html` for client-side routes.
 
 ## Notes
 
 - Database migrations run automatically on backend startup.
 - Type exports for frontend are generated in development by the backend server.
+- In development, the frontend uses Vite and proxies `/api` requests to `VITE_API_URL`.
 
 ## License
 
