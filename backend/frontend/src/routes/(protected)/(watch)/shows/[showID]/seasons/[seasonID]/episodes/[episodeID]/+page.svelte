@@ -6,7 +6,6 @@
 	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
-	import { API_URL } from '$lib/consts';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
@@ -32,8 +31,7 @@
 	var nextEpisode = $state<EpisodeInfo | null>(null);
 
 	const streamUrl = $derived(
-		API_URL +
-			`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
+		`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
 

@@ -5,6 +5,8 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/loissascha/go-http-server/server"
@@ -130,6 +132,36 @@ func main() {
 	seasonMetaH.RegisterRoutes()
 	episodeMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
+
+	frontendBuildDir := "./frontend/build"
+	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))
+	s.Handle("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			http.NotFound(w, r)
+			return
+		}
+
+		requestPath := strings.TrimPrefix(r.URL.Path, "/")
+		if requestPath != "" {
+			filePath := filepath.Join(frontendBuildDir, filepath.Clean(requestPath))
+			if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
+				frontendFileServer.ServeHTTP(w, r)
+				return
+			}
+
+			if filepath.Ext(requestPath) != "" {
+				http.NotFound(w, r)
+				return
+			}
+		}
+
+		http.ServeFile(w, r, filepath.Join(frontendBuildDir, "index.html"))
+	})
 
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo)
 	libraryCataloguer.RunBackground()
