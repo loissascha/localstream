@@ -33,3 +33,7 @@ func (s *MovieService) GetById(ctx context.Context, id string) (*entity.Movie, e
 	}
 	return s.movieRepo.GetByID(ctx, uid)
 }
+
+func (s *MovieService) Search(ctx context.Context, query string) ([]entity.Movie, error) {
+	return s.movieRepo.Search(ctx, query)
+}

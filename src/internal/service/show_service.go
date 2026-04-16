@@ -31,3 +31,7 @@ func (s *ShowService) ListLatest(ctx context.Context) ([]entity.Show, error) {
 func (s *ShowService) List(ctx context.Context) ([]entity.Show, error) {
 	return s.showRepo.List(ctx)
 }
+
+func (s *ShowService) Search(ctx context.Context, query string) ([]entity.Show, error) {
+	return s.showRepo.Search(ctx, query)
+}
