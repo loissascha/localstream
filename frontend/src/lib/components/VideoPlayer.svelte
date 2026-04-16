@@ -307,7 +307,7 @@
 	{/if}
 
 	<div
-		class={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+		class={`absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
 		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
@@ -324,42 +324,44 @@
 			<span class="w-12 tabular-nums">{formatTime(duration)}</span>
 		</div>
 
-		<div class="flex flex-wrap items-center gap-2 sm:flex-nowrap">
-			<button
-				type="button"
-				class="rounded-full p-2 text-white transition hover:bg-white/10"
-				onclick={togglePlay}
-				aria-label={paused ? 'Play video' : 'Pause video'}
-			>
-				{#if paused}
-					<PlayIcon />
-				{:else}
-					<PauseIcon />
-				{/if}
-			</button>
+		<div class="flex grow flex-wrap items-center justify-between gap-2 sm:flex-nowrap">
+			<div>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
+					onclick={togglePlay}
+					aria-label={paused ? 'Play video' : 'Pause video'}
+				>
+					{#if paused}
+						<PlayIcon />
+					{:else}
+						<PauseIcon />
+					{/if}
+				</button>
 
-			<button
-				type="button"
-				class="rounded-full p-2 text-white transition hover:bg-white/10"
-				onclick={() => seekBy(-10)}
-				aria-label="Skip back 10 seconds"
-			>
-				<SkipPreviousIcon />
-			</button>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
+					onclick={() => seekBy(-10)}
+					aria-label="Skip back 10 seconds"
+				>
+					<SkipPreviousIcon />
+				</button>
 
-			<button
-				type="button"
-				class="rounded-full p-2 text-white transition hover:bg-white/10"
-				onclick={() => seekBy(10)}
-				aria-label="Skip forward 10 seconds"
-			>
-				<SkipNextIcon />
-			</button>
+				<button
+					type="button"
+					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
+					onclick={() => seekBy(10)}
+					aria-label="Skip forward 10 seconds"
+				>
+					<SkipNextIcon />
+				</button>
+			</div>
 
 			<div class="ml-auto flex items-center gap-2 sm:ml-0">
 				<button
 					type="button"
-					class="rounded-full p-2 text-white transition hover:bg-white/10"
+					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
 					onclick={toggleMute}
 					aria-label={muted || volume === 0 ? 'Unmute video' : 'Mute video'}
 				>
@@ -383,7 +385,7 @@
 
 				<button
 					type="button"
-					class="rounded-full p-2 text-white transition hover:bg-white/10"
+					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
 					onclick={toggleFullscreen}
 					aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
 				>
