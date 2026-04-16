@@ -44,11 +44,6 @@ func (self *ShowMatcher) RunBackground() {
 				continue
 			}
 
-			if len(showSearchResults) == 0 {
-				logger.Error(nil, "Didn't find anything for show {Show} ({Year})", show.Name, show.Year)
-				continue
-			}
-
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 			defer cancel()
 
