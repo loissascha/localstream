@@ -7,6 +7,7 @@
 	import SkipNextIcon from '$lib/icons/SkipNextIcon.svelte';
 	import SkipPreviousIcon from '$lib/icons/SkipPreviousIcon.svelte';
 	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
+	import { getCookie, setCookie } from '$lib/cookies';
 
 	interface OverlayState {
 		currentTime: number;
@@ -126,6 +127,7 @@
 		videoEl.muted = boundedValue === 0;
 		volume = boundedValue;
 		muted = videoEl.muted;
+		setCookie('videoplayer_volume', boundedValue.toString(), 300);
 	}
 
 	function toggleMute() {
@@ -245,6 +247,13 @@
 		return () => {
 			document.removeEventListener('fullscreenchange', handleFullscreenChange);
 		};
+	});
+
+	$effect(() => {
+		const volumeCookie = getCookie('videoplayer_volume');
+		if (volumeCookie != null && !isNaN(Number(volumeCookie))) {
+			setVolume(Number(volumeCookie));
+		}
 	});
 
 	onDestroy(() => {
