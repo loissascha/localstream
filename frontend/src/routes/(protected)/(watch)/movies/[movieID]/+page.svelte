@@ -92,13 +92,7 @@
 	});
 </script>
 
-<main class="grid h-dvh grid-rows-[auto_1fr] overflow-hidden">
-	<header class="flex items-center gap-2 bg-neutral-900 px-4 py-3.5">
-		<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
-			<HomeIcon />
-		</a>
-	</header>
-
+<main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
 	<section class="min-h-0">
 		<VideoPlayer
 			href={streamUrl}
@@ -107,6 +101,12 @@
 			onended={stopPlaybackLogging}
 			bind:currentTime
 			bind:duration
-		/>
+		>
+			{#snippet topbar()}
+				<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
+					<HomeIcon />
+				</a>
+			{/snippet}
+		</VideoPlayer>
 	</section>
 </main>

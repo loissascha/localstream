@@ -23,6 +23,7 @@
 		onpause?: () => void;
 		onended?: () => void;
 		overlay?: Snippet<[OverlayState]>;
+		topbar?: Snippet;
 	}
 
 	let {
@@ -31,6 +32,7 @@
 		onpause,
 		onended,
 		overlay,
+		topbar,
 		duration = $bindable(0),
 		currentTime = $bindable(0)
 	}: Props = $props();
@@ -300,8 +302,16 @@
 		</div>
 	{/if}
 
+	{#if topbar}
+		<div
+			class={`absolute top-0 right-0 left-0 z-10 flex items-center gap-2 bg-linear-to-t via-black/55 to-black/90 px-4 py-4 transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+		>
+			{@render topbar()}
+		</div>
+	{/if}
+
 	{#if overlay}
-		<div class="absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]">
+		<div class={`absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]`}>
 			{@render overlay({ currentTime, duration, paused, isFullscreen })}
 		</div>
 	{/if}
