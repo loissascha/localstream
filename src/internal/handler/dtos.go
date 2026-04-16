@@ -32,6 +32,11 @@ type ShowListResponse struct {
 	Shows []ShowInfo `json:"shows"`
 }
 
+type SearchResponse struct {
+	Shows  []ShowInfo  `json:"shows"`
+	Movies []MovieInfo `json:"movies"`
+}
+
 type EpisodeInfo struct {
 	ID         string         `json:"id"`
 	SeasonID   string         `json:"season_id"`
