@@ -5,11 +5,11 @@
 	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { page } from '$app/state';
 	import ShowIcon from '$lib/icons/ShowIcon.svelte';
 	import MovieIcon from '$lib/icons/MovieIcon.svelte';
 	import CollectionIcon from '$lib/icons/CollectionIcon.svelte';
+	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 
 	let { children } = $props();
 
@@ -50,6 +50,16 @@
 			<LogoutIcon />
 		</a>
 	</div>
+</section>
+<section id="search" class="flex items-center justify-center">
+	<form class="flex items-center gap-2">
+		<input
+			type="text"
+			placeholder="Search"
+			class="w-86 max-w-full rounded-full bg-neutral-800 px-4 py-2"
+		/>
+		<button class="cursor-pointer"><SearchIcon /></button>
+	</form>
 </section>
 <section id="selections" class="hidden items-center justify-center gap-4 p-4 md:flex">
 	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
