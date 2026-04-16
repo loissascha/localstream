@@ -18,4 +18,5 @@ type ShowRepository interface {
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 	List(ctx context.Context) ([]entity.Show, error)
 	ListLatest(ctx context.Context) ([]entity.Show, error)
+	Search(ctx context.Context, query string) ([]entity.Show, error)
 }

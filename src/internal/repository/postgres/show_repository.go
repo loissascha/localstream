@@ -160,4 +160,25 @@ func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	return shows, nil
 }
 
+func (r *ShowRepository) Search(ctx context.Context, query string) ([]entity.Show, error) {
+	const stmt = `
+		SELECT DISTINCT s.*
+		FROM shows s
+		WHERE s.name ILIKE $1
+			OR EXISTS (
+				SELECT 1
+				FROM show_metadata sm
+				WHERE sm.show_id = s.id
+					AND sm.name ILIKE $1
+			)
+	`
+
+	var shows []entity.Show
+	if err := r.db.SelectContext(ctx, &shows, stmt, "%"+query+"%"); err != nil {
+		return nil, fmt.Errorf("search shows: %w", err)
+	}
+
+	return shows, nil
+}
+
 var _ repository.ShowRepository = (*ShowRepository)(nil)

@@ -18,4 +18,5 @@ type MovieRepository interface {
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 	ListLatest(ctx context.Context) ([]entity.Movie, error)
 	List(ctx context.Context) ([]entity.Movie, error)
+	Search(ctx context.Context, query string) ([]entity.Movie, error)
 }

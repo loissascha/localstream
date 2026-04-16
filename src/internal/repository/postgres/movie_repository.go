@@ -139,6 +139,27 @@ func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, f
 	return nil
 }
 
+func (r *MovieRepository) Search(ctx context.Context, query string) ([]entity.Movie, error) {
+	const stmt = `
+		SELECT DISTINCT m.*
+		FROM movies m
+		WHERE m.name ILIKE $1
+			OR EXISTS (
+				SELECT 1
+				FROM movie_metadata mm
+				WHERE mm.movie_id = m.id
+					AND mm.name ILIKE $1
+			)
+	`
+
+	var movies []entity.Movie
+	if err := r.db.SelectContext(ctx, &movies, stmt, "%"+query+"%"); err != nil {
+		return nil, fmt.Errorf("search movies: %w", err)
+	}
+
+	return movies, nil
+}
+
 func (r *MovieRepository) Create(ctx context.Context, movie *entity.Movie) error {
 	fetchSource := movie.FetchSource
 	if fetchSource == "" {
