@@ -16,8 +16,8 @@ type MovieInfo struct {
 	Year             int    `json:"year"`
 	Description      string `json:"description"`
 	FetchSource      string `json:"fetch_source"`
-	MediumImageUrl   string `db:"medium_image_url"`
-	BackdropImageUrl string `db:"backdrop_image_url"`
+	MediumImageUrl   string `json:"medium_image_url"`
+	BackdropImageUrl string `json:"backdrop_image_url"`
 }
 
 type MovieListResponse struct {
