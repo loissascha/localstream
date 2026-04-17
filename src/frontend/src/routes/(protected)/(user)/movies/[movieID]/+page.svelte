@@ -6,6 +6,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import type { MovieInfo } from '$lib/types/export_types';
+	import DOMPurify from 'dompurify';
 
 	const movieId = $derived(page.params.movieID ?? '');
 	let movie = $state<MovieInfo | null>(null);
@@ -41,7 +42,7 @@
 					{/if}
 				</h1>
 				<div class="px-2">
-					{movie.description}
+					{@html DOMPurify.sanitize(movie.description)}
 				</div>
 				<div class="p-4">
 					<button

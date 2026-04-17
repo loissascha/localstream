@@ -12,6 +12,7 @@
 	import { deleteWatchstate, setWatchstateFinished } from '$lib/api/watchstate';
 	import { loadSeasonsForShow } from '$lib/api/seasons';
 	import CheckIcon from '$lib/icons/CheckIcon.svelte';
+	import DOMPurify from 'dompurify';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -128,7 +129,7 @@
 				</h1>
 			{/if}
 			<div>
-				{showData?.description}
+				{@html DOMPurify.sanitize(showData?.description ?? '')}
 			</div>
 		</div>
 	</div>
@@ -152,14 +153,11 @@
 	<div class="my-3 grid grid-cols-3 gap-4 py-5 md:flex md:flex-wrap">
 		{#each episodeData as episode (episode.id)}
 			<a
-				href={resolve(
-					'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
-					{
-						showID: showId,
-						seasonID: selectedSeason!.id,
-						episodeID: episode.id
-					}
-				)}
+				href={resolve('/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
+					showID: showId,
+					seasonID: selectedSeason!.id,
+					episodeID: episode.id
+				})}
 				class="flex aspect-square shrink-0 flex-col justify-between rounded bg-neutral-800 md:w-34"
 			>
 				<div>
