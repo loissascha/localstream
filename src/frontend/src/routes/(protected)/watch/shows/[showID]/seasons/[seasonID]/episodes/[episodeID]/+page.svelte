@@ -206,7 +206,7 @@
 				</a>
 				<a
 					class="p-2 text-slate-300 no-underline hover:text-white"
-					href={resolve('/(protected)/(watch)/shows/[showID]', { showID: showId })}
+					href={resolve('/(protected)/(user)/shows/[showID]', { showID: showId })}
 				>
 					<ChevronLeftIcon />
 				</a>
@@ -218,7 +218,7 @@
 				{#if almostDone && nextEpisode != null}
 					<a
 						href={resolve(
-							'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+							'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
 							{
 								showID: showId,
 								seasonID: nextEpisode.season_id,
