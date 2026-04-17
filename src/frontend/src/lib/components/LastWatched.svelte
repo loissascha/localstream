@@ -52,7 +52,7 @@
 						}
 					)}
 				>
-					<ShowInfoDisplay show={d.show_info} />
+					<ShowInfoDisplay show={d.show_info} nameLink />
 					<div>
 						<div>S{d.season_info.number}:E{d.episode_info.number}</div>
 						<div class="bg-neutral-600">
