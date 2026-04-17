@@ -236,7 +236,7 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 			}
 		}
 
-		show, err := h.showService.GetByID(r.Context(), showId)
+		show, err := h.showService.GetByIDWithMetadata(r.Context(), showId)
 		if err != nil {
 			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
 			return

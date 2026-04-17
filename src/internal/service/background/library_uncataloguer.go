@@ -42,7 +42,7 @@ func (l *LibraryUncataloguer) RunOnce() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
 
-	shows, err := l.showRepo.List(ctx)
+	shows, err := l.showRepo.All(ctx)
 	if err != nil {
 		return err
 	}

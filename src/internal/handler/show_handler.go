@@ -7,8 +7,8 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/repository"
 	"github.com/loissascha/localstream/internal/service"
 )
 
@@ -42,7 +42,7 @@ func (h *ShowHandler) RegisterRoutes() {
 
 func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 	showId := r.PathValue("id")
-	show, err := h.showSerivce.GetByID(r.Context(), showId)
+	show, err := h.showSerivce.GetByIDWithMetadata(r.Context(), showId)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read show"})
 		return
@@ -55,7 +55,7 @@ func (h *ShowHandler) showData(w http.ResponseWriter, r *http.Request) {
 func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 	limit := strings.TrimSpace(r.URL.Query().Get("limit"))
 
-	var shows []entity.Show
+	var shows []repository.ShowSelectItem
 	var err error
 	if limit == "latest" {
 		shows, err = h.showSerivce.ListLatest(r.Context())
@@ -63,7 +63,7 @@ func (h *ShowHandler) listShows(w http.ResponseWriter, r *http.Request) {
 		shows, err = h.showSerivce.List(r.Context())
 	}
 	if err != nil {
-		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read shows"})
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read shows: " + err.Error()})
 		return
 	}
 

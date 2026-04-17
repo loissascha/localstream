@@ -61,6 +61,27 @@ func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Sho
 	return &show, nil
 }
 
+func (r *ShowRepository) GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*repository.ShowSelectItem, error) {
+	const query = `
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		FROM shows s 
+		LEFT JOIN show_metadata m 
+		ON m.show_id=s.id AND s.fetch_source!='multiple'
+		WHERE s.id = $1
+		LIMIT 1
+	`
+
+	var show repository.ShowSelectItem
+	if err := r.db.GetContext(ctx, &show, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get show with metadata by id: %w", err)
+	}
+
+	return &show, nil
+}
+
 func (r *ShowRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {
 	const query = `
 		DELETE FROM shows
@@ -130,15 +151,32 @@ func (r *ShowRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fe
 
 	return nil
 }
-func (r *ShowRepository) ListLatest(ctx context.Context) ([]entity.Show, error) {
+
+func (r *ShowRepository) All(ctx context.Context) ([]entity.Show, error) {
 	const query = `
 		SELECT *
-		FROM shows
-		ORDER BY created_at DESC
+		FROM shows  
+	`
+
+	var shows []entity.Show
+	if err := r.db.SelectContext(ctx, &shows, query); err != nil {
+		return nil, fmt.Errorf("all shows: %w", err)
+	}
+
+	return shows, nil
+}
+
+func (r *ShowRepository) ListLatest(ctx context.Context) ([]repository.ShowSelectItem, error) {
+	const query = `
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		FROM shows s 
+		LEFT JOIN show_metadata m 
+		ON m.show_id=s.id AND s.fetch_source!='multiple'
+		ORDER BY s.created_at DESC
 		LIMIT 10
 	`
 
-	var shows []entity.Show
+	var shows []repository.ShowSelectItem
 	if err := r.db.SelectContext(ctx, &shows, query); err != nil {
 		return nil, fmt.Errorf("list shows: %w", err)
 	}
@@ -146,15 +184,15 @@ func (r *ShowRepository) ListLatest(ctx context.Context) ([]entity.Show, error) 
 	return shows, nil
 }
 
-// TODO: SELECT s.id, COALESCE(m.name, s.name) as "name", s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" from shows s LEFT JOIN show_metadata m ON m.show_id=s.id AND s.fetch_source!='multiple';
-
-func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
+func (r *ShowRepository) List(ctx context.Context) ([]repository.ShowSelectItem, error) {
 	const query = `
-		SELECT *
-		FROM shows
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		FROM shows s 
+		LEFT JOIN show_metadata m 
+		ON m.show_id=s.id AND s.fetch_source!='multiple'
 	`
 
-	var shows []entity.Show
+	var shows []repository.ShowSelectItem
 	if err := r.db.SelectContext(ctx, &shows, query); err != nil {
 		return nil, fmt.Errorf("list shows: %w", err)
 	}
@@ -162,10 +200,19 @@ func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	return shows, nil
 }
 
-func (r *ShowRepository) Search(ctx context.Context, query string) ([]entity.Show, error) {
+func (r *ShowRepository) Search(ctx context.Context, query string) ([]repository.ShowSelectItem, error) {
 	const stmt = `
-		SELECT DISTINCT s.*
+		SELECT DISTINCT 
+			s.id, 
+			COALESCE(m.name, s.name) as "name",
+			s.year,
+			s.fetch_source,
+			s.path,
+			COALESCE(m.description, '') as "description",
+			COALESCE(m.medium_image_url, '') as "medium_image_url" 
 		FROM shows s
+		LEFT JOIN show_metadata m 
+		ON m.show_id=s.id AND s.fetch_source!='multiple'
 		WHERE s.name ILIKE $1
 			OR EXISTS (
 				SELECT 1
@@ -175,7 +222,7 @@ func (r *ShowRepository) Search(ctx context.Context, query string) ([]entity.Sho
 			)
 	`
 
-	var shows []entity.Show
+	var shows []repository.ShowSelectItem
 	if err := r.db.SelectContext(ctx, &shows, stmt, "%"+query+"%"); err != nil {
 		return nil, fmt.Errorf("search shows: %w", err)
 	}

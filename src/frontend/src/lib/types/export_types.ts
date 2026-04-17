@@ -118,6 +118,8 @@ export interface ShowInfo {
   name: string;
   year: number;
   fetch_source: string;
+  description: string;
+  medium_image_url: string;
 }
 export interface ShowListResponse {
   shows: ShowInfo[];
