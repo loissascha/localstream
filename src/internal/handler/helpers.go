@@ -1,37 +1,10 @@
 package handler
 
 import (
-	"encoding/base64"
 	"errors"
 	"strconv"
 	"strings"
 )
-
-func parseAllowedExtensions(raw string) map[string]bool {
-	allowed := map[string]bool{}
-	if strings.TrimSpace(raw) == "" {
-		allowed[".mp4"] = true
-		return allowed
-	}
-
-	parts := strings.Split(raw, ",")
-	for _, part := range parts {
-		ext := strings.ToLower(strings.TrimSpace(part))
-		if ext == "" {
-			continue
-		}
-		if !strings.HasPrefix(ext, ".") {
-			ext = "." + ext
-		}
-		allowed[ext] = true
-	}
-
-	if len(allowed) == 0 {
-		allowed[".mp4"] = true
-	}
-
-	return allowed
-}
 
 func parseSingleRange(rangeHeader string, fileSize int64) (int64, int64, error) {
 	if fileSize <= 0 {
@@ -85,16 +58,4 @@ func parseSingleRange(rangeHeader string, fileSize int64) (int64, int64, error) 
 	}
 
 	return start, end, nil
-}
-
-func encodeVideoID(relativePath string) string {
-	return base64.RawURLEncoding.EncodeToString([]byte(relativePath))
-}
-
-func decodeVideoID(videoID string) (string, error) {
-	decoded, err := base64.RawURLEncoding.DecodeString(videoID)
-	if err != nil {
-		return "", err
-	}
-	return string(decoded), nil
 }
