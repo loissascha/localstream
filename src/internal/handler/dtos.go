@@ -221,9 +221,6 @@ func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 	if m.Duration > 0 {
 		percent = (100 / m.Duration) * m.Position
 	}
-	if percent > 95 {
-		m.Finished = true
-	}
 	if m.Finished {
 		percent = 100
 	}
