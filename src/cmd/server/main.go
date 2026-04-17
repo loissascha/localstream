@@ -105,7 +105,6 @@ func main() {
 
 	// handler
 	authH := handler.NewAuthHandler(s, authService, authMiddleware)
-	videoH := handler.NewVideoHandler(s, authMiddleware)
 	libH := handler.NewLibraryHandler(s, authMiddleware, libService)
 	showH := handler.NewShowHandler(s, authMiddleware, showSerivce)
 	seasonH := handler.NewSeasonHandler(s, authMiddleware, seasonService)
@@ -121,7 +120,6 @@ func main() {
 
 	// register routes
 	authH.RegisterHandlers()
-	videoH.RegisterHandlers()
 	libH.RegisterHandlers()
 	showH.RegisterRoutes()
 	seasonH.RegisterRoutes()

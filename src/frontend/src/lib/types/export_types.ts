@@ -136,15 +136,6 @@ export interface ShowMetadataInfo {
   original_image_url: string;
   fetch_source: string;
 }
-export interface VideoListItem {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-}
-export interface VideoListResponse {
-  videos: VideoListItem[];
-}
 export interface WatchstateInfo {
   position: number;
   duration: number;
