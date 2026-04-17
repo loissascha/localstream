@@ -18,7 +18,7 @@
 				goto(resolve('/(protected)/(user)/shows/[showID]', { showID: show.id }));
 			}
 		}}
-		class={`my-1 cursor-pointer text-center font-bold ${nameLink ? '' : ''}`}
+		class={`my-1 cursor-pointer text-center font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
 	>
 		{show.name}
 	</button>

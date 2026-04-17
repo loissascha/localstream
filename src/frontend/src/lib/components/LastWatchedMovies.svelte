@@ -48,7 +48,7 @@
 					})}
 				>
 					<div>
-						<MovieInfoDisplay movie={d.movie_info} />
+						<MovieInfoDisplay movie={d.movie_info} nameLink />
 					</div>
 					<div>
 						<div class="bg-neutral-600">
