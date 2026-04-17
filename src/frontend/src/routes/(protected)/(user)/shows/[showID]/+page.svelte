@@ -2,17 +2,14 @@
 	import { auth } from '$lib/auth.svelte';
 	import { page } from '$app/state';
 	import {
-		type ShowMetadataInfo,
 		type EpisodeInfo,
 		type EpisodeListResponse,
 		type SeasonInfo,
-		type SeasonListResponse,
 		type ShowInfo
 	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
-	import { deleteWatchstate, setWatchstateFinished, updateWatchstate } from '$lib/api/watchstate';
-	import { loadShowMetadata } from '$lib/api/show_metadata';
+	import { deleteWatchstate, setWatchstateFinished } from '$lib/api/watchstate';
 	import { loadSeasonsForShow } from '$lib/api/seasons';
 	import CheckIcon from '$lib/icons/CheckIcon.svelte';
 
@@ -219,7 +216,7 @@
 					{#if episode.watchstate.percentage > 0 && !episode.watchstate.finished}
 						<div
 							style={`width: ${episode.watchstate.percentage}%;`}
-							class={`h-2 bg-blue-300 text-sm`}
+							class={`h-2 bg-brand text-sm`}
 						></div>
 					{:else}
 						<div class="h-2 w-full"></div>
