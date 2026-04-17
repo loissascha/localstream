@@ -133,7 +133,7 @@ func main() {
 	movieMetaH.RegisterRoutes()
 	searchH.RegisterRoutes()
 
-	frontendBuildDir := "./frontend/build"
+	frontendBuildDir := os.Getenv("FRONTEND_APP_DIR")
 	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))
 	s.Handle("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
