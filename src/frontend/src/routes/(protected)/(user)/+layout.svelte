@@ -240,7 +240,11 @@
 										>
 											<div class="flex min-w-0 items-center gap-3">
 												<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
-													<ShowIcon />
+													{#if show.medium_image_url != ''}
+														<img alt={show.name} src={show.medium_image_url} class="w-10" />
+													{:else}
+														<ShowIcon />
+													{/if}
 												</div>
 												<div class="min-w-0">
 													<div class="truncate font-medium text-white">{show.name}</div>
@@ -272,7 +276,11 @@
 										>
 											<div class="flex min-w-0 items-center gap-3">
 												<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
-													<MovieIcon />
+													{#if movie.medium_image_url != ''}
+														<img alt={movie.name} src={movie.medium_image_url} class="w-10" />
+													{:else}
+														<MovieIcon />
+													{/if}
 												</div>
 												<div class="min-w-0">
 													<div class="truncate font-medium text-white">{movie.name}</div>
