@@ -270,7 +270,7 @@
 								<div class="space-y-1">
 									{#each searchResults.movies as movie (movie.id)}
 										<a
-											href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}
+											href={resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}
 											class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition hover:bg-neutral-800"
 											onclick={handleSearchResultClick}
 										>

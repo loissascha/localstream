@@ -153,7 +153,7 @@
 		{#each episodeData as episode (episode.id)}
 			<a
 				href={resolve(
-					'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+					'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
 					{
 						showID: showId,
 						seasonID: selectedSeason!.id,

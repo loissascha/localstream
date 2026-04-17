@@ -44,7 +44,7 @@
 			{#each data as d (d.id)}
 				<ListItemA
 					href={resolve(
-						'/(protected)/(watch)/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+						'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
 						{
 							showID: d.show_id,
 							seasonID: d.season_id,

@@ -2,7 +2,6 @@
 	import { type ShowInfo, type MovieInfo } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
-	import LibraryIcon from '$lib/icons/LibraryIcon.svelte';
 	import { listMovies } from '$lib/api/movies';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import { loadShows } from '$lib/api/shows';

@@ -7,6 +7,6 @@
 	let { movie }: { movie: MovieInfo } = $props();
 </script>
 
-<ListItemA href={resolve('/(protected)/(watch)/movies/[movieID]', { movieID: movie.id })}>
+<ListItemA href={resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}>
 	<MovieInfoDisplay {movie} />
 </ListItemA>

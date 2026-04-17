@@ -43,7 +43,7 @@
 		<ItemGrid>
 			{#each data as d (d.id)}
 				<ListItemA
-					href={resolve('/(protected)/(watch)/movies/[movieID]', {
+					href={resolve('/(protected)/watch/movies/[movieID]', {
 						movieID: d.movie_id
 					})}
 				>
