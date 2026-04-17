@@ -55,6 +55,10 @@ export interface MovieInfo {
   fetch_source: string;
   medium_image_url: string;
   backdrop_image_url: string;
+  position: number;
+  duration: number;
+  finished: boolean;
+  percentage: number;
 }
 export interface MovieListResponse {
   movies: MovieInfo[];

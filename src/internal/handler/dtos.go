@@ -11,13 +11,17 @@ import (
 type AnyInfoStruct interface{}
 
 type MovieInfo struct {
-	ID               string `json:"id"`
-	Name             string `json:"name"`
-	Year             int    `json:"year"`
-	Description      string `json:"description"`
-	FetchSource      string `json:"fetch_source"`
-	MediumImageUrl   string `json:"medium_image_url"`
-	BackdropImageUrl string `json:"backdrop_image_url"`
+	ID               string  `json:"id"`
+	Name             string  `json:"name"`
+	Year             int     `json:"year"`
+	Description      string  `json:"description"`
+	FetchSource      string  `json:"fetch_source"`
+	MediumImageUrl   string  `json:"medium_image_url"`
+	BackdropImageUrl string  `json:"backdrop_image_url"`
+	Position         float64 `json:"position"`
+	Duration         float64 `json:"duration"`
+	Finished         bool    `json:"finished"`
+	Percentage       float64 `json:"percentage"`
 }
 
 type MovieListResponse struct {
@@ -213,6 +217,16 @@ func toEpisodeMetadataInfo(m *entity.EpisodeMetadata) EpisodeMetadataInfo {
 }
 
 func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
+	percent := 0.0
+	if m.Duration > 0 {
+		percent = (100 / m.Duration) * m.Position
+	}
+	if percent > 95 {
+		m.Finished = true
+	}
+	if m.Finished {
+		percent = 100
+	}
 	return MovieInfo{
 		ID:               encoders.EncodeUUID(m.ID),
 		Name:             m.Name,
@@ -221,6 +235,10 @@ func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 		FetchSource:      string(m.FetchSource),
 		MediumImageUrl:   m.MediumImageUrl,
 		BackdropImageUrl: m.BackdropImageUrl,
+		Duration:         m.Duration,
+		Finished:         m.Finished,
+		Position:         m.Position,
+		Percentage:       percent,
 	}
 }
 

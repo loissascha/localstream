@@ -40,18 +40,20 @@ func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Mo
 }
 
 // SELECT m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, ”) as "medium_image_url", coalesce(mm.backdrop_image_url, ”) as "backdrop_image_url", m.fetch_source  FROM movies m LEFT JOIN movie_metadata mm ON mm.movie_id=m.id AND m.fetch_source!='multiple'
-func (r *MovieRepository) GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*repository.MovieSelectItem, error) {
+func (r *MovieRepository) GetByIDWithMetadata(ctx context.Context, id uuid.UUID, userID int64) (*repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
-		WHERE m.id = $1
+		LEFT JOIN user_movie_watchstates umw 
+		ON umw.movie_id=m.id AND umw.user_id=$1
+		WHERE m.id = $2
 		LIMIT 1
 	`
 
 	var movie repository.MovieSelectItem
-	if err := r.db.GetContext(ctx, &movie, query, id); err != nil {
+	if err := r.db.GetContext(ctx, &movie, query, userID, id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -117,34 +119,38 @@ func (r *MovieRepository) All(ctx context.Context) ([]entity.Movie, error) {
 	return movies, nil
 }
 
-func (r *MovieRepository) ListLatest(ctx context.Context) ([]repository.MovieSelectItem, error) {
+func (r *MovieRepository) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
-		ORDER BY created_at DESC
+		LEFT JOIN user_movie_watchstates umw 
+		ON umw.movie_id=m.id AND umw.user_id=$1
+		ORDER BY m.created_at DESC
 		LIMIT 10
 		`
 
 	var movies []repository.MovieSelectItem
-	if err := r.db.SelectContext(ctx, &movies, query); err != nil {
+	if err := r.db.SelectContext(ctx, &movies, query, userID); err != nil {
 		return nil, fmt.Errorf("list movies: %w", err)
 	}
 
 	return movies, nil
 }
 
-func (r *MovieRepository) List(ctx context.Context) ([]repository.MovieSelectItem, error) {
+func (r *MovieRepository) List(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
+		LEFT JOIN user_movie_watchstates umw 
+		ON umw.movie_id=m.id AND umw.user_id=$1
 	`
 
 	var movies []repository.MovieSelectItem
-	if err := r.db.SelectContext(ctx, &movies, query); err != nil {
+	if err := r.db.SelectContext(ctx, &movies, query, userID); err != nil {
 		return nil, fmt.Errorf("list movies: %w", err)
 	}
 
@@ -179,24 +185,26 @@ func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, f
 	return nil
 }
 
-func (r *MovieRepository) Search(ctx context.Context, query string) ([]repository.MovieSelectItem, error) {
+func (r *MovieRepository) Search(ctx context.Context, query string, userID int64) ([]repository.MovieSelectItem, error) {
 	const stmt = `
 		SELECT DISTINCT 
-		m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
-		WHERE m.name ILIKE $1
+		LEFT JOIN user_movie_watchstates umw 
+		ON umw.movie_id=m.id AND umw.user_id=$1
+		WHERE m.name ILIKE $2
 			OR EXISTS (
 				SELECT 1
 				FROM movie_metadata mmm
 				WHERE mmm.movie_id = m.id
-					AND mmm.name ILIKE $1
+					AND mmm.name ILIKE $2
 			)
 	`
 
 	var movies []repository.MovieSelectItem
-	if err := r.db.SelectContext(ctx, &movies, stmt, "%"+query+"%"); err != nil {
+	if err := r.db.SelectContext(ctx, &movies, stmt, userID, "%"+query+"%"); err != nil {
 		return nil, fmt.Errorf("search movies: %w", err)
 	}
 

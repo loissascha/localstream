@@ -13,14 +13,14 @@ var ErrMovieNotFound = errors.New("movie not found")
 type MovieRepository interface {
 	Create(ctx context.Context, movie *entity.Movie) error
 	GetByID(ctx context.Context, id uuid.UUID) (*entity.Movie, error)
-	GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*MovieSelectItem, error)
+	GetByIDWithMetadata(ctx context.Context, id uuid.UUID, userID int64) (*MovieSelectItem, error)
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPath(ctx context.Context, path string) (*entity.Movie, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 	All(ctx context.Context) ([]entity.Movie, error)
-	ListLatest(ctx context.Context) ([]MovieSelectItem, error)
-	List(ctx context.Context) ([]MovieSelectItem, error)
-	Search(ctx context.Context, query string) ([]MovieSelectItem, error)
+	ListLatest(ctx context.Context, userID int64) ([]MovieSelectItem, error)
+	List(ctx context.Context, userID int64) ([]MovieSelectItem, error)
+	Search(ctx context.Context, query string, userID int64) ([]MovieSelectItem, error)
 }
 
 type MovieSelectItem struct {
@@ -31,4 +31,7 @@ type MovieSelectItem struct {
 	MediumImageUrl   string             `db:"medium_image_url"`
 	BackdropImageUrl string             `db:"backdrop_image_url"`
 	FetchSource      entity.FetchSource `db:"fetch_source"`
+	Position         float64            `db:"position"`
+	Duration         float64            `db:"duration"`
+	Finished         bool               `db:"finished"`
 }

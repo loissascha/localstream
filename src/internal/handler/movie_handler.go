@@ -127,7 +127,13 @@ func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
 	movieId := r.PathValue("movieID")
 
-	movie, err := h.movieService.GetByIDWithMetadata(r.Context(), movieId)
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	movie, err := h.movieService.GetByIDWithMetadata(r.Context(), movieId, userID)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get movie: " + err.Error()})
 		return
@@ -142,13 +148,18 @@ func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
 
 func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
 	limit := strings.TrimSpace(r.URL.Query().Get("limit"))
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
 
 	var movies []repository.MovieSelectItem
 	var err error
 	if limit == "latest" {
-		movies, err = h.movieService.ListLatest(r.Context())
+		movies, err = h.movieService.ListLatest(r.Context(), userID)
 	} else {
-		movies, err = h.movieService.List(r.Context())
+		movies, err = h.movieService.List(r.Context(), userID)
 	}
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read movies: " + err.Error()})

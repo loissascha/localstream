@@ -47,13 +47,19 @@ func (h *SearchHandler) search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
 	shows, err := h.showSerivce.Search(r.Context(), query)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to search shows"})
 		return
 	}
 
-	movies, err := h.movieService.Search(r.Context(), query)
+	movies, err := h.movieService.Search(r.Context(), query, userID)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to search movies"})
 		return
