@@ -13,10 +13,22 @@ var ErrMovieNotFound = errors.New("movie not found")
 type MovieRepository interface {
 	Create(ctx context.Context, movie *entity.Movie) error
 	GetByID(ctx context.Context, id uuid.UUID) (*entity.Movie, error)
+	GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*MovieSelectItem, error)
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPath(ctx context.Context, path string) (*entity.Movie, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
-	ListLatest(ctx context.Context) ([]entity.Movie, error)
-	List(ctx context.Context) ([]entity.Movie, error)
-	Search(ctx context.Context, query string) ([]entity.Movie, error)
+	All(ctx context.Context) ([]entity.Movie, error)
+	ListLatest(ctx context.Context) ([]MovieSelectItem, error)
+	List(ctx context.Context) ([]MovieSelectItem, error)
+	Search(ctx context.Context, query string) ([]MovieSelectItem, error)
+}
+
+type MovieSelectItem struct {
+	ID               uuid.UUID          `db:"id"`
+	Name             string             `db:"name"`
+	Year             int                `db:"year"`
+	Description      string             `db:"description"`
+	MediumImageUrl   string             `db:"medium_image_url"`
+	BackdropImageUrl string             `db:"backdrop_image_url"`
+	FetchSource      entity.FetchSource `db:"fetch_source"`
 }

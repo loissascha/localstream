@@ -23,7 +23,6 @@ type ShowRepository interface {
 	Search(ctx context.Context, query string) ([]ShowSelectItem, error)
 }
 
-// TODO: SELECT s.id, COALESCE(m.name, s.name) as "name", s.fetch_source, s.path, COALESCE(m.description, ”) as "description", COALESCE(m.medium_image_url, ”) as "medium_image_url" from shows s LEFT JOIN show_metadata m ON m.show_id=s.id AND s.fetch_source!='multiple';
 type ShowSelectItem struct {
 	ID             uuid.UUID          `db:"id"`
 	Name           string             `db:"name"`

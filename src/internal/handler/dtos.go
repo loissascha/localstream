@@ -11,11 +11,13 @@ import (
 type AnyInfoStruct interface{}
 
 type MovieInfo struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Year        int    `json:"year"`
-	Description string `json:"description"`
-	FetchSource string `json:"fetch_source"`
+	ID               string `json:"id"`
+	Name             string `json:"name"`
+	Year             int    `json:"year"`
+	Description      string `json:"description"`
+	FetchSource      string `json:"fetch_source"`
+	MediumImageUrl   string `db:"medium_image_url"`
+	BackdropImageUrl string `db:"backdrop_image_url"`
 }
 
 type MovieListResponse struct {
@@ -210,13 +212,15 @@ func toEpisodeMetadataInfo(m *entity.EpisodeMetadata) EpisodeMetadataInfo {
 	}
 }
 
-func toMovieInfo(m *entity.Movie) MovieInfo {
+func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 	return MovieInfo{
-		ID:          encoders.EncodeUUID(m.ID),
-		Name:        m.Name,
-		Year:        m.Year,
-		Description: m.Description,
-		FetchSource: string(m.FetchSource),
+		ID:               encoders.EncodeUUID(m.ID),
+		Name:             m.Name,
+		Year:             m.Year,
+		Description:      m.Description,
+		FetchSource:      string(m.FetchSource),
+		MediumImageUrl:   m.MediumImageUrl,
+		BackdropImageUrl: m.BackdropImageUrl,
 	}
 }
 

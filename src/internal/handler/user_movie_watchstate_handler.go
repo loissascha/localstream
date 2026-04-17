@@ -78,7 +78,7 @@ func (h *UserMovieWatchstateHandler) listLatestWatchstates(w http.ResponseWriter
 		}
 
 		movieId := encoders.EncodeUUID(watchstate.MovieID)
-		movie, err := h.movieService.GetById(r.Context(), movieId)
+		movie, err := h.movieService.GetByIDWithMetadata(r.Context(), movieId)
 		if err != nil {
 			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstates: " + err.Error()})
 			return

@@ -53,6 +53,8 @@ export interface MovieInfo {
   year: number;
   description: string;
   fetch_source: string;
+  MediumImageUrl: string;
+  BackdropImageUrl: string;
 }
 export interface MovieListResponse {
   movies: MovieInfo[];

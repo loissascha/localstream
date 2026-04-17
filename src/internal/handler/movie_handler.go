@@ -12,8 +12,8 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
-	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/repository"
 	"github.com/loissascha/localstream/internal/service"
 )
 
@@ -127,7 +127,7 @@ func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
 	movieId := r.PathValue("movieID")
 
-	movie, err := h.movieService.GetById(r.Context(), movieId)
+	movie, err := h.movieService.GetByIDWithMetadata(r.Context(), movieId)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get movie: " + err.Error()})
 		return
@@ -143,7 +143,7 @@ func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
 func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
 	limit := strings.TrimSpace(r.URL.Query().Get("limit"))
 
-	var movies []entity.Movie
+	var movies []repository.MovieSelectItem
 	var err error
 	if limit == "latest" {
 		movies, err = h.movieService.ListLatest(r.Context())

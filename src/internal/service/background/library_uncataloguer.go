@@ -54,7 +54,7 @@ func (l *LibraryUncataloguer) RunOnce() error {
 		}
 	}
 
-	movies, err := l.movieRepo.List(ctx)
+	movies, err := l.movieRepo.All(ctx)
 	if err != nil {
 		return err
 	}

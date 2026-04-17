@@ -18,12 +18,20 @@ func NewMovieService(movieRepo repository.MovieRepository) *MovieService {
 	}
 }
 
-func (s *MovieService) ListLatest(ctx context.Context) ([]entity.Movie, error) {
+func (s *MovieService) ListLatest(ctx context.Context) ([]repository.MovieSelectItem, error) {
 	return s.movieRepo.ListLatest(ctx)
 }
 
-func (s *MovieService) List(ctx context.Context) ([]entity.Movie, error) {
+func (s *MovieService) List(ctx context.Context) ([]repository.MovieSelectItem, error) {
 	return s.movieRepo.List(ctx)
+}
+
+func (s *MovieService) GetByIDWithMetadata(ctx context.Context, id string) (*repository.MovieSelectItem, error) {
+	uid, err := encoders.DecodeUUID(id)
+	if err != nil {
+		return nil, err
+	}
+	return s.movieRepo.GetByIDWithMetadata(ctx, uid)
 }
 
 func (s *MovieService) GetById(ctx context.Context, id string) (*entity.Movie, error) {
@@ -34,6 +42,6 @@ func (s *MovieService) GetById(ctx context.Context, id string) (*entity.Movie, e
 	return s.movieRepo.GetByID(ctx, uid)
 }
 
-func (s *MovieService) Search(ctx context.Context, query string) ([]entity.Movie, error) {
+func (s *MovieService) Search(ctx context.Context, query string) ([]repository.MovieSelectItem, error) {
 	return s.movieRepo.Search(ctx, query)
 }
