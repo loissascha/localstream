@@ -44,7 +44,7 @@ func (r *ShowRepository) Create(ctx context.Context, show *entity.Show) error {
 
 func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Show, error) {
 	const query = `
-		SELECT id, name, year, path, created_at, fetch_source
+		SELECT *
 		FROM shows
 		WHERE id = $1
 		LIMIT 1
@@ -86,7 +86,7 @@ func (r *ShowRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {
 
 func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Show, error) {
 	const query = `
-		SELECT id, name, year, path, created_at, fetch_source
+		SELECT *
 		FROM shows
 		WHERE path = $1
 		LIMIT 1
@@ -146,7 +146,8 @@ func (r *ShowRepository) ListLatest(ctx context.Context) ([]entity.Show, error) 
 	return shows, nil
 }
 
-// TODO: SELECT s.id, s.name as "localname", m.name, s.fetch_source, s.path, m.description, m.medium_image_url from shows s LEFT JOIN show_metadata m ON m.show_id=s.id AND s.fetch_source!='multiple';
+// TODO: SELECT s.id, COALESCE(m.name, s.name) as "name", s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" from shows s LEFT JOIN show_metadata m ON m.show_id=s.id AND s.fetch_source!='multiple';
+
 func (r *ShowRepository) List(ctx context.Context) ([]entity.Show, error) {
 	const query = `
 		SELECT *
