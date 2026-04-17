@@ -14,6 +14,7 @@
 	import { setWatchstateFinished } from '$lib/api/watchstate';
 	import { loadShowMetadata } from '$lib/api/show_metadata';
 	import { loadSeasonsForShow } from '$lib/api/seasons';
+	import CheckIcon from '$lib/icons/CheckIcon.svelte';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -185,10 +186,10 @@
 				<div>
 					<div class="flex justify-end px-2 py-1">
 						{#if episode.watchstate.finished}
-							<div class="">Watched</div>
+							<div class="cursor-pointer text-brand"><CheckIcon /></div>
 						{:else}
 							<button
-								class="cursor-pointer"
+								class="cursor-pointer text-neutral-500"
 								onclick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
@@ -206,7 +207,7 @@
 									}
 								}}
 							>
-								Not Watched
+								<CheckIcon />
 							</button>
 						{/if}
 					</div>
@@ -215,7 +216,7 @@
 					{episode.number}
 				</div>
 				<div>
-					{#if episode.watchstate.percentage > 0}
+					{#if episode.watchstate.percentage > 0 && !episode.watchstate.finished}
 						<div
 							style={`width: ${episode.watchstate.percentage}%;`}
 							class={`h-2 bg-blue-300 text-sm`}
