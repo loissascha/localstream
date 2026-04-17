@@ -1,10 +1,21 @@
 import type {
 	SaveWatchstateRequest,
 	WatchstateListResponse,
-	WatchstateMovieResponse,
-	WatchstateMoviesListResponse,
 	WatchstateResponse
 } from '$lib/types/export_types';
+
+export async function deleteWatchstate(bearerToken: string, episodeID: string) {
+	const response = await fetch('/api/watchstate/episode/' + episodeID + '/delete', {
+		method: 'DELETE',
+		headers: {
+			Authorization: 'Bearer ' + bearerToken
+		}
+	});
+	if (response.status !== 200) {
+		console.error(response);
+		throw new Error('Error: ' + response.status);
+	}
+}
 
 export async function setWatchstateFinished(
 	bearerToken: string,

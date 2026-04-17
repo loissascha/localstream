@@ -62,6 +62,12 @@ func (h *UserWatchstateHandler) RegisterRoutes() {
 		server.WithDescription("Sets the episode to watched"),
 	)
 
+	h.s.DELETEI("/api/watchstate/episode/{episodeID}/delete",
+		h.deleteEpisodeWatchstate,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("deletes the watchstate of an episode"),
+	)
+
 	h.s.GET("/api/watchstate/latest/shows",
 		h.listLatestWatchstatesByShow,
 		server.WithExportType[WatchstateResponse](),
@@ -85,6 +91,22 @@ type WatchstateMoviesListResponse struct {
 
 type WatchstateListResponse struct {
 	Watchstates []WatchstateResponse `json:"watchstates"`
+}
+
+func (h *UserWatchstateHandler) deleteEpisodeWatchstate(w http.ResponseWriter, r *http.Request) {
+	episodeID := r.PathValue("episodeID")
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+	err := h.userWatchstateService.DeleteByEpisodeID(r.Context(), userID, episodeID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "error deleting watchstate: " + err.Error()})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, true)
 }
 
 func (h *UserWatchstateHandler) setEpisodeWatchstateFinished(w http.ResponseWriter, r *http.Request) {

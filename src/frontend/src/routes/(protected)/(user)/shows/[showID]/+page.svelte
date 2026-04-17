@@ -11,7 +11,7 @@
 	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
-	import { setWatchstateFinished } from '$lib/api/watchstate';
+	import { deleteWatchstate, setWatchstateFinished, updateWatchstate } from '$lib/api/watchstate';
 	import { loadShowMetadata } from '$lib/api/show_metadata';
 	import { loadSeasonsForShow } from '$lib/api/seasons';
 	import CheckIcon from '$lib/icons/CheckIcon.svelte';
@@ -168,7 +168,25 @@
 				<div>
 					<div class="flex justify-end px-2 py-1">
 						{#if episode.watchstate.finished}
-							<div class="cursor-pointer text-brand"><CheckIcon /></div>
+							<button
+								class="cursor-pointer text-brand"
+								onclick={(e) => {
+									e.preventDefault();
+									e.stopPropagation();
+									if (auth.token && selectedSeason) {
+										deleteWatchstate(auth.token, episode.id)
+											.then(() => {
+												if (selectedSeason) {
+													loadEpisodes(selectedSeason.id);
+												}
+											})
+											.catch((e) => {
+												const m = (e as Error).message;
+												alert(m);
+											});
+									}
+								}}><CheckIcon /></button
+							>
 						{:else}
 							<button
 								class="cursor-pointer text-neutral-500"

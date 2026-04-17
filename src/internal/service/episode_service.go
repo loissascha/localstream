@@ -51,6 +51,19 @@ func (s *EpisodeService) getShowIdForSeasonId(ctx context.Context, seasonId uuid
 	return showId, nil
 }
 
+func (s *EpisodeService) DeleteByID(ctx context.Context, episodeId string) error {
+	id, err := encoders.DecodeUUID(episodeId)
+	if err != nil {
+		return err
+	}
+
+	err = s.episodeRepo.DeleteByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (*entity.Episode, error) {
 	id, err := encoders.DecodeUUID(episodeId)
 	if err != nil {
