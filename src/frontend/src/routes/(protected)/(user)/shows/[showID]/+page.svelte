@@ -28,8 +28,6 @@
 	let seasonData = $state<SeasonInfo[] | null>(null);
 	let episodeData = $state<EpisodeInfo[] | null>(null);
 
-	let metadata = $state<ShowMetadataInfo | null>(null);
-
 	let selectedSeason = $state<SeasonInfo | null>(null);
 
 	async function loadEpisodes(seasonID: string) {
@@ -71,7 +69,7 @@
 		}
 	}
 
-	async function loadShows() {
+	async function loadShowData() {
 		try {
 			const res = await fetch('/api/show/' + showId, {
 				headers: {
@@ -91,24 +89,10 @@
 		}
 	}
 
-	async function loadMetadata() {
-		try {
-			if (!auth.token) return;
-			const data = await loadShowMetadata(auth.token, showId);
-			if (data.length == 1) {
-				metadata = data[0];
-			}
-		} catch (e) {
-			const m = (e as Error).message;
-			alert(m);
-		}
-	}
-
 	$effect(() => {
 		if (!showId || showId == '') return;
-		loadShows();
+		loadShowData();
 		loadSeasons();
-		loadMetadata();
 	});
 
 	$effect(() => {
@@ -129,9 +113,9 @@
 
 	<div class="flex flex-col gap-2 md:flex-row">
 		<div class="shrink-0">
-			{#if metadata != null}
+			{#if showData != null && showData.medium_image_url != null}
 				<div>
-					<img alt={metadata.name} class="max-h-102" src={metadata.original_image_url} />
+					<img alt={showData.name} class="max-h-102" src={showData.medium_image_url} />
 				</div>
 			{/if}
 		</div>
@@ -146,11 +130,9 @@
 					{/if}
 				</h1>
 			{/if}
-			{#if metadata != null}
-				<div>
-					{metadata.description.replaceAll('<p>', '').replaceAll('</p>', '')}
-				</div>
-			{/if}
+			<div>
+				{showData?.description}
+			</div>
 		</div>
 	</div>
 
