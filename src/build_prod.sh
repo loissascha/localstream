@@ -1,6 +1,6 @@
 #!/bin/bash
 cd frontend
-bun install --frozen-lockfile
-bun run build
+pnpm install --frozen-lockfile
+pnpm run build
 cd ..
 go build -o localstream ./cmd/server
