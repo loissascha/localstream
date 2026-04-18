@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { listCollections } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
+	import CreateCollectionOverlay from '$lib/components/overlays/CreateCollectionOverlay.svelte';
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
 	import type { CollectionInfo } from '$lib/types/export_types';
 
@@ -30,3 +31,9 @@
 		Create Collection
 	</button>
 </section>
+
+<CreateCollectionOverlay
+	close={() => {
+		alert('close');
+	}}
+/>
