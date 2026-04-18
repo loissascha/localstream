@@ -67,6 +67,7 @@ export interface MovieMetadataInfo {
   id: string;
   movie_id: string;
   name: string;
+  release_year: number;
   url: string;
   description: string;
   medium_image_url: string;
