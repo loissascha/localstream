@@ -2,15 +2,20 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { addMovieToCollection } from '$lib/api/collections';
 	import { getMovie } from '$lib/api/movies';
 	import { auth } from '$lib/auth.svelte';
+	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
+	import PlusIcon from '$lib/icons/PlusIcon.svelte';
 	import type { MovieInfo } from '$lib/types/export_types';
 	import DOMPurify from 'dompurify';
 
 	const movieId = $derived(page.params.movieID ?? '');
 	let movie = $state<MovieInfo | null>(null);
 	let errorMessage = $state('');
+
+	let showAddToCollection = $state(false);
 
 	async function loadData() {
 		try {
@@ -63,8 +68,36 @@
 					>
 						Watch <ChevronRightIcon />
 					</button>
+					<button
+						onclick={() => {
+							showAddToCollection = true;
+						}}
+						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+					>
+						<PlusIcon />
+						Add to Collection
+					</button>
 				</div>
 			</div>
 		</div>
 	{/if}
 </section>
+
+{#if showAddToCollection}
+	<SelectCollectionOverlay
+		selectedCollection={(collectionId) => {
+			if (auth.token && movie) {
+				addMovieToCollection(auth.token, collectionId, movie.id)
+					.then(() => {
+						showAddToCollection = false;
+					})
+					.catch((e) => {
+						alert((e as Error).message);
+					});
+			}
+		}}
+		close={() => {
+			showAddToCollection = false;
+		}}
+	/>
+{/if}
