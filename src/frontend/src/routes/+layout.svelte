@@ -28,6 +28,6 @@
 	<meta name="apple-mobile-web-app-title" content="Localstream" />
 	<title>Localstream</title>
 </svelte:head>
-<div class="min-h-dvh w-dvw bg-neutral-900 text-white">
+<div class="min-h-dvh w-dvw bg-neutral-900 text-neutral-100">
 	{@render children()}
 </div>
