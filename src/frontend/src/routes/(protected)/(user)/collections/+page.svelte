@@ -8,6 +8,11 @@
 	import type { CollectionInfo } from '$lib/types/export_types';
 
 	let collections = $state<CollectionInfo[]>([]);
+	const sortedCollections = $derived(
+		[...collections].sort((a, b) =>
+			a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+		)
+	);
 	let createCollectionOverlayOpen = $state(false);
 
 	async function loadData() {
@@ -40,7 +45,7 @@
 
 <section>
 	<ItemGrid>
-		{#each collections as collection (collection.id)}
+		{#each sortedCollections as collection (collection.id)}
 			<CollectionListItem {collection} />
 		{/each}
 	</ItemGrid>
