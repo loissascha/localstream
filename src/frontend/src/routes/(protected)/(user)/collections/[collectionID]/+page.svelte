@@ -16,6 +16,28 @@
 	let collection = $state<CollectionInfo | null>(null);
 	let movies = $state<MovieInfo[]>([]);
 	let shows = $state<ShowInfo[]>([]);
+	let sortedMovies = $derived(
+		[...movies].sort((a, b) => {
+			if (a.year < b.year) {
+				return -1;
+			}
+			if (a.year > b.year) {
+				return 1;
+			}
+			return 0;
+		})
+	);
+	let sortedShows = $derived(
+		[...shows].sort((a, b) => {
+			if (a.year < b.year) {
+				return -1;
+			}
+			if (a.year > b.year) {
+				return 1;
+			}
+			return 0;
+		})
+	);
 
 	let selectedMovies = $state<Record<string, boolean>>({});
 	let selectedShows = $state<Record<string, boolean>>({});
@@ -106,7 +128,7 @@
 		{#if shows.length > 0}
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Shows</h2>
 			<ItemGrid>
-				{#each shows as show (show.id)}
+				{#each sortedShows as show (show.id)}
 					<ShowListItem {show} selectable bind:selected={selectedShows[show.id]} />
 				{/each}
 			</ItemGrid>
@@ -114,7 +136,7 @@
 		{#if movies.length > 0}
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Movies</h2>
 			<ItemGrid>
-				{#each movies as movie (movie.id)}
+				{#each sortedMovies as movie (movie.id)}
 					<MovieListItem {movie} selectable bind:selected={selectedMovies[movie.id]} />
 				{/each}
 			</ItemGrid>
