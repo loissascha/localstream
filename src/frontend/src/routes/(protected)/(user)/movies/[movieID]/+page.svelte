@@ -10,10 +10,16 @@
 
 	const movieId = $derived(page.params.movieID ?? '');
 	let movie = $state<MovieInfo | null>(null);
+	let errorMessage = $state('');
 
 	async function loadData() {
-		if (!auth.token) return;
-		movie = await getMovie(auth.token, movieId);
+		try {
+			if (!auth.token) return;
+			movie = await getMovie(auth.token, movieId);
+		} catch (e) {
+			const m = (e as Error).message;
+			errorMessage = m;
+		}
 	}
 
 	$effect(() => {
@@ -23,6 +29,10 @@
 </script>
 
 <section>
+	{#if errorMessage}
+		<p class="text-red-700">{errorMessage}</p>
+	{/if}
+
 	{#if movie == null}
 		<span>Loading...</span>
 	{:else}
