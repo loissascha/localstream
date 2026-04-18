@@ -8,8 +8,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
+	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/provider"
 )
 
@@ -137,12 +140,22 @@ func (self *TMDBProvider) SearchMovie(name string, year int) ([]provider.MovieRe
 }
 
 func toMovieResult(r MovieAPIResult) provider.MovieResult {
+	ry := 0
+	rd := r.ReleaseDate
+	sp := strings.Split(rd, "-")
+	var err error
+	if len(sp) == 3 {
+		ry, err = strconv.Atoi(sp[0])
+		if err != nil {
+			logger.Error(err, "Error parsing release year for movie")
+		}
+	}
 	return provider.MovieResult{
 		FetchID:      r.ID,
 		Adult:        r.Adult,
 		Title:        r.OriginalTitle,
 		Description:  r.Overview,
-		ReleaseDate:  r.ReleaseDate,
+		ReleaseYear:  ry,
 		BackdropPath: r.BackdropPath,
 		PosterPath:   r.PosterPath,
 	}

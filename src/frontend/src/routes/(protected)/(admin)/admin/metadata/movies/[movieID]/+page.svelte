@@ -106,7 +106,7 @@
 			<div class="my-4 rounded border border-neutral-500 p-4">
 				<div class="grid grid-cols-2">
 					<div>
-						<div>{result.original_title}</div>
+						<div>{result.original_title} ({result.release_year})</div>
 						<div class="my-2">
 							{result.overview}
 						</div>
