@@ -8,6 +8,7 @@
 	import SkipPreviousIcon from '$lib/icons/SkipPreviousIcon.svelte';
 	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
 	import { getCookie, setCookie } from '$lib/cookies';
+	import FullscreenExitIcon from '$lib/icons/FullscreenExitIcon.svelte';
 
 	interface OverlayState {
 		currentTime: number;
@@ -408,7 +409,11 @@
 					onclick={toggleFullscreen}
 					aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
 				>
-					<FullscreenIcon />
+					{#if isFullscreen}
+						<FullscreenExitIcon />
+					{:else}
+						<FullscreenIcon />
+					{/if}
 				</button>
 			</div>
 		</div>
