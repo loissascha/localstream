@@ -1,36 +1,40 @@
 # AGENTS Guide
 
 ## Working Roots
-- The real app lives under `src/`, not repo root.
-- Run Go/backend commands from `src/`.
-- Run Svelte/frontend commands from `src/frontend/`.
-- There is no root-level task runner or workspace manifest.
+- The app root is `src/`, not repo root.
+- Run Go commands from `src/`.
+- Run frontend commands from `src/frontend/`.
+- There is no root-level workspace/task runner.
 
 ## Backend
-- Main entrypoint: `src/cmd/server/main.go`.
-- Usual commands from `src/`: `go mod download`, `go run ./cmd/server`, `go build ./...`, `go test ./...`, `go vet ./...`, `gofmt -w .`.
-- Focused parser tests live in `src/internal/parsers/`. Useful examples: `go test ./internal/parsers -run '^TestParseMovieFromFilename$'` and `go test ./internal/parsers -run 'TestParseSeasonFromName/specials' -count=1`.
-- `godotenv.Load()` is called in the server, so backend env comes from `src/.env` when running from `src/`.
-- Backend startup runs goose migrations automatically from `src/migrations/`.
-- In development, the backend generates frontend API types at `src/frontend/src/lib/types/export_types.ts`; do not hand-edit that file.
-- The backend also serves the built frontend from `src/frontend/build`, so production-like verification needs a frontend build first.
+- Entrypoint: `src/cmd/server/main.go`.
+- Common commands from `src/`: `go mod download`, `go run ./cmd/server`, `go build ./...`, `go test ./...`, `go vet ./...`, `gofmt -w .`.
+- The server calls `godotenv.Load()`, so local backend env is read from `src/.env` when started from `src/`.
+- Backend startup automatically runs goose migrations from `src/migrations/`.
+- In development, the server generates frontend API types at `src/frontend/src/lib/types/export_types.ts`; do not hand-edit that file.
+- Focused parser checks: `go test ./internal/parsers -run '^TestParseMovieFromFilename$'` and `go test ./internal/parsers -run 'TestParseSeasonFromName/specials' -count=1`.
 
 ## Frontend
-- Usual commands from `src/frontend/`: `bun install`, `bun run dev`, `bun run check`, `bun run lint`, `bun run build`, `bun run format`.
-- There is no frontend test runner configured in `src/frontend/package.json`.
-- `src/frontend/svelte.config.js` uses `@sveltejs/adapter-static` with `fallback: 'index.html'`.
+- Use `pnpm`, not `bun` (`src/frontend/pnpm-lock.yaml` is the lockfile).
+- Common commands from `src/frontend/`: `pnpm install`, `pnpm dev`, `pnpm check`, `pnpm lint`, `pnpm build`, `pnpm format`.
+- `pnpm check` runs `svelte-kit sync` first.
+- `pnpm lint` is `prettier --check . && eslint .`.
+- There is no frontend test runner in `src/frontend/package.json`.
 - `src/frontend/src/routes/+layout.ts` sets `ssr = false`; treat the app as client-rendered.
-- `VITE_API_URL` is used both by client code (`src/frontend/src/lib/consts.ts`) and the Vite `/api` proxy (`src/frontend/vite.config.ts`). Default local backend is `http://localhost:42069`.
+- `src/frontend/svelte.config.js` uses `@sveltejs/adapter-static` with `fallback: 'index.html'`.
+- `VITE_API_URL` drives both client API calls and the Vite `/api` proxy; default local backend is `http://localhost:42069`.
 
-## Env Files
-- Backend template: `src/.env.example`.
-- Frontend template: `src/frontend/.env.example`.
-- Backend requires `PORT` and `DATABASE_URL`; frontend requires `VITE_API_URL`.
+## Env And Build Quirks
+- Backend env template: `src/.env.example`. Frontend env template: `src/frontend/.env.example`.
+- Backend requires `PORT` and `DATABASE_URL`. Frontend requires `VITE_API_URL`.
+- The Go server serves the built frontend from `FRONTEND_APP_DIR`, which defaults to `./frontend/build` in `src/.env.example`.
+- Production-like verification needs a frontend build first (`pnpm build` in `src/frontend/`) before starting the Go server.
 
 ## Structure
-- Backend packages are organized under `src/internal/` with the main flow split across `handler/`, `middleware/`, `service/`, `repository/`, `provider/`, and `database/`.
-- Frontend routes are grouped under `src/frontend/src/routes/(auth)` and `src/frontend/src/routes/(protected)`; API helpers live under `src/frontend/src/lib/api/`.
+- Backend packages live under `src/internal/`; the main split is `handler/`, `middleware/`, `service/`, `repository/`, `provider/`, and `database/`.
+- Frontend routes are grouped under `src/frontend/src/routes/(auth)` and `src/frontend/src/routes/(protected)`.
+- Frontend API helpers live under `src/frontend/src/lib/api/`.
 
 ## Verification
 - Backend changes: run `go test ./...` and `go vet ./...` from `src/`.
-- Frontend changes: run `bun run check` and `bun run lint` from `src/frontend/`.
+- Frontend changes: run `pnpm check` and `pnpm lint` from `src/frontend/`.
