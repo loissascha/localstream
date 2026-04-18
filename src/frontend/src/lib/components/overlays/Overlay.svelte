@@ -24,7 +24,7 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		onclick={stopOverlayClick}
-		class="fixed inset-5 m-auto flex max-h-160 max-w-3xl flex-col rounded bg-neutral-800 md:inset-10"
+		class="relative right-5 left-5 m-auto flex max-h-160 max-w-3xl flex-col rounded-xl bg-neutral-800 md:inset-10"
 	>
 		<button
 			type="button"
