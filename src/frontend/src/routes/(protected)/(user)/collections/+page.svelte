@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { listCollections } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
+	import CollectionListItem from '$lib/components/CollectionListItem.svelte';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import CreateCollectionOverlay from '$lib/components/overlays/CreateCollectionOverlay.svelte';
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
@@ -40,9 +41,7 @@
 <section>
 	<ItemGrid>
 		{#each collections as collection (collection.id)}
-			<div>
-				{collection.name}
-			</div>
+			<CollectionListItem {collection} />
 		{/each}
 	</ItemGrid>
 </section>
