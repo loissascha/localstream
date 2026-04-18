@@ -9,6 +9,23 @@ export interface AuthUserResponse {
   id: number;
   username: string;
 }
+export interface CollectionDetailResponse {
+  collection: CollectionInfo;
+  movies: MovieInfo[];
+  shows: ShowInfo[];
+}
+export interface CollectionInfo {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface CollectionListResponse {
+  collections: CollectionInfo[];
+}
+export interface CreateCollectionRequest {
+  name: string;
+}
 export interface CreateLibraryRequest {
   name: string;
   type: string;
@@ -140,6 +157,9 @@ export interface ShowMetadataInfo {
   medium_image_url: string;
   original_image_url: string;
   fetch_source: string;
+}
+export interface UpdateCollectionRequest {
+  name: string;
 }
 export interface WatchstateInfo {
   position: number;
