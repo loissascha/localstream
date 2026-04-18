@@ -33,7 +33,7 @@ This is an actively evolving side project, not a production-hardened platform.
 Prerequisites:
 
 - Go `1.25.3+`
-- bun
+- pnpm
 - PostgreSQL
 
 1) Configure backend env
@@ -59,7 +59,7 @@ Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:
 cd src && go mod download
 
 # frontend
-cd frontend && bun install
+cd frontend && pnpm install
 ```
 
 4) Run backend
@@ -73,7 +73,7 @@ go run ./cmd/server
 
 ```bash
 cd src/frontend
-bun run dev
+pnpm dev
 ```
 
 Open the app at Vite's dev URL (typically `http://localhost:5173`).
@@ -90,11 +90,11 @@ Backend (run from `src/`):
 
 Frontend (run from `src/frontend/`):
 
-- `bun run dev`
-- `bun run check`
-- `bun run lint`
-- `bun run build`
-- `bun run format`
+- `pnpm dev`
+- `pnpm check`
+- `pnpm lint`
+- `pnpm build`
+- `pnpm format`
 
 ## Environment variables
 
@@ -131,14 +131,14 @@ Set at least `PORT` and `DATABASE_URL` in `src/.env`. Set `APP_ENV=production` a
 
 ```bash
 cd src && go mod download
-cd frontend && bun install
+cd frontend && pnpm install
 ```
 
 3) Build the frontend
 
 ```bash
 cd src/frontend
-bun run build
+pnpm build
 ```
 
 4) Start the Go server
