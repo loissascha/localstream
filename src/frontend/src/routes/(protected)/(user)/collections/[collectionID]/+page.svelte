@@ -43,9 +43,9 @@
 	<div>Loading...</div>
 {:else}
 	<section class="my-4">
-		<h1 class="text-2xl font-bold tracking-wide">{collection.name}</h1>
+		<h1 class="mb-8 text-2xl font-bold tracking-wide">{collection.name}</h1>
 		{#if shows.length > 0}
-			<h2>Shows</h2>
+			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Shows</h2>
 			<ItemGrid>
 				{#each shows as show (show.id)}
 					<ShowListItem {show} />
@@ -53,7 +53,7 @@
 			</ItemGrid>
 		{/if}
 		{#if movies.length > 0}
-			<h2>Movies</h2>
+			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Movies</h2>
 			<ItemGrid>
 				{#each movies as movie (movie.id)}
 					<MovieListItem {movie} />
