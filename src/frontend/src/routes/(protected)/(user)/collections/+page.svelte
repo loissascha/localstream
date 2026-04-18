@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { listCollections } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
+	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import CreateCollectionOverlay from '$lib/components/overlays/CreateCollectionOverlay.svelte';
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
 	import type { CollectionInfo } from '$lib/types/export_types';
 
 	let collections = $state<CollectionInfo[]>([]);
+	let createCollectionOverlayOpen = $state(false);
 
 	async function loadData() {
 		if (!auth.token) return;
@@ -25,6 +27,9 @@
 		{collections.length} Collections
 	</div>
 	<button
+		onclick={() => {
+			createCollectionOverlayOpen = true;
+		}}
 		class="flex cursor-pointer gap-1 rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 	>
 		<PlusIcon />
@@ -32,8 +37,21 @@
 	</button>
 </section>
 
-<CreateCollectionOverlay
-	close={() => {
-		alert('close');
-	}}
-/>
+<section>
+	<ItemGrid>
+		{#each collections as collection (collection.id)}
+			<div>
+				{collection.name}
+			</div>
+		{/each}
+	</ItemGrid>
+</section>
+
+{#if createCollectionOverlayOpen}
+	<CreateCollectionOverlay
+		close={() => {
+			createCollectionOverlayOpen = false;
+			loadData();
+		}}
+	/>
+{/if}
