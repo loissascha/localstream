@@ -83,7 +83,7 @@
 			</h2>
 			<ItemGrid>
 				{#each movies as movie (movie.id)}
-					<MovieListItem {movie} />
+					<MovieListItem {movie} showFinished={movie.finished} />
 				{/each}
 			</ItemGrid>
 		</section>

@@ -137,7 +137,12 @@
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Movies</h2>
 			<ItemGrid>
 				{#each sortedMovies as movie (movie.id)}
-					<MovieListItem {movie} selectable bind:selected={selectedMovies[movie.id]} />
+					<MovieListItem
+						{movie}
+						selectable
+						bind:selected={selectedMovies[movie.id]}
+						showFinished={movie.finished}
+					/>
 				{/each}
 			</ItemGrid>
 		{/if}

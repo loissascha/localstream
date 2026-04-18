@@ -85,7 +85,12 @@
 		<section class="my-8">
 			<ItemGrid>
 				{#each movies as movie (movie.id)}
-					<MovieListItem {movie} selectable bind:selected={selectedMovies[movie.id]} />
+					<MovieListItem
+						{movie}
+						selectable
+						bind:selected={selectedMovies[movie.id]}
+						showFinished={movie.finished}
+					/>
 				{/each}
 			</ItemGrid>
 		</section>
