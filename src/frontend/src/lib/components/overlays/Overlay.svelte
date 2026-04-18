@@ -18,13 +18,13 @@
 	onclick={() => {
 		close();
 	}}
-	class="fixed inset-0 z-50 bg-black/40"
+	class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
 >
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		onclick={stopOverlayClick}
-		class="relative right-5 left-5 m-auto flex max-h-160 max-w-3xl flex-col rounded-xl bg-neutral-800 md:inset-10"
+		class="relative flex max-h-160 w-3xl max-w-full flex-col rounded-xl bg-neutral-800 md:inset-10"
 	>
 		<button
 			type="button"
