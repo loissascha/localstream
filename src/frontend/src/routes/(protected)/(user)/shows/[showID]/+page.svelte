@@ -13,12 +13,17 @@
 	import { loadSeasonsForShow } from '$lib/api/seasons';
 	import CheckIcon from '$lib/icons/CheckIcon.svelte';
 	import DOMPurify from 'dompurify';
+	import PlusIcon from '$lib/icons/PlusIcon.svelte';
+	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
+	import { addShowToCollection } from '$lib/api/collections';
 
 	const showId = $derived(page.params.showID ?? '');
 
 	let loadingShowData = $state(true);
 	let loadingSeasons = $state(true);
 	let loadingEpisodes = $state(true);
+
+	let showAddToCollection = $state(false);
 
 	let errorMessage = $state<string | null>(null);
 
@@ -131,6 +136,17 @@
 			<div>
 				{@html DOMPurify.sanitize(showData?.description ?? '')}
 			</div>
+			<div class="p-4">
+				<button
+					onclick={() => {
+						showAddToCollection = true;
+					}}
+					class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+				>
+					<PlusIcon />
+					Add to Collection
+				</button>
+			</div>
 		</div>
 	</div>
 
@@ -224,3 +240,22 @@
 		{/each}
 	</div>
 </main>
+
+{#if showAddToCollection}
+	<SelectCollectionOverlay
+		selectedCollection={(collectionId) => {
+			if (auth.token && showData) {
+				addShowToCollection(auth.token, collectionId, showData.id)
+					.then(() => {
+						showAddToCollection = false;
+					})
+					.catch((e) => {
+						alert((e as Error).message);
+					});
+			}
+		}}
+		close={() => {
+			showAddToCollection = false;
+		}}
+	/>
+{/if}
