@@ -23,7 +23,7 @@
 	});
 </script>
 
-<section class="flex items-center justify-center gap-4">
+<section class="mb-4 flex items-center justify-center gap-4">
 	<div>
 		{collections.length} Collections
 	</div>
