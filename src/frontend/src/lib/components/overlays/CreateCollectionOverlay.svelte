@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { createCollection } from '$lib/api/collections';
+	import { auth } from '$lib/auth.svelte';
 	import Overlay from './Overlay.svelte';
 
 	interface Props {
@@ -9,12 +11,24 @@
 	let name = $state('');
 	let error_message = $state('');
 
-	function submitForm() {
-		if (name.trim() == '') {
-			error_message = 'Name must not be empty!';
-			return;
+	async function submitForm() {
+		try {
+			if (!auth.token) return;
+			if (name.trim() == '') {
+				error_message = 'Name must not be empty!';
+				return;
+			}
+
+			await createCollection(auth.token, {
+				name: name
+			});
+
+			name = '';
+			close();
+		} catch (e) {
+			const m = (e as Error).message;
+			error_message = m;
 		}
-		name = '';
 	}
 </script>
 
