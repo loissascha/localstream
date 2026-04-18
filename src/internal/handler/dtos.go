@@ -127,6 +127,7 @@ type MovieMetadataInfo struct {
 	ID               string             `json:"id"`
 	MovieID          string             `json:"movie_id"`
 	Name             string             `json:"name"`
+	ReleaseYear      int                `json:"release_year"`
 	Url              string             `json:"url"`
 	Description      string             `json:"description"`
 	MediumImageUrl   string             `json:"medium_image_url"`
@@ -165,6 +166,7 @@ func toMovieMetadataInfo(m *entity.MovieMetadata) MovieMetadataInfo {
 		ID:               encoders.EncodeUUID(m.ID),
 		MovieID:          encoders.EncodeUUID(m.MovieID),
 		Name:             m.Name,
+		ReleaseYear:      m.ReleaseYear,
 		Url:              m.Url,
 		Description:      m.Description,
 		MediumImageUrl:   m.MediumImageUrl,

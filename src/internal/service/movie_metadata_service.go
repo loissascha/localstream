@@ -124,6 +124,11 @@ func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie
 	logger.Debug(nil, "Backdrop Link: {URL}", backdropLink)
 	logger.Debug(nil, "Poster Link: {URL}", posterLink)
 
+	releaseYear := r.ReleaseYear
+	if releaseYear == 0 {
+		releaseYear = movie.Year
+	}
+
 	uuid, err := uuid.NewV7()
 	if err != nil {
 		return err
@@ -133,6 +138,7 @@ func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie
 		ID:               uuid,
 		MovieID:          movie.ID,
 		Name:             r.Title,
+		ReleaseYear:      releaseYear,
 		Url:              "",
 		Description:      r.Description,
 		MediumImageUrl:   posterLink,

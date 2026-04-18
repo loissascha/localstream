@@ -20,8 +20,8 @@ func NewMovieMetadataRepository(db *sqlx.DB) *MovieMetadataRepository {
 
 func (r *MovieMetadataRepository) Create(ctx context.Context, metadata *entity.MovieMetadata) error {
 	const query = `
-		INSERT INTO movie_metadata (movie_id, name, url, description, medium_image_url, backdrop_image_url, fetch_source)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO movie_metadata (movie_id, name, release_year, url, description, medium_image_url, backdrop_image_url, fetch_source)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id
 	`
 
@@ -30,6 +30,7 @@ func (r *MovieMetadataRepository) Create(ctx context.Context, metadata *entity.M
 		query,
 		metadata.MovieID,
 		metadata.Name,
+		metadata.ReleaseYear,
 		metadata.Url,
 		metadata.Description,
 		metadata.MediumImageUrl,
