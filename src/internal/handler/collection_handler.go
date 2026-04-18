@@ -256,7 +256,7 @@ func (h *CollectionHandler) addMovie(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, service.ErrInvalidCollectionInput):
 			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid collection input"})
 		case errors.Is(err, repository.ErrCollectionMovieAlreadyExists):
-			respond.JSON(w, http.StatusConflict, map[string]string{"error": "movie already exists in collection"})
+			respond.JSON(w, http.StatusOK, map[string]bool{"success": true})
 		case errors.Is(err, repository.ErrCollectionNotFound):
 			respond.JSON(w, http.StatusNotFound, map[string]string{"error": "collection not found"})
 		default:
@@ -304,7 +304,7 @@ func (h *CollectionHandler) addShow(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, service.ErrInvalidCollectionInput):
 			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid collection input"})
 		case errors.Is(err, repository.ErrCollectionShowAlreadyExists):
-			respond.JSON(w, http.StatusConflict, map[string]string{"error": "show already exists in collection"})
+			respond.JSON(w, http.StatusOK, map[string]bool{"success": true})
 		case errors.Is(err, repository.ErrCollectionNotFound):
 			respond.JSON(w, http.StatusNotFound, map[string]string{"error": "collection not found"})
 		default:
