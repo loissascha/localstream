@@ -85,6 +85,7 @@ func main() {
 	userMovieWatchstateRepo := repopostgres.NewUserMovieWatchstateRepository(db)
 	movieRepo := repopostgres.NewMovieRepository(db)
 	movieMetaRepo := repopostgres.NewMovieMetadataRepository(db)
+	collectionRepo := repopostgres.NewCollectionRepository(db)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -99,6 +100,7 @@ func main() {
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
+	collectionService := service.NewCollectionService(collectionRepo)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -117,6 +119,7 @@ func main() {
 	episodeMetaH := handler.NewEpisodeMetadataHandler(s, authMiddleware, episodeMetaService)
 	movieMetaH := handler.NewMovieMetadataHandler(s, authMiddleware, movieMetaService)
 	searchH := handler.NewSearchHandler(s, authMiddleware, showSerivce, movieService)
+	collectionH := handler.NewCollectionHandler(s, authMiddleware, collectionService)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -132,6 +135,7 @@ func main() {
 	episodeMetaH.RegisterRoutes()
 	movieMetaH.RegisterRoutes()
 	searchH.RegisterRoutes()
+	collectionH.RegisterRoutes()
 
 	frontendBuildDir := os.Getenv("FRONTEND_APP_DIR")
 	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))

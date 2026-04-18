@@ -112,6 +112,23 @@ type LibraryListResponse struct {
 	Libraries []LibraryListItem `json:"libraries"`
 }
 
+type CollectionInfo struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type CollectionListResponse struct {
+	Collections []CollectionInfo `json:"collections"`
+}
+
+type CollectionDetailResponse struct {
+	Collection CollectionInfo `json:"collection"`
+	Movies     []MovieInfo    `json:"movies"`
+	Shows      []ShowInfo     `json:"shows"`
+}
+
 type ShowMetadataInfo struct {
 	ID               string             `json:"id"`
 	ShowID           string             `json:"show_id"`
@@ -247,6 +264,15 @@ func toLibraryListItem(l *entity.Library) LibraryListItem {
 		Name:        l.Name,
 		Path:        l.Path,
 		LibraryType: string(l.LibraryType),
+	}
+}
+
+func toCollectionInfo(c *entity.Collection) CollectionInfo {
+	return CollectionInfo{
+		ID:        encoders.EncodeUUID(c.ID),
+		Name:      c.Name,
+		CreatedAt: c.CreatedAt,
+		UpdatedAt: c.UpdatedAt,
 	}
 }
 
