@@ -72,7 +72,9 @@
 		<p>Loading movies...</p>
 	{:else}
 		{#if selectedMoviesCount > 0}
-			<section class="flex items-center justify-end gap-4">
+			<section
+				class="sticky top-0 right-0 left-0 z-10 flex items-center justify-end gap-4 bg-neutral-900 p-4"
+			>
 				<button
 					class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 					onclick={() => {
