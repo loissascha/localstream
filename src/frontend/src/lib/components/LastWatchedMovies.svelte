@@ -50,11 +50,6 @@
 					<div>
 						<MovieInfoDisplay movie={d.movie_info} nameLink />
 					</div>
-					<div>
-						<div class="bg-neutral-600">
-							<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
-						</div>
-					</div>
 				</ListItemA>
 			{/each}
 		</ItemGrid>

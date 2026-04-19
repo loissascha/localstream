@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { type MovieInfo } from '$lib/types/export_types';
+	import PercentageBar from './ui/PercentageBar.svelte';
 
 	let { movie, nameLink = false }: { movie: MovieInfo; nameLink?: boolean } = $props();
 </script>
@@ -9,6 +10,11 @@
 <div>
 	{#if movie.medium_image_url != ''}
 		<img alt={movie.name} class="w-full rounded" src={movie.medium_image_url} />
+	{/if}
+	{#if movie.percentage > 0}
+		<div>
+			<PercentageBar percentage={movie.percentage} />
+		</div>
 	{/if}
 	<button
 		onclick={(e) => {

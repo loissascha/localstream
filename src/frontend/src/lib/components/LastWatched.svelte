@@ -8,6 +8,7 @@
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
+	import PercentageBar from './ui/PercentageBar.svelte';
 
 	let data = $state<WatchstateResponse[]>([]);
 
@@ -52,12 +53,9 @@
 						}
 					)}
 				>
-					<ShowInfoDisplay show={d.show_info} nameLink />
+					<ShowInfoDisplay show={d.show_info} nameLink percentage={d.percentage} showPercentage />
 					<div>
 						<div>S{d.season_info.number}:E{d.episode_info.number}</div>
-						<div class="bg-neutral-600">
-							<div style={`width: ${d.percentage}%;`} class={`h-2 bg-brand text-sm`}></div>
-						</div>
 					</div>
 				</ListItemA>
 			{/each}

@@ -143,7 +143,6 @@
 						{movie}
 						selectable
 						bind:selected={selectedMovies[movie.id]}
-						showFinished={movie.finished}
 					/>
 				{/each}
 			</ItemGrid>
