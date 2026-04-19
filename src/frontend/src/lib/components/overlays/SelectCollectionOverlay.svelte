@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { listCollections } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
+	import PlusIcon from '$lib/icons/PlusIcon.svelte';
+	import CreateCollectionOverlay from './CreateCollectionOverlay.svelte';
 	import Overlay from './Overlay.svelte';
 
 	type CollectionListItem = {
@@ -19,6 +21,8 @@
 		selectedCollection: (collectionId: string) => void;
 	}
 	let { close, selectedCollection }: Props = $props();
+
+	let showNewCollection = $state(false);
 
 	let collections = $state<CollectionListItem[]>([]);
 	const sortedCollections = $derived(
@@ -61,52 +65,71 @@
 	});
 </script>
 
-<Overlay {close}>
-	<div class="space-y-2">
-		<div class="border-b border-neutral-700/80 pr-10 pb-4">
-			<h1 class="text-2xl font-bold tracking-wide text-neutral-100">Collections</h1>
-			<p class="mt-1 text-sm text-neutral-400">Choose a collection for this item.</p>
-		</div>
+{#if showNewCollection}
+	<CreateCollectionOverlay
+		close={() => {
+			fetchData().then(() => {
+				showNewCollection = false;
+			});
+		}}
+	/>
+{:else}
+	<Overlay {close}>
+		<div class="space-y-2">
+			<div class="border-b border-neutral-700/80 pr-10 pb-4">
+				<h1 class="text-2xl font-bold tracking-wide text-neutral-100">Collections</h1>
+				<p class="mt-1 text-sm text-neutral-400">Choose a collection for this item.</p>
+			</div>
 
-		<div class="space-y-3 pt-2">
-			{#if sortedCollections.length === 0}
-				<div
-					class="rounded-2xl border border-dashed border-neutral-700 bg-neutral-900/60 px-6 py-10 text-center text-neutral-400"
-				>
-					No collections yet.
-				</div>
-			{:else}
-				{#each collectionCards as collection (collection.id)}
-					<button
-						type="button"
-						onclick={() => {
-							selectedCollection(collection.id);
-						}}
-						class="group flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-neutral-700/80 bg-linear-to-br from-neutral-900 to-neutral-800/90 px-4 py-4 text-left text-neutral-100 shadow-lg shadow-black/10 transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-800 focus-visible:border-brand focus-visible:outline-none"
+			<button
+				class="flex gap-2"
+				onclick={() => {
+					showNewCollection = true;
+				}}
+			>
+				<PlusIcon /> New Collection
+			</button>
+
+			<div class="space-y-3 pt-2">
+				{#if sortedCollections.length === 0}
+					<div
+						class="rounded-2xl border border-dashed border-neutral-700 bg-neutral-900/60 px-6 py-10 text-center text-neutral-400"
 					>
-						<div
-							class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 font-semibold text-neutral-900 shadow-inner shadow-white/20 transition-transform duration-200 group-hover:scale-105"
+						No collections yet.
+					</div>
+				{:else}
+					{#each collectionCards as collection (collection.id)}
+						<button
+							type="button"
+							onclick={() => {
+								selectedCollection(collection.id);
+							}}
+							class="group flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-neutral-700/80 bg-linear-to-br from-neutral-900 to-neutral-800/90 px-4 py-4 text-left text-neutral-100 shadow-lg shadow-black/10 transition-all duration-200 hover:border-neutral-500 hover:bg-neutral-800 focus-visible:border-brand focus-visible:outline-none"
 						>
-							{collection.initial}
-						</div>
-
-						<div class="min-w-0 flex-1">
-							<div class="truncate text-base font-semibold text-neutral-50">
-								{collection.name}
+							<div
+								class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 font-semibold text-neutral-900 shadow-inner shadow-white/20 transition-transform duration-200 group-hover:scale-105"
+							>
+								{collection.initial}
 							</div>
-							{#if collection.updatedLabel}
-								<div class="mt-1 text-sm text-neutral-400">Updated {collection.updatedLabel}</div>
-							{/if}
-						</div>
 
-						<div
-							class="text-sm font-medium text-neutral-500 transition-colors duration-200 group-hover:text-neutral-300"
-						>
-							Select
-						</div>
-					</button>
-				{/each}
-			{/if}
+							<div class="min-w-0 flex-1">
+								<div class="truncate text-base font-semibold text-neutral-50">
+									{collection.name}
+								</div>
+								{#if collection.updatedLabel}
+									<div class="mt-1 text-sm text-neutral-400">Updated {collection.updatedLabel}</div>
+								{/if}
+							</div>
+
+							<div
+								class="text-sm font-medium text-neutral-500 transition-colors duration-200 group-hover:text-neutral-300"
+							>
+								Select
+							</div>
+						</button>
+					{/each}
+				{/if}
+			</div>
 		</div>
-	</div>
-</Overlay>
+	</Overlay>
+{/if}
