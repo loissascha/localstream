@@ -92,6 +92,7 @@
 	<MovieMetadataSearchOverlay
 		close={() => {
 			showMovieMetadataSearchOverlay = false;
+			loadMetadata();
 		}}
 		{movie}
 	/>
