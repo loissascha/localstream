@@ -327,14 +327,16 @@
 			{/if}
 		</div>
 		<InstallAppButton />
-		<Dropdown>
+		<Dropdown anchor="right">
 			<UserIcon />
 			{#snippet items()}
-				<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
-					<div class="flex items-center gap-1">
-						<SettingsIcon /> Settings
-					</div>
-				</DropdownItem>
+				{#if auth.isAdmin}
+					<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
+						<div class="flex items-center gap-1">
+							<SettingsIcon /> Settings
+						</div>
+					</DropdownItem>
+				{/if}
 				<DropdownItem href={resolve('/logout')}>
 					<div class="flex items-center gap-1">
 						<LogoutIcon /> Logout
@@ -342,22 +344,6 @@
 				</DropdownItem>
 			{/snippet}
 		</Dropdown>
-		{#if auth.isAdmin}
-			<a
-				href={resolve('/(protected)/(admin)/admin')}
-				type="submit"
-				class="cursor-pointer px-3 py-1.5 text-sm hover:text-brand"
-			>
-				<SettingsIcon />
-			</a>
-		{/if}
-		<a
-			href={resolve('/logout')}
-			type="submit"
-			class="cursor-pointer px-3 py-1.5 text-sm hover:text-brand"
-		>
-			<LogoutIcon />
-		</a>
 	</div>
 </section>
 <section id="content" class="p-4 pb-24 md:pb-4">
