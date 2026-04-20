@@ -74,9 +74,9 @@
 	{:else}
 		{#each searchResults as result (result.id)}
 			<div class="my-4 p-4">
-				<div class="grid grid-cols-2">
+				<div class="grid grid-cols-1 md:grid-cols-2">
 					<div>
-						<div>{result.original_title} ({result.release_year})</div>
+						<div class="font-bold">{result.original_title} ({result.release_year})</div>
 						<div class="my-2">
 							{result.overview}
 						</div>
@@ -95,7 +95,7 @@
 											alert(m);
 										});
 								}}
-								class="mt-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
+								class="mt-4 mb-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
 								>Select as Primary</button
 							>
 						</div>
