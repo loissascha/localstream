@@ -13,6 +13,9 @@
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { SearchResponse } from '$lib/types/export_types';
 	import Logo from '$lib/components/ui/Logo.svelte';
+	import Dropdown from '$lib/components/ui/Dropdown.svelte';
+	import UserIcon from '$lib/icons/UserIcon.svelte';
+	import DropdownItem from '$lib/components/ui/DropdownItem.svelte';
 
 	let { children } = $props();
 	let searchRoot: HTMLElement | null = $state(null);
@@ -324,6 +327,21 @@
 			{/if}
 		</div>
 		<InstallAppButton />
+		<Dropdown>
+			<UserIcon />
+			{#snippet items()}
+				<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
+					<div class="flex items-center gap-1">
+						<SettingsIcon /> Settings
+					</div>
+				</DropdownItem>
+				<DropdownItem href={resolve('/logout')}>
+					<div class="flex items-center gap-1">
+						<LogoutIcon /> Logout
+					</div>
+				</DropdownItem>
+			{/snippet}
+		</Dropdown>
 		{#if auth.isAdmin}
 			<a
 				href={resolve('/(protected)/(admin)/admin')}
