@@ -82,7 +82,7 @@
 			</div>
 
 			<button
-				class="flex gap-2"
+				class="flex gap-2 cursor-pointer"
 				onclick={() => {
 					showNewCollection = true;
 				}}

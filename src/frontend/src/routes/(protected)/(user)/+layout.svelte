@@ -12,6 +12,7 @@
 	import CollectionIcon from '$lib/icons/CollectionIcon.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { SearchResponse } from '$lib/types/export_types';
+	import Logo from '$lib/components/ui/Logo.svelte';
 
 	let { children } = $props();
 	let searchRoot: HTMLElement | null = $state(null);
@@ -162,12 +163,166 @@
 </script>
 
 <section id="header" class="flex items-center justify-between px-4 py-4">
-	<div class="flex items-center gap-2">
-		<a href={resolve('/(protected)/(user)')} class="text-2xl font-semibold tracking-wider"
-			>Localstream</a
+	<div class="flex grow items-center gap-2">
+		<a
+			href={resolve('/(protected)/(user)')}
+			class="flex items-center gap-2 text-2xl font-semibold tracking-wider select-none"
+			><Logo />ocalstream</a
 		>
 	</div>
-	<div class="flex items-center gap-2">
+	<section id="middle" class="flex items-center justify-center gap-2 px-4">
+		<div class="hidden flex-col gap-2 md:flex lg:flex-row">
+			<a
+				href={homeHref}
+				class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-neutral-400 transition-all duration-100 md:text-lg"
+				class:text-white={isActive(homeHref)}
+			>
+				<HomeIcon />
+				Home
+			</a>
+			<a
+				href={showsHref}
+				class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-neutral-400 transition-all duration-100 md:text-lg"
+				class:text-white={isActive(showsHref, true)}
+			>
+				<ShowIcon />
+				Shows
+			</a>
+			<a
+				href={moviesHref}
+				class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-neutral-400 transition-all duration-100 md:text-lg"
+				class:text-white={isActive(moviesHref, true)}
+			>
+				<MovieIcon />
+				Movies
+			</a>
+			<a
+				href={collectionsHref}
+				class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-neutral-400 transition-all duration-100 md:text-lg"
+				class:text-white={isActive(collectionsHref, true)}
+			>
+				<CollectionIcon />
+				Collections
+			</a>
+		</div>
+	</section>
+	<div class="flex grow items-center justify-end gap-2">
+		<div class="relative w-full max-w-80" bind:this={searchRoot}>
+			<form class="flex items-center gap-2" onsubmit={handleSearchSubmit}>
+				<div class="relative flex-1">
+					<input
+						type="text"
+						placeholder="Search shows and movies"
+						class="w-full rounded-full border border-transparent bg-neutral-800 px-4 py-2 pr-11 transition outline-none focus:border-neutral-600"
+						bind:value={searchQuery}
+						oninput={handleSearchInput}
+						onfocus={openSearch}
+						onkeydown={handleSearchKeydown}
+					/>
+					<button
+						type="submit"
+						class="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-neutral-300 hover:text-white"
+						aria-label="Search"
+					>
+						<SearchIcon />
+					</button>
+				</div>
+			</form>
+
+			{#if shouldShowSearchDropdown}
+				<div
+					class="absolute top-full right-0 left-0 z-40 mt-2 overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900/98 shadow-2xl backdrop-blur-sm"
+				>
+					<div class="max-h-[70vh] overflow-y-auto p-2">
+						{#if searchLoading}
+							<div class="px-3 py-4 text-sm text-neutral-300">Searching...</div>
+						{:else if searchError}
+							<div class="px-3 py-4 text-sm text-red-400">{searchError}</div>
+						{:else if searchQuery.trim().length < 3}
+							<div class="px-3 py-4 text-sm text-neutral-400">Type at least 3 characters</div>
+						{:else if !hasSearchResults}
+							<div class="px-3 py-4 text-sm text-neutral-400">No results</div>
+						{:else}
+							{#if searchResults.shows.length > 0}
+								<div class="pb-2">
+									<div
+										class="px-3 py-2 text-xs font-semibold tracking-[0.18em] text-neutral-500 uppercase"
+									>
+										Shows
+									</div>
+									<div class="space-y-1">
+										{#each searchResults.shows as show (show.id)}
+											<a
+												href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
+												class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition hover:bg-neutral-800"
+												onclick={handleSearchResultClick}
+											>
+												<div class="flex min-w-0 items-center gap-3">
+													<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
+														{#if show.medium_image_url != ''}
+															<img alt={show.name} src={show.medium_image_url} class="w-10" />
+														{:else}
+															<ShowIcon />
+														{/if}
+													</div>
+													<div class="min-w-0">
+														<div class="truncate font-medium text-white">{show.name}</div>
+														<div class="text-sm text-neutral-400">
+															{show.year > 0 ? show.year : 'Show'}
+														</div>
+													</div>
+												</div>
+												<div class="text-xs tracking-[0.18em] text-neutral-500 uppercase">Show</div>
+											</a>
+										{/each}
+									</div>
+								</div>
+							{/if}
+
+							{#if searchResults.movies.length > 0}
+								<div>
+									<div
+										class="px-3 py-2 text-xs font-semibold tracking-[0.18em] text-neutral-500 uppercase"
+									>
+										Movies
+									</div>
+									<div class="space-y-1">
+										{#each searchResults.movies as movie (movie.id)}
+											<a
+												href={resolve('/(protected)/(user)/movies/[movieID]', {
+													movieID: movie.id
+												})}
+												class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition hover:bg-neutral-800"
+												onclick={handleSearchResultClick}
+											>
+												<div class="flex min-w-0 items-center gap-3">
+													<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
+														{#if movie.medium_image_url != ''}
+															<img alt={movie.name} src={movie.medium_image_url} class="w-10" />
+														{:else}
+															<MovieIcon />
+														{/if}
+													</div>
+													<div class="min-w-0">
+														<div class="truncate font-medium text-white">{movie.name}</div>
+														<div class="text-sm text-neutral-400">
+															{movie.year > 0 ? movie.year : 'Movie'}
+														</div>
+													</div>
+												</div>
+												<div class="text-xs tracking-[0.18em] text-neutral-500 uppercase">
+													Movie
+												</div>
+											</a>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						{/if}
+					</div>
+				</div>
+			{/if}
+		</div>
 		<InstallAppButton />
 		{#if auth.isAdmin}
 			<a
@@ -184,156 +339,6 @@
 			class="cursor-pointer px-3 py-1.5 text-sm hover:text-brand"
 		>
 			<LogoutIcon />
-		</a>
-	</div>
-</section>
-<section id="search" class="flex items-center justify-center px-4">
-	<div class="relative w-full max-w-xl" bind:this={searchRoot}>
-		<form class="flex items-center gap-2" onsubmit={handleSearchSubmit}>
-			<div class="relative flex-1">
-				<input
-					type="text"
-					placeholder="Search shows and movies"
-					class="w-full rounded-full border border-transparent bg-neutral-800 px-4 py-2 pr-11 transition outline-none focus:border-neutral-600"
-					bind:value={searchQuery}
-					oninput={handleSearchInput}
-					onfocus={openSearch}
-					onkeydown={handleSearchKeydown}
-				/>
-				<button
-					type="submit"
-					class="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-neutral-300 hover:text-white"
-					aria-label="Search"
-				>
-					<SearchIcon />
-				</button>
-			</div>
-		</form>
-
-		{#if shouldShowSearchDropdown}
-			<div
-				class="absolute top-full right-0 left-0 z-40 mt-2 overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900/98 shadow-2xl backdrop-blur-sm"
-			>
-				<div class="max-h-[70vh] overflow-y-auto p-2">
-					{#if searchLoading}
-						<div class="px-3 py-4 text-sm text-neutral-300">Searching...</div>
-					{:else if searchError}
-						<div class="px-3 py-4 text-sm text-red-400">{searchError}</div>
-					{:else if searchQuery.trim().length < 3}
-						<div class="px-3 py-4 text-sm text-neutral-400">Type at least 3 characters</div>
-					{:else if !hasSearchResults}
-						<div class="px-3 py-4 text-sm text-neutral-400">No results</div>
-					{:else}
-						{#if searchResults.shows.length > 0}
-							<div class="pb-2">
-								<div
-									class="px-3 py-2 text-xs font-semibold tracking-[0.18em] text-neutral-500 uppercase"
-								>
-									Shows
-								</div>
-								<div class="space-y-1">
-									{#each searchResults.shows as show (show.id)}
-										<a
-											href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}
-											class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition hover:bg-neutral-800"
-											onclick={handleSearchResultClick}
-										>
-											<div class="flex min-w-0 items-center gap-3">
-												<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
-													{#if show.medium_image_url != ''}
-														<img alt={show.name} src={show.medium_image_url} class="w-10" />
-													{:else}
-														<ShowIcon />
-													{/if}
-												</div>
-												<div class="min-w-0">
-													<div class="truncate font-medium text-white">{show.name}</div>
-													<div class="text-sm text-neutral-400">
-														{show.year > 0 ? show.year : 'Show'}
-													</div>
-												</div>
-											</div>
-											<div class="text-xs tracking-[0.18em] text-neutral-500 uppercase">Show</div>
-										</a>
-									{/each}
-								</div>
-							</div>
-						{/if}
-
-						{#if searchResults.movies.length > 0}
-							<div>
-								<div
-									class="px-3 py-2 text-xs font-semibold tracking-[0.18em] text-neutral-500 uppercase"
-								>
-									Movies
-								</div>
-								<div class="space-y-1">
-									{#each searchResults.movies as movie (movie.id)}
-										<a
-											href={resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}
-											class="flex items-center justify-between gap-3 rounded-xl px-3 py-3 transition hover:bg-neutral-800"
-											onclick={handleSearchResultClick}
-										>
-											<div class="flex min-w-0 items-center gap-3">
-												<div class="rounded-lg bg-neutral-800 p-2 text-neutral-200">
-													{#if movie.medium_image_url != ''}
-														<img alt={movie.name} src={movie.medium_image_url} class="w-10" />
-													{:else}
-														<MovieIcon />
-													{/if}
-												</div>
-												<div class="min-w-0">
-													<div class="truncate font-medium text-white">{movie.name}</div>
-													<div class="text-sm text-neutral-400">
-														{movie.year > 0 ? movie.year : 'Movie'}
-													</div>
-												</div>
-											</div>
-											<div class="text-xs tracking-[0.18em] text-neutral-500 uppercase">Movie</div>
-										</a>
-									{/each}
-								</div>
-							</div>
-						{/if}
-					{/if}
-				</div>
-			</div>
-		{/if}
-	</div>
-</section>
-<section id="selections" class="hidden items-center justify-center gap-4 p-4 md:flex">
-	<div class="flex gap-2 rounded-full bg-neutral-800 px-3 py-2">
-		<a
-			href={homeHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(homeHref)}
-		>
-			<HomeIcon />
-			Home
-		</a>
-		<a
-			href={showsHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(showsHref, true)}
-		>
-			<ShowIcon />
-			Shows
-		</a>
-		<a
-			href={moviesHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(moviesHref, true)}
-		>
-			<MovieIcon />
-			Movies
-		</a>
-		<a
-			href={collectionsHref}
-			class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-all duration-100 md:text-lg"
-			class:bg-neutral-700={isActive(collectionsHref, true)}
-		>
-			<CollectionIcon />
-			Collections
 		</a>
 	</div>
 </section>

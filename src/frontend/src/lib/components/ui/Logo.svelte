@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 64 64" fill="none">
+	<title>Localstream favicon</title>
+	<rect width="64" height="64" rx="16" fill="#171717" />
+	<path
+		d="M16 14C16 11.7909 17.7909 10 20 10H26C28.2091 10 30 11.7909 30 14V42H44C46.2091 42 48 43.7909 48 46V50C48 52.2091 46.2091 54 44 54H20C17.7909 54 16 52.2091 16 50V14Z"
+		fill="#F5F5F5"
+	/>
+	<path d="M37 16L52 25.5L37 35V16Z" fill="#4ADE80" />
+</svg>
