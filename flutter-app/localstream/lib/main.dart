@@ -16,6 +16,7 @@ class MainApp extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text("Localstream"),
           ),
+          backgroundColor: Colors.green,
         ),
         body: Center(
           child: Column(
