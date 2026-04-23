@@ -6,12 +6,18 @@ Future<String?> getLastServer() async {
   return prefs.getString("last_server");
 }
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final lastServer = await getLastServer();
+
+  runApp(MainApp(lastServer));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  const MainApp(this.lastServer, {super.key});
+
+  final String? lastServer;
 
   @override
   Widget build(BuildContext context) {
