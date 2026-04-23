@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<String?> getLastServer() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString("last_server");
+}
 
 void main() {
   runApp(const MainApp());
