@@ -175,7 +175,7 @@
 		>
 	</div>
 	<section id="middle" class="flex items-center justify-center gap-2 px-4">
-		<div class="hidden flex-col gap-2 md:flex lg:flex-row">
+		<div class="hidden flex-col gap-2 lg:flex lg:flex-row">
 			<a
 				href={homeHref}
 				class="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 text-neutral-400 transition-all duration-100 md:text-lg"
@@ -352,7 +352,7 @@
 </section>
 
 <nav
-	class="fixed right-0 bottom-0 left-0 border-t border-neutral-700 bg-neutral-900/95 px-2 pt-2 backdrop-blur-sm md:hidden"
+	class="fixed right-0 bottom-0 left-0 border-t border-neutral-700 bg-neutral-900/95 px-2 pt-2 backdrop-blur-sm lg:hidden"
 	style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));"
 >
 	<div class="grid grid-cols-4 gap-1">
