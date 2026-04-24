@@ -334,13 +334,13 @@
 				{#if auth.isAdmin}
 					<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
 						<div class="flex items-center gap-1">
-							<SettingsIcon /> Settings
+							<SettingsIcon /> Admin
 						</div>
 					</DropdownItem>
 				{/if}
 				<DropdownItem href={resolve('/logout')}>
 					<div class="flex items-center gap-1">
-						<LogoutIcon /> Logout
+						<LogoutIcon /> Change Account
 					</div>
 				</DropdownItem>
 			{/snippet}
