@@ -16,6 +16,7 @@
 	import Dropdown from '$lib/components/ui/Dropdown.svelte';
 	import UserIcon from '$lib/icons/UserIcon.svelte';
 	import DropdownItem from '$lib/components/ui/DropdownItem.svelte';
+	import DropdownMelt from '$lib/components/ui/DropdownMelt.svelte';
 
 	let { children } = $props();
 	let searchRoot: HTMLElement | null = $state(null);
@@ -327,7 +328,7 @@
 			{/if}
 		</div>
 		<InstallAppButton />
-		<Dropdown anchor="right">
+		<DropdownMelt>
 			<UserIcon />
 			{#snippet items()}
 				{#if auth.isAdmin}
@@ -343,7 +344,7 @@
 					</div>
 				</DropdownItem>
 			{/snippet}
-		</Dropdown>
+		</DropdownMelt>
 	</div>
 </section>
 <section id="content" class="p-4 pb-24 md:pb-4">
