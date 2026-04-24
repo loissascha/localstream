@@ -97,8 +97,12 @@ func (self *EpisodeMatcher) RunBackground() {
 			}
 
 			seasonMetadata, err := self.seasonMetadataRepo.GetBySeasonID(ctx, season.ID)
-			if err != nil || seasonMetadata == nil {
+			if err != nil {
 				logger.Error(err, "[EpisodeMatcher] Can't get season metadata")
+				continue
+			}
+			if seasonMetadata == nil {
+				logger.Warning(nil, "[EpisodeMatcher] Season Metadata is empty")
 				continue
 			}
 
