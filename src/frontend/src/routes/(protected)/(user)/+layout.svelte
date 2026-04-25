@@ -334,7 +334,7 @@
 				{#if auth.isAdmin}
 					<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
 						<div class="flex items-center gap-1">
-							<SettingsIcon /> Admin
+							<SettingsIcon /> Settings
 						</div>
 					</DropdownItem>
 				{/if}
