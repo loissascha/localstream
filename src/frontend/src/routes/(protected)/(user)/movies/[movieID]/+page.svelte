@@ -5,6 +5,7 @@
 	import { addMovieToCollection } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
+	import PercentageBar from '$lib/components/ui/PercentageBar.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
 	import { movies } from '$lib/movies.svelte';
@@ -63,6 +64,11 @@
 						<PlusIcon />
 						Add to Collection
 					</button>
+					<div class="mt-4">
+						{#if movie.percentage > 0}
+							<PercentageBar percentage={movie.percentage} />
+						{/if}
+					</div>
 				</div>
 			</div>
 		</div>
