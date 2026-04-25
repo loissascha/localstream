@@ -4,6 +4,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import { type MovieInfo } from '$lib/types/export_types';
 	import MovieMetadataDialog from './overlays/MovieMetadataDialog.svelte';
+	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
 	import DropdownItem from './ui/DropdownItem.svelte';
 	import PercentageBar from './ui/PercentageBar.svelte';
 	import { Popover } from 'melt/builders';
@@ -11,6 +12,8 @@
 	let { movie, nameLink = false }: { movie: MovieInfo; nameLink?: boolean } = $props();
 
 	const popover = new Popover();
+
+	let movieMetadataOverlayOpen = $state(false);
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -49,9 +52,23 @@
 		class="rounded-md border border-neutral-500 bg-neutral-800 text-white shadow-lg"
 	>
 		{#if auth.isAdmin}
-			<DropdownItem onclick={() => {}}>
-				<MovieMetadataDialog {movie} updated={() => {}}>Metadata</MovieMetadataDialog>
-			</DropdownItem>
+			<DropdownItem
+				onclick={() => {
+					movieMetadataOverlayOpen = true;
+				}}>Metadata</DropdownItem
+			>
+			<!-- <div> -->
+			<!-- 	<MovieMetadataDialog {movie} updated={() => {}}>Metadata</MovieMetadataDialog> -->
+			<!-- </div> -->
 		{/if}
 	</div>
 </div>
+
+{#if movieMetadataOverlayOpen}
+	<MovieMetadataSearchOverlay
+		{movie}
+		close={() => {
+			movieMetadataOverlayOpen = false;
+		}}
+	/>
+{/if}
