@@ -3,6 +3,8 @@
 	import type { MovieInfo } from '$lib/types/export_types';
 	import ListItemA from './ListItemA.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
+	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
+	import ContextMenu from './ui/ContextMenu.svelte';
 
 	interface Props {
 		movie: MovieInfo;
@@ -11,12 +13,28 @@
 	}
 
 	let { movie, selectable = false, selected = $bindable(false) }: Props = $props();
+
+	let movieMetadataOverlayOpen = $state(false);
 </script>
 
 <div class="relative">
-	<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
-		<MovieInfoDisplay {movie} />
-	</ListItemA>
+	<ContextMenu>
+		<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
+			<MovieInfoDisplay {movie} />
+		</ListItemA>
+		{#snippet items()}
+			<button
+				onclick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					movieMetadataOverlayOpen = true;
+				}}
+				class="cursor-pointer border-b border-neutral-500 px-4 py-2 hover:bg-neutral-700"
+				>Item 1</button
+			>
+			<button class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Item 2</button>
+		{/snippet}
+	</ContextMenu>
 
 	{#if movie.finished}
 		<div class="absolute top-2 right-2 z-10">
@@ -65,3 +83,12 @@
 		</button>
 	{/if}
 </div>
+
+{#if movieMetadataOverlayOpen}
+	<MovieMetadataSearchOverlay
+		{movie}
+		close={() => {
+			movieMetadataOverlayOpen = false;
+		}}
+	/>
+{/if}

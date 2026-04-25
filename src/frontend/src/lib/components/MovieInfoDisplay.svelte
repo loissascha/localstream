@@ -1,28 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { auth } from '$lib/auth.svelte';
 	import { type MovieInfo } from '$lib/types/export_types';
-	import MovieMetadataDialog from './overlays/MovieMetadataDialog.svelte';
-	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
-	import DropdownItem from './ui/DropdownItem.svelte';
 	import PercentageBar from './ui/PercentageBar.svelte';
-	import { Popover } from 'melt/builders';
 
 	let { movie, nameLink = false }: { movie: MovieInfo; nameLink?: boolean } = $props();
-
-	const popover = new Popover();
-
-	let movieMetadataOverlayOpen = $state(false);
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-	oncontextmenu={(e) => {
-		e.preventDefault();
-		popover.open = true;
-	}}
->
+<div>
 	{#if movie.medium_image_url != ''}
 		<img alt={movie.name} class="w-full rounded" src={movie.medium_image_url} />
 	{/if}
@@ -46,30 +32,4 @@
 			<div class="text-center text-sm text-neutral-400">{movie.year}</div>
 		{/if}
 	</button>
-	<div {...popover.trigger}></div>
-	<div
-		{...popover.content}
-		class="rounded-md border border-neutral-500 bg-neutral-800 text-white shadow-lg"
-	>
-		{#if auth.isAdmin}
-			<DropdownItem
-				onclick={() => {
-					popover.open = false;
-					movieMetadataOverlayOpen = true;
-				}}>Metadata</DropdownItem
-			>
-			<!-- <div> -->
-			<!-- 	<MovieMetadataDialog {movie} updated={() => {}}>Metadata</MovieMetadataDialog> -->
-			<!-- </div> -->
-		{/if}
-	</div>
 </div>
-
-{#if movieMetadataOverlayOpen}
-	<MovieMetadataSearchOverlay
-		{movie}
-		close={() => {
-			movieMetadataOverlayOpen = false;
-		}}
-	/>
-{/if}
