@@ -2,6 +2,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { loadMoviesDatabase, movies } from '$lib/movies.svelte';
 
 	let { children } = $props();
 
@@ -10,6 +11,12 @@
 		if (!auth.loggedIn) {
 			goto(resolve('/(auth)/login'));
 			return;
+		}
+		if (!movies.initialized) {
+			loadMoviesDatabase().catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
 		}
 	});
 </script>

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { type ShowInfo, type MovieInfo } from '$lib/types/export_types';
+	import { type ShowInfo } from '$lib/types/export_types';
 	import { auth } from '$lib/auth.svelte';
 	import LastWatched from '$lib/components/LastWatched.svelte';
-	import { listMovies } from '$lib/api/movies';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import { loadShows } from '$lib/api/shows';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
@@ -10,25 +9,23 @@
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 	import ShowIcon from '$lib/icons/ShowIcon.svelte';
 	import MovieIcon from '$lib/icons/MovieIcon.svelte';
+	import { movies } from '$lib/movies.svelte';
 
 	let shows = $state<ShowInfo[]>([]);
-	let movies = $state<MovieInfo[]>([]);
-	let loadingShows = $state(true);
-	let loadingMovies = $state(true);
-	let errorMessage = $state('');
 
-	async function loadMovies() {
-		try {
-			if (!auth.token) return;
-			const data = await listMovies(auth.token, true);
-			movies = data.movies;
-		} catch (e) {
-			const m = (e as Error).message;
-			alert(m);
-		} finally {
-			loadingMovies = false;
-		}
-	}
+	// TODO: need created date in movie info se we can sort properly
+	let latestMovies = $derived.by(() => {
+		return [...movies.movies]
+			.sort((a, b) => {
+				if (a.name < b.name) return -1;
+				if (a.name > b.name) return 1;
+				return 0;
+			})
+			.slice(0, 10);
+	});
+
+	let loadingShows = $state(true);
+	let errorMessage = $state('');
 
 	async function loadShowsList() {
 		try {
@@ -45,7 +42,6 @@
 	$effect(() => {
 		if (!auth.initialized) return;
 		loadShowsList();
-		loadMovies();
 	});
 </script>
 
@@ -73,19 +69,15 @@
 		</section>
 	{/if}
 
-	{#if loadingMovies}
-		<p>Loading movies...</p>
-	{:else}
-		<section class="my-8">
-			<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
-				<MovieIcon />
-				Recent Movies
-			</h2>
-			<ItemGrid>
-				{#each movies as movie (movie.id)}
-					<MovieListItem {movie} />
-				{/each}
-			</ItemGrid>
-		</section>
-	{/if}
+	<section class="my-8">
+		<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
+			<MovieIcon />
+			Recent Movies
+		</h2>
+		<ItemGrid>
+			{#each latestMovies as movie (movie.id)}
+				<MovieListItem {movie} />
+			{/each}
+		</ItemGrid>
+	</section>
 </main>
