@@ -37,8 +37,16 @@
 </script>
 
 <Overlay {close}>
-	<h1 class="text-2xl font-bold tracking-wide">Search Metadata</h1>
+	<h1 class="text-2xl font-bold tracking-wide">Metadata</h1>
 	<h2 class="text-lg font-semibold tracking-wide">{movie.name}</h2>
+	<div class="flex">
+		<div class="grow">
+			{movie.description}
+		</div>
+		<div>
+			<img src={movie.medium_image_url} class="w-120" alt={movie.name} />
+		</div>
+	</div>
 	{#if success_message != ''}
 		<div class="mt-4 text-green-500">
 			{success_message}
@@ -62,7 +70,7 @@
 			bind:value={searchQuery}
 			type="text"
 			class="my-4 w-full rounded bg-neutral-700 px-4 py-2"
-			placeholder="Search by Name"
+			placeholder="Search for new Metadata"
 		/>
 		<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600">
 			<SearchIcon /> Search
