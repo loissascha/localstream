@@ -3,34 +3,20 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { addMovieToCollection } from '$lib/api/collections';
-	import { getMovie } from '$lib/api/movies';
 	import { auth } from '$lib/auth.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
-	import type { MovieInfo } from '$lib/types/export_types';
+	import { movies } from '$lib/movies.svelte';
 	import DOMPurify from 'dompurify';
 
 	const movieId = $derived(page.params.movieID ?? '');
-	let movie = $state<MovieInfo | null>(null);
+	let movie = $derived.by(() => {
+		return movies.movies.find((movie) => movie.id === movieId);
+	});
 	let errorMessage = $state('');
 
 	let showAddToCollection = $state(false);
-
-	async function loadData() {
-		try {
-			if (!auth.token) return;
-			movie = await getMovie(auth.token, movieId);
-		} catch (e) {
-			const m = (e as Error).message;
-			errorMessage = m;
-		}
-	}
-
-	$effect(() => {
-		movieId;
-		loadData();
-	});
 </script>
 
 <section>
