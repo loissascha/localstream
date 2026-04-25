@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { getWatchstateForMovie, updateWatchstateMovie } from '$lib/api/watchstate_movie';
+	import { getWatchstateForMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
+	import { setMovieWatchstate } from '$lib/movies.svelte';
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
@@ -34,20 +35,12 @@
 		}
 
 		const position = Number(currentTime.toFixed(2));
-		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
 
-		if (auth.token) {
-			try {
-				console.log('log watchsatte');
-				await updateWatchstateMovie(auth.token, {
-					movie_id: movieId,
-					position: position,
-					duration: duration,
-					finished: finished
-				});
-			} catch (e) {
-				console.error(e);
-			}
+		try {
+			console.log('log watchsatte');
+			await setMovieWatchstate(movieId, position, duration);
+		} catch (e) {
+			console.error(e);
 		}
 	}
 

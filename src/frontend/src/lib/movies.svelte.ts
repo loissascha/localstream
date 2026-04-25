@@ -1,5 +1,6 @@
 import { addMovieToCollection } from './api/collections';
 import { listMovies } from './api/movies';
+import { updateWatchstateMovie } from './api/watchstate_movie';
 import { auth } from './auth.svelte';
 import type { MovieInfo } from './types/export_types';
 
@@ -43,5 +44,36 @@ export async function addSelectedMoviesToCollection(collectionId: string) {
 		movies.selectedMovies = Object.fromEntries(movies.movies.map((movie) => [movie.id, false]));
 	} catch (e) {
 		alert((e as Error).message);
+	}
+}
+
+export async function setMovieWatchstate(movieId: string, position: number, duration: number) {
+	try {
+		if (!auth.token) return;
+		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+		await updateWatchstateMovie(auth.token, {
+			movie_id: movieId,
+			position: position,
+			duration: duration,
+			finished: finished
+		});
+
+		var percent = 0.0;
+		if (duration > 0) {
+			percent = (100 / duration) * position;
+		}
+		if (finished) {
+			percent = 100;
+		}
+
+		movies.movies = movies.movies.map((movie) => {
+			if (movie.id !== movieId) return movie;
+			return {
+				...movie,
+				percentage: percent
+			};
+		});
+	} catch (e) {
+		throw e;
 	}
 }
