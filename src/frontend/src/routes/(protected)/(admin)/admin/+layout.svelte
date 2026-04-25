@@ -71,8 +71,11 @@
 					<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/users')}
 						>Users</AdminLeftMenuButton
 					>
-					<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/metadata')}
-						>Metadata</AdminLeftMenuButton
+					<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/metadata/shows')}
+						>Shows</AdminLeftMenuButton
+					>
+					<AdminLeftMenuButton href={resolve('/(protected)/(admin)/admin/metadata/movies')}
+						>Movies</AdminLeftMenuButton
 					>
 				</div>
 			{/if}
