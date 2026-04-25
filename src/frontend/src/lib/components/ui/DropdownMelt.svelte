@@ -13,7 +13,10 @@
 </script>
 
 <button {...popover.trigger} class={`cursor-pointer ${className}`}>{@render children()}</button>
-<div {...popover.content} class="rounded-md bg-neutral-800 text-white shadow-lg">
+<div
+	{...popover.content}
+	class="rounded-md border border-neutral-500 bg-neutral-800 text-white shadow-lg"
+>
 	<div {...popover.arrow}></div>
 	{@render items()}
 </div>
