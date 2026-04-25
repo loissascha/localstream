@@ -54,6 +54,7 @@
 		{#if auth.isAdmin}
 			<DropdownItem
 				onclick={() => {
+					popover.open = false;
 					movieMetadataOverlayOpen = true;
 				}}>Metadata</DropdownItem
 			>
