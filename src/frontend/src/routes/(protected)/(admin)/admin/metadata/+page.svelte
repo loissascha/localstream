@@ -53,14 +53,14 @@
 	<p class="text-red-500">{errorMessage}</p>
 {/if}
 
-<section class="grid grid-cols-3 gap-4">
+<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 	{#each shows as show (show.id)}
 		{#if !hideSingle || show.fetch_source == 'multiple' || show.fetch_source == 'empty'}
 			<AdminShowMetadataBlock {show} />
 		{/if}
 	{/each}
 </section>
-<section class="mt-4 grid grid-cols-3 gap-4">
+<section class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
 	{#each movies as movie (movie.id)}
 		{#if !hideSingle || movie.fetch_source == 'multiple' || movie.fetch_source == 'empty'}
 			<AdminMovieMetadataBlock {movie} />
