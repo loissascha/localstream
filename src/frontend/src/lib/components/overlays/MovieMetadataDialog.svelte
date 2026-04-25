@@ -65,7 +65,11 @@
 		<form
 			onsubmit={(e) => {
 				e.preventDefault();
-				if (searchingMetadata) return;
+				console.log('submit form');
+				if (searchingMetadata) {
+					alert('Searching...');
+					return;
+				}
 				submitMetadataSearchForm();
 			}}
 			class="flex items-center gap-2"
@@ -87,7 +91,7 @@
 			Searching...
 		{:else}
 			{#each searchResults as result (result.id)}
-				<div class="my-4 p-4 overflow-y-auto">
+				<div class="my-4 overflow-y-auto p-4">
 					<div class="grid grid-cols-1 md:grid-cols-2">
 						<div>
 							<div class="font-bold">{result.original_title} ({result.release_year})</div>
