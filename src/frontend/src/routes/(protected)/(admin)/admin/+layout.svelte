@@ -39,8 +39,11 @@
 								>Libraries</DropdownItem
 							>
 							<DropdownItem href={resolve('/(protected)/(admin)/admin/users')}>Users</DropdownItem>
-							<DropdownItem href={resolve('/(protected)/(admin)/admin/metadata')}
-								>Metadata</DropdownItem
+							<DropdownItem href={resolve('/(protected)/(admin)/admin/metadata/shows')}
+								>Shows</DropdownItem
+							>
+							<DropdownItem href={resolve('/(protected)/(admin)/admin/metadata/movies')}
+								>Movies</DropdownItem
 							>
 						</div>
 					{/if}
