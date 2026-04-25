@@ -87,7 +87,7 @@
 			Searching...
 		{:else}
 			{#each searchResults as result (result.id)}
-				<div class="my-4 p-4">
+				<div class="my-4 p-4 overflow-y-auto">
 					<div class="grid grid-cols-1 md:grid-cols-2">
 						<div>
 							<div class="font-bold">{result.original_title} ({result.release_year})</div>

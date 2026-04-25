@@ -21,7 +21,13 @@
 
 <dialog
 	{...dialog.content}
-	class="m-auto max-h-[90%] max-w-[90%] w-[90%] lg:w-3xl rounded-xl border border-neutral-500 bg-neutral-800 p-4 text-white lg:max-w-4xl"
+	class="m-auto max-h-[90%] w-[90%] max-w-[90%] rounded-xl border border-neutral-500 bg-neutral-800 p-4 text-white lg:w-3xl lg:max-w-4xl"
 >
+	<button
+		class="absolute top-5 right-5 cursor-pointer text-xl"
+		onclick={() => {
+			close();
+		}}>&times;</button
+	>
 	{@render content(close)}
 </dialog>
