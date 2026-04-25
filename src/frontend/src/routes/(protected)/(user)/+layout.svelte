@@ -3,8 +3,6 @@
 	import { auth } from '$lib/auth.svelte';
 	import { searchLibrary } from '$lib/api/search';
 	import InstallAppButton from '$lib/components/InstallAppButton.svelte';
-	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
-	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { page } from '$app/state';
 	import ShowIcon from '$lib/icons/ShowIcon.svelte';
@@ -13,10 +11,7 @@
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { SearchResponse } from '$lib/types/export_types';
 	import Logo from '$lib/components/ui/Logo.svelte';
-	import Dropdown from '$lib/components/ui/Dropdown.svelte';
-	import UserIcon from '$lib/icons/UserIcon.svelte';
-	import DropdownItem from '$lib/components/ui/DropdownItem.svelte';
-	import DropdownMelt from '$lib/components/ui/DropdownMelt.svelte';
+	import LayoutUserDropdown from '$lib/components/ui/LayoutUserDropdown.svelte';
 
 	let { children } = $props();
 	let searchRoot: HTMLElement | null = $state(null);
@@ -328,23 +323,7 @@
 			{/if}
 		</div>
 		<InstallAppButton />
-		<DropdownMelt>
-			<UserIcon />
-			{#snippet items()}
-				{#if auth.isAdmin}
-					<DropdownItem href={resolve('/(protected)/(admin)/admin')}>
-						<div class="flex items-center gap-1">
-							<SettingsIcon /> Settings
-						</div>
-					</DropdownItem>
-				{/if}
-				<DropdownItem href={resolve('/logout')}>
-					<div class="flex items-center gap-1">
-						<LogoutIcon /> Change Account
-					</div>
-				</DropdownItem>
-			{/snippet}
-		</DropdownMelt>
+		<LayoutUserDropdown />
 	</div>
 </section>
 <section id="content" class="p-4 pb-24 md:pb-4">
