@@ -13,7 +13,7 @@
 
 	interface Props {
 		children: Snippet;
-		items: Snippet;
+		items: Snippet<[() => void]>;
 		disabled?: boolean;
 		closeOnItemClick?: boolean;
 		placement?: Placement;
@@ -204,7 +204,7 @@
 			style={`position: ${menuStrategy}; left: ${menuX}px; top: ${menuY}px;`}
 			class={`z-50 flex w-max min-w-40 flex-col gap-1 overflow-hidden rounded-md bg-neutral-800 text-white shadow-lg ${menuClassName}`}
 		>
-			{@render items()}
+			{@render items(closeMenu)}
 		</div>
 	{/if}
 </div>

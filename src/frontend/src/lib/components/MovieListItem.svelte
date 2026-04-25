@@ -18,21 +18,21 @@
 </script>
 
 <div class="relative">
-	<ContextMenu>
+	<ContextMenu closeOnItemClick={true}>
 		<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
 			<MovieInfoDisplay {movie} />
 		</ListItemA>
-		{#snippet items()}
+		{#snippet items(closeMenu)}
 			<button
+				role="menuitem"
 				onclick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();
+					closeMenu();
 					movieMetadataOverlayOpen = true;
 				}}
-				class="cursor-pointer border-b border-neutral-500 px-4 py-2 hover:bg-neutral-700"
-				>Item 1</button
+				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Item 1</button
 			>
-			<button class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Item 2</button>
 		{/snippet}
 	</ContextMenu>
 
