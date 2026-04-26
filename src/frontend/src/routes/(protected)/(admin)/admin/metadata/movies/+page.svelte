@@ -1,30 +1,9 @@
 <script lang="ts">
-	import { listMovies } from '$lib/api/movies';
-	import { auth } from '$lib/auth.svelte';
 	import AdminMovieMetadataBlock from '$lib/components/admin/AdminMovieMetadataBlock.svelte';
-	import { type MovieInfo } from '$lib/types/export_types';
+	import { movies } from '$lib/movies.svelte';
 
-	var movies = $state<MovieInfo[]>([]);
-	var loadingMovies = $state(true);
 	var errorMessage = $state('');
 	var hideSingle = $state(true);
-
-	async function loadMoviesList() {
-		try {
-			if (!auth.token) return;
-			const data = await listMovies(auth.token);
-			movies = data.movies;
-		} catch (e) {
-			errorMessage = (e as Error).message;
-		} finally {
-			loadingMovies = false;
-		}
-	}
-
-	$effect(() => {
-		if (!auth.initialized) return;
-		loadMoviesList();
-	});
 </script>
 
 <div class="mb-4">
@@ -37,7 +16,7 @@
 {/if}
 
 <section class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-	{#each movies as movie (movie.id)}
+	{#each movies.movies as movie (movie.id)}
 		{#if !hideSingle || movie.fetch_source == 'multiple' || movie.fetch_source == 'empty'}
 			<AdminMovieMetadataBlock {movie} />
 		{/if}
