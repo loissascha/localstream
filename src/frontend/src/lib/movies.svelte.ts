@@ -1,5 +1,5 @@
 import { addMovieToCollection } from './api/collections';
-import { listMovies } from './api/movies';
+import { getMovie, listMovies } from './api/movies';
 import { updateWatchstateMovie } from './api/watchstate_movie';
 import { auth } from './auth.svelte';
 import type { MovieInfo } from './types/export_types';
@@ -42,6 +42,19 @@ export async function addSelectedMoviesToCollection(collectionId: string) {
 			}
 		}
 		movies.selectedMovies = Object.fromEntries(movies.movies.map((movie) => [movie.id, false]));
+	} catch (e) {
+		alert((e as Error).message);
+	}
+}
+
+export async function reloadSingleMovie(movieId: string) {
+	try {
+		if (!auth.token) return;
+		const response = await getMovie(auth.token, movieId);
+		movies.movies = movies.movies.map((movie) => {
+			if (movie.id !== movieId) return movie;
+			return response;
+		});
 	} catch (e) {
 		alert((e as Error).message);
 	}

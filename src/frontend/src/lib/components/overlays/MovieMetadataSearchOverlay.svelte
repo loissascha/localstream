@@ -2,6 +2,7 @@
 	import { searchMovieMetadata, setPrimaryMovieMetadataByFetchID } from '$lib/api/movie_metadata';
 	import { auth } from '$lib/auth.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
+	import { reloadSingleMovie } from '$lib/movies.svelte';
 	import type { MovieInfo, MovieResult } from '$lib/types/export_types';
 	import Overlay from './Overlay.svelte';
 
@@ -97,6 +98,7 @@
 											searchResults = [];
 											searchQuery = '';
 											success_message = 'Updated primary metadata!';
+											reloadSingleMovie(movie.id);
 										})
 										.catch((e) => {
 											const m = (e as Error).message;

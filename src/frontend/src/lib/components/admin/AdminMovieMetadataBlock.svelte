@@ -2,12 +2,14 @@
 	import { setPrimaryMetadataForMovie } from '$lib/api/admin/movie_metadata';
 	import { loadMovieMetadata } from '$lib/api/movie_metadata';
 	import { auth } from '$lib/auth.svelte';
+	import { reloadSingleMovie } from '$lib/movies.svelte';
 	import type { MovieInfo, MovieMetadataInfo } from '$lib/types/export_types';
-	import MovieMetadataDialog from '../overlays/MovieMetadataDialog.svelte';
+	import MovieMetadataSearchOverlay from '../overlays/MovieMetadataSearchOverlay.svelte';
 
 	let { movie }: { movie: MovieInfo } = $props();
 	let metadata = $state<MovieMetadataInfo[]>([]);
 	let loading = $state(true);
+	let showMetadataOverlay = $state(false);
 
 	async function loadMetadata() {
 		try {
@@ -38,11 +40,11 @@
 			<span>
 				Metadata: {metadata.length}
 			</span>
-			<MovieMetadataDialog
-				{movie}
-				updated={() => {
-					loadMetadata();
-				}}>Show Details</MovieMetadataDialog
+			<button
+				class="cursor-pointer"
+				onclick={() => {
+					showMetadataOverlay = true;
+				}}>Show Details</button
 			>
 		</div>
 		<div class="mt-4 flex flex-col gap-2">
@@ -80,3 +82,13 @@
 		</div>
 	{/if}
 </div>
+
+{#if showMetadataOverlay}
+	<MovieMetadataSearchOverlay
+		close={() => {
+			showMetadataOverlay = false;
+			loadMetadata();
+		}}
+		{movie}
+	/>
+{/if}
