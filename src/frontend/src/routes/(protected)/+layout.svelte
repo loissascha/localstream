@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { loadMoviesDatabase, movies } from '$lib/movies.svelte';
+	import { loadShowsDatabase, shows } from '$lib/shows.svelte';
 
 	let { children } = $props();
 
@@ -14,6 +15,12 @@
 		}
 		if (!movies.initialized) {
 			loadMoviesDatabase().catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+		}
+		if (!shows.initialized) {
+			loadShowsDatabase().catch((e) => {
 				const m = (e as Error).message;
 				alert(m);
 			});
