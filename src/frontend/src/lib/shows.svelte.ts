@@ -1,5 +1,6 @@
 import { addShowToCollection } from './api/collections';
 import { loadShows } from './api/shows';
+import { updateWatchstate } from './api/watchstate';
 import { auth } from './auth.svelte';
 import type { ShowInfo } from './types/export_types';
 
@@ -43,5 +44,45 @@ export async function addSelectedShowsToCollection(collectionId: string) {
 		shows.selectedShows = Object.fromEntries(shows.shows.map((show) => [show.id, false]));
 	} catch (e) {
 		alert((e as Error).message);
+	}
+}
+
+export async function setShowWatchstate(
+	showId: string,
+	seasonId: string,
+	episodeId: string,
+	position: number,
+	duration: number
+) {
+	try {
+		if (!auth.token) return;
+		const finished = duration > 0 && position >= Math.max(duration - 10, 0);
+		const normalizedDuration = Number.isFinite(duration) ? Number(duration.toFixed(2)) : 0;
+		await updateWatchstate(auth.token, {
+			episode_id: episodeId,
+			season_id: seasonId,
+			show_id: showId,
+			position: position,
+			duration: normalizedDuration,
+			finished: finished
+		});
+
+		var percent = 0.0;
+		if (duration > 0) {
+			percent = (100 / duration) * position;
+		}
+		if (finished) {
+			percent = 100;
+		}
+
+		shows.shows = shows.shows.map((show) => {
+			if (show.id !== showId) return show;
+			return {
+				...show,
+				percentage: percent
+			};
+		});
+	} catch (e) {
+		throw e;
 	}
 }

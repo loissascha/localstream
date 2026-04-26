@@ -3,12 +3,13 @@
 	import { page } from '$app/state';
 	import { getEpisodeDetails, getEpisodeMetadata, getNextEpisode } from '$lib/api/episode';
 	import { getSeasonDetails } from '$lib/api/seasons';
-	import { getWatchstateForEpisode, updateWatchstate } from '$lib/api/watchstate';
+	import { getWatchstateForEpisode } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
+	import { setShowWatchstate } from '$lib/shows.svelte';
 	import {
 		type SeasonInfo,
 		type EpisodeInfo,
@@ -61,37 +62,12 @@
 
 		const position = Number(currentTime.toFixed(2));
 		const normalizedDuration = Number.isFinite(duration) ? Number(duration.toFixed(2)) : 0;
-		const finished = normalizedDuration > 0 && position >= Math.max(normalizedDuration - 10, 0);
 		const almostDoneStatus =
 			normalizedDuration > 0 && position >= Math.max(normalizedDuration - 180, 0);
 		console.log('almost done status:', almostDoneStatus);
 		almostDone = almostDoneStatus;
 
-		if (auth.token) {
-			try {
-				await updateWatchstate(auth.token, {
-					episode_id: episodeId,
-					season_id: seasonId,
-					show_id: showId,
-					position: position,
-					duration: normalizedDuration,
-					finished: finished
-				});
-			} catch (e) {
-				console.error(e);
-			}
-		}
-
-		// 	console.log({
-		// 		userToken: auth.token,
-		// 		showId: showId,
-		// 		seasonId: seasonId,
-		// 		episodeId: episodeId,
-		// 		positionSeconds: position,
-		// 		durationSeconds: duration,
-		// 		finished,
-		// 		updatedAt: new Date().toISOString()
-		// 	});
+		await setShowWatchstate(showId, seasonId, episodeId, position, duration);
 	}
 
 	function startPlaybackLogging() {
