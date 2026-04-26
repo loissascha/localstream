@@ -4,8 +4,7 @@
 	import {
 		type EpisodeInfo,
 		type EpisodeListResponse,
-		type SeasonInfo,
-		type ShowInfo
+		type SeasonInfo
 	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
@@ -16,10 +15,10 @@
 	import PlusIcon from '$lib/icons/PlusIcon.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import { addShowToCollection } from '$lib/api/collections';
+	import { shows } from '$lib/shows.svelte';
 
 	const showId = $derived(page.params.showID ?? '');
 
-	let loadingShowData = $state(true);
 	let loadingSeasons = $state(true);
 	let loadingEpisodes = $state(true);
 
@@ -27,7 +26,9 @@
 
 	let errorMessage = $state<string | null>(null);
 
-	let showData = $state<ShowInfo | null>(null);
+	let show = $derived.by(() => {
+		return shows.shows.find((show) => show.id === showId);
+	});
 	let seasonData = $state<SeasonInfo[] | null>(null);
 	let episodeData = $state<EpisodeInfo[] | null>(null);
 
@@ -72,29 +73,8 @@
 		}
 	}
 
-	async function loadShowData() {
-		try {
-			const res = await fetch('/api/show/' + showId, {
-				headers: {
-					Authorization: 'Bearer ' + auth.token
-				}
-			});
-			if (!res.ok) {
-				throw new Error(`Failed to load shows: ${res.status}`);
-			}
-
-			showData = (await res.json()) as ShowInfo;
-		} catch (error) {
-			errorMessage =
-				error instanceof Error ? error.message : 'Unknown error while loading show data';
-		} finally {
-			loadingShowData = false;
-		}
-	}
-
 	$effect(() => {
 		if (!showId || showId == '') return;
-		loadShowData();
 		loadSeasons();
 	});
 
@@ -116,25 +96,21 @@
 
 	<div class="flex flex-col gap-2 md:flex-row">
 		<div class="shrink-0">
-			{#if showData != null && showData.medium_image_url != null}
+			{#if show != null && show.medium_image_url != null}
 				<div>
-					<img alt={showData.name} class="max-h-102" src={showData.medium_image_url} />
+					<img alt={show.name} class="max-h-102" src={show.medium_image_url} />
 				</div>
 			{/if}
 		</div>
 		<div>
-			{#if loadingShowData}
-				<p>Loading stuff...</p>
-			{:else}
-				<h1 class="mb-2 text-3xl">
-					{showData?.name}
-					{#if showData && showData.year > 0}
-						({showData.year})
-					{/if}
-				</h1>
-			{/if}
+			<h1 class="mb-2 text-3xl">
+				{show?.name}
+				{#if show && show.year > 0}
+					({show.year})
+				{/if}
+			</h1>
 			<div>
-				{@html DOMPurify.sanitize(showData?.description ?? '')}
+				{@html DOMPurify.sanitize(show?.description ?? '')}
 			</div>
 			<div class="p-4">
 				<button
@@ -244,8 +220,8 @@
 {#if showAddToCollection}
 	<SelectCollectionOverlay
 		selectedCollection={(collectionId) => {
-			if (auth.token && showData) {
-				addShowToCollection(auth.token, collectionId, showData.id)
+			if (auth.token && show) {
+				addShowToCollection(auth.token, collectionId, show.id)
 					.then(() => {
 						showAddToCollection = false;
 					})
