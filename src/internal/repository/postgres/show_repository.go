@@ -63,7 +63,7 @@ func (r *ShowRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Sho
 
 func (r *ShowRepository) GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*repository.ShowSelectItem, error) {
 	const query = `
-		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url", s.created_at 
 		FROM shows s 
 		LEFT JOIN show_metadata m 
 		ON m.show_id=s.id AND s.fetch_source!='multiple'
@@ -168,7 +168,7 @@ func (r *ShowRepository) All(ctx context.Context) ([]entity.Show, error) {
 
 func (r *ShowRepository) ListLatest(ctx context.Context) ([]repository.ShowSelectItem, error) {
 	const query = `
-		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url", s.created_at
 		FROM shows s 
 		LEFT JOIN show_metadata m 
 		ON m.show_id=s.id AND s.fetch_source!='multiple'
@@ -186,7 +186,7 @@ func (r *ShowRepository) ListLatest(ctx context.Context) ([]repository.ShowSelec
 
 func (r *ShowRepository) List(ctx context.Context) ([]repository.ShowSelectItem, error) {
 	const query = `
-		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url" 
+		SELECT s.id, COALESCE(m.name, s.name) as "name", s.year, s.fetch_source, s.path, COALESCE(m.description, '') as "description", COALESCE(m.medium_image_url, '') as "medium_image_url", s.created_at
 		FROM shows s 
 		LEFT JOIN show_metadata m 
 		ON m.show_id=s.id AND s.fetch_source!='multiple'
@@ -209,7 +209,8 @@ func (r *ShowRepository) Search(ctx context.Context, query string) ([]repository
 			s.fetch_source,
 			s.path,
 			COALESCE(m.description, '') as "description",
-			COALESCE(m.medium_image_url, '') as "medium_image_url" 
+			COALESCE(m.medium_image_url, '') as "medium_image_url",
+			s.created_at
 		FROM shows s
 		LEFT JOIN show_metadata m 
 		ON m.show_id=s.id AND s.fetch_source!='multiple'

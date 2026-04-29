@@ -11,17 +11,18 @@ import (
 type AnyInfoStruct interface{}
 
 type MovieInfo struct {
-	ID               string  `json:"id"`
-	Name             string  `json:"name"`
-	Year             int     `json:"year"`
-	Description      string  `json:"description"`
-	FetchSource      string  `json:"fetch_source"`
-	MediumImageUrl   string  `json:"medium_image_url"`
-	BackdropImageUrl string  `json:"backdrop_image_url"`
-	Position         float64 `json:"position"`
-	Duration         float64 `json:"duration"`
-	Finished         bool    `json:"finished"`
-	Percentage       float64 `json:"percentage"`
+	ID               string    `json:"id"`
+	Name             string    `json:"name"`
+	Year             int       `json:"year"`
+	Description      string    `json:"description"`
+	FetchSource      string    `json:"fetch_source"`
+	MediumImageUrl   string    `json:"medium_image_url"`
+	BackdropImageUrl string    `json:"backdrop_image_url"`
+	Position         float64   `json:"position"`
+	Duration         float64   `json:"duration"`
+	Finished         bool      `json:"finished"`
+	Percentage       float64   `json:"percentage"`
+	CreatedAt        time.Time `json:"created_at"`
 }
 
 type MovieListResponse struct {
@@ -29,12 +30,13 @@ type MovieListResponse struct {
 }
 
 type ShowInfo struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	Year           int    `json:"year"`
-	FetchSource    string `json:"fetch_source"`
-	Description    string `json:"description"`
-	MediumImageUrl string `json:"medium_image_url"`
+	ID             string    `json:"id"`
+	Name           string    `json:"name"`
+	Year           int       `json:"year"`
+	FetchSource    string    `json:"fetch_source"`
+	Description    string    `json:"description"`
+	MediumImageUrl string    `json:"medium_image_url"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type ShowListResponse struct {
@@ -255,6 +257,7 @@ func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 		Finished:         m.Finished,
 		Position:         m.Position,
 		Percentage:       percent,
+		CreatedAt:        m.CreatedAt,
 	}
 }
 
@@ -301,6 +304,7 @@ func toShowInfo(show *repository.ShowSelectItem) ShowInfo {
 		FetchSource:    string(show.FetchSource),
 		Description:    show.Description,
 		MediumImageUrl: show.MediumImageUrl,
+		CreatedAt:      show.CreatedAt,
 	}
 }
 

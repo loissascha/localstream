@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
@@ -34,4 +35,5 @@ type MovieSelectItem struct {
 	Position         float64            `db:"position"`
 	Duration         float64            `db:"duration"`
 	Finished         bool               `db:"finished"`
+	CreatedAt        time.Time          `db:"created_at"`
 }

@@ -76,6 +76,7 @@ export interface MovieInfo {
   duration: number;
   finished: boolean;
   percentage: number;
+  created_at: string;
 }
 export interface MovieListResponse {
   movies: MovieInfo[];
@@ -144,6 +145,7 @@ export interface ShowInfo {
   fetch_source: string;
   description: string;
   medium_image_url: string;
+  created_at: string;
 }
 export interface ShowListResponse {
   shows: ShowInfo[];

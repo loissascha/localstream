@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
@@ -31,4 +32,5 @@ type ShowSelectItem struct {
 	Path           string             `db:"path"`
 	Description    string             `db:"description"`
 	MediumImageUrl string             `db:"medium_image_url"`
+	CreatedAt      time.Time          `db:"created_at"`
 }

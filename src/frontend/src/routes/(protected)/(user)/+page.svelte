@@ -13,8 +13,10 @@
 	let latestMovies = $derived.by(() => {
 		return [...movies.movies]
 			.sort((a, b) => {
-				if (a.name < b.name) return -1;
-				if (a.name > b.name) return 1;
+				const adate = new Date(a.created_at);
+				const bdate = new Date(b.created_at);
+				if (adate < bdate) return -1;
+				if (adate > bdate) return 1;
 				return 0;
 			})
 			.slice(0, 10);
@@ -22,8 +24,10 @@
 	let latestShows = $derived.by(() => {
 		return [...shows.shows]
 			.sort((a, b) => {
-				if (a.name < b.name) return -1;
-				if (a.name > b.name) return 1;
+				const adate = new Date(a.created_at);
+				const bdate = new Date(b.created_at);
+				if (adate < bdate) return -1;
+				if (adate > bdate) return 1;
 				return 0;
 			})
 			.slice(0, 10);

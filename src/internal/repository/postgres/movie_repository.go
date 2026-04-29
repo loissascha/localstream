@@ -42,7 +42,7 @@ func (r *MovieRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Mo
 // SELECT m.id, coalesce(mm.name, m.name) as "name", m.year, coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, ”) as "medium_image_url", coalesce(mm.backdrop_image_url, ”) as "backdrop_image_url", m.fetch_source  FROM movies m LEFT JOIN movie_metadata mm ON mm.movie_id=m.id AND m.fetch_source!='multiple'
 func (r *MovieRepository) GetByIDWithMetadata(ctx context.Context, id uuid.UUID, userID int64) (*repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
@@ -121,7 +121,7 @@ func (r *MovieRepository) All(ctx context.Context) ([]entity.Movie, error) {
 
 func (r *MovieRepository) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
@@ -141,7 +141,7 @@ func (r *MovieRepository) ListLatest(ctx context.Context, userID int64) ([]repos
 
 func (r *MovieRepository) List(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
-		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
@@ -188,7 +188,7 @@ func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, f
 func (r *MovieRepository) Search(ctx context.Context, query string, userID int64) ([]repository.MovieSelectItem, error) {
 	const stmt = `
 		SELECT DISTINCT 
-		m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source 
+		m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at
 		FROM movies m
 		LEFT JOIN movie_metadata mm 
 		ON mm.movie_id=m.id AND m.fetch_source!='multiple'
