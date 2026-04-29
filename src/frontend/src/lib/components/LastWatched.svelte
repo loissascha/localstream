@@ -8,7 +8,6 @@
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
-	import PercentageBar from './ui/PercentageBar.svelte';
 
 	let data = $state<WatchstateResponse[]>([]);
 
@@ -43,21 +42,23 @@
 		</h2>
 		<ItemGrid>
 			{#each data as d (d.id)}
-				<ListItemA
-					href={resolve(
-						'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
-						{
-							showID: d.show_id,
-							seasonID: d.season_id,
-							episodeID: d.episode_id
-						}
-					)}
-				>
-					<ShowInfoDisplay show={d.show_info} nameLink percentage={d.percentage} showPercentage />
-					<div>
-						<div>S{d.season_info.number}:E{d.episode_info.number}</div>
-					</div>
-				</ListItemA>
+				{#if !d.finished}
+					<ListItemA
+						href={resolve(
+							'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+							{
+								showID: d.show_id,
+								seasonID: d.season_id,
+								episodeID: d.episode_id
+							}
+						)}
+					>
+						<ShowInfoDisplay show={d.show_info} nameLink percentage={d.percentage} showPercentage />
+						<div>
+							<div>S{d.season_info.number}:E{d.episode_info.number}</div>
+						</div>
+					</ListItemA>
+				{/if}
 			{/each}
 		</ItemGrid>
 	{/if}
