@@ -9,7 +9,6 @@
 	import { movies } from '$lib/movies.svelte';
 	import { shows } from '$lib/shows.svelte';
 
-	// TODO: need created date in movie info se we can sort properly
 	let latestMovies = $derived.by(() => {
 		return [...movies.movies]
 			.sort((a, b) => {
