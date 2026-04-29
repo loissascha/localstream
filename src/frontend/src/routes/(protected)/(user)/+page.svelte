@@ -15,8 +15,8 @@
 			.sort((a, b) => {
 				const adate = new Date(a.created_at);
 				const bdate = new Date(b.created_at);
-				if (adate < bdate) return -1;
-				if (adate > bdate) return 1;
+				if (adate < bdate) return 1;
+				if (adate > bdate) return -1;
 				return 0;
 			})
 			.slice(0, 10);
@@ -26,8 +26,8 @@
 			.sort((a, b) => {
 				const adate = new Date(a.created_at);
 				const bdate = new Date(b.created_at);
-				if (adate < bdate) return -1;
-				if (adate > bdate) return 1;
+				if (adate < bdate) return 1;
+				if (adate > bdate) return -1;
 				return 0;
 			})
 			.slice(0, 10);
