@@ -6,8 +6,9 @@
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 	import ShowIcon from '$lib/icons/ShowIcon.svelte';
 	import MovieIcon from '$lib/icons/MovieIcon.svelte';
-	import { movies } from '$lib/movies.svelte';
-	import { shows } from '$lib/shows.svelte';
+	import { loadMoviesDatabase, movies } from '$lib/movies.svelte';
+	import { loadShowsDatabase, shows } from '$lib/shows.svelte';
+	import { auth } from '$lib/auth.svelte';
 
 	let latestMovies = $derived.by(() => {
 		return [...movies.movies]
@@ -30,6 +31,19 @@
 				return 0;
 			})
 			.slice(0, 10);
+	});
+
+	$effect(() => {
+		if (!auth.initialized) return;
+		loadShowsDatabase().catch((e) => {
+			const m = (e as Error).message;
+			alert(m);
+		});
+
+		loadMoviesDatabase().catch((e) => {
+			const m = (e as Error).message;
+			alert(m);
+		});
 	});
 </script>
 
