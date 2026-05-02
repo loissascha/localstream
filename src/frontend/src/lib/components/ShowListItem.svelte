@@ -3,6 +3,8 @@
 	import type { ShowInfo } from '$lib/types/export_types';
 	import ListItemA from './ListItemA.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
+	import ContextMenu from './ui/ContextMenu.svelte';
+	import ShowMetadataSearchOverlay from './overlays/ShowMetadataSearchOverlay.svelte';
 
 	interface Props {
 		show: ShowInfo;
@@ -17,12 +19,28 @@
 		selected = $bindable(false),
 		showFinished = false
 	}: Props = $props();
+
+	let showMetadataOverlayOpen = $state(false);
 </script>
 
 <div class="relative">
-	<ListItemA href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}>
-		<ShowInfoDisplay {show} />
-	</ListItemA>
+	<ContextMenu closeOnItemClick={true}>
+		<ListItemA href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}>
+			<ShowInfoDisplay {show} />
+		</ListItemA>
+		{#snippet items(closeMenu)}
+			<button
+				role="menuitem"
+				onclick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					closeMenu();
+					showMetadataOverlayOpen = true;
+				}}
+				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
+			>
+		{/snippet}
+	</ContextMenu>
 
 	{#if showFinished}
 		<div class="absolute top-2 right-2 z-10">
@@ -71,3 +89,12 @@
 		</button>
 	{/if}
 </div>
+
+{#if showMetadataOverlayOpen}
+	<ShowMetadataSearchOverlay
+		{show}
+		close={() => {
+			showMetadataOverlayOpen = false;
+		}}
+	/>
+{/if}
