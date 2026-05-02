@@ -31,7 +31,7 @@
 					closeMenu();
 					movieMetadataOverlayOpen = true;
 				}}
-				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Item 1</button
+				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
 			>
 		{/snippet}
 	</ContextMenu>
