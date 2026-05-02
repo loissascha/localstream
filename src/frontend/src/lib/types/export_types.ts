@@ -139,8 +139,8 @@ export interface SeasonMetadataInfo {
   fetch_source: string;
 }
 export interface ShowImage {
-  Medium: string;
-  Original: string;
+  medium: string;
+  original: string;
 }
 export interface ShowInfo {
   id: string;
@@ -155,13 +155,13 @@ export interface ShowListResponse {
   shows: ShowInfo[];
 }
 export interface ShowMetadata {
-  ID: number;
-  URL: string;
-  Name: string;
-  Genres: string[];
-  Premiered?: string;
-  Image?: ShowImage;
-  Summary?: string;
+  id: number;
+  url: string;
+  name: string;
+  genres: string[];
+  premiered?: string;
+  image?: ShowImage;
+  summary?: string;
 }
 export interface ShowMetadataInfo {
   id: string;
@@ -174,8 +174,8 @@ export interface ShowMetadataInfo {
   fetch_source: string;
 }
 export interface ShowSearchResult {
-  Score: number;
-  Show: ShowMetadata;
+  score: number;
+  show: ShowMetadata;
 }
 export interface UpdateCollectionRequest {
   name: string;
