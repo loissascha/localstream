@@ -6,19 +6,26 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
 type ShowMetadataService struct {
-	showRepo         repository.ShowRepository
-	showMetadataRepo repository.ShowMetadataRepository
+	showRepo             repository.ShowRepository
+	showMetadataRepo     repository.ShowMetadataRepository
+	showMetadataProvider provider.TVMetadataProvider
 }
 
-func NewShowMetadataService(showMetadataRepo repository.ShowMetadataRepository, showRepo repository.ShowRepository) *ShowMetadataService {
+func NewShowMetadataService(showMetadataRepo repository.ShowMetadataRepository, showRepo repository.ShowRepository, showMetadataProvider provider.TVMetadataProvider) *ShowMetadataService {
 	return &ShowMetadataService{
-		showMetadataRepo: showMetadataRepo,
-		showRepo:         showRepo,
+		showMetadataRepo:     showMetadataRepo,
+		showRepo:             showRepo,
+		showMetadataProvider: showMetadataProvider,
 	}
+}
+
+func (s *ShowMetadataService) Search(ctx context.Context, searchQuery string) ([]provider.ShowSearchResult, error) {
+	return s.showMetadataProvider.SearchShow(searchQuery, 0)
 }
 
 func (s *ShowMetadataService) Create(ctx context.Context, showID string, metadata *entity.ShowMetadata) error {

@@ -96,7 +96,7 @@ func main() {
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
-	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo)
+	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
