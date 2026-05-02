@@ -66,7 +66,7 @@ func (s *ShowMetadataService) SetPrimaryForShowIDByFetchID(ctx context.Context, 
 	}
 
 	// set the fetch result
-	err = s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTMDB)
+	err = s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
 	if err != nil {
 		return err
 	}
@@ -91,6 +91,7 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, showID str
 		MediumImageUrl:   metadata.Image.Medium,
 		OriginalImageUrl: metadata.Image.Original,
 		FetchID:          metadata.ID,
+		FetchSource:      entity.FetchSourceTVMaze,
 	}
 	return s.Create(ctx, showID, &m)
 }
