@@ -3,10 +3,12 @@
 	import { loadShowMetadata } from '$lib/api/show_metadata';
 	import { auth } from '$lib/auth.svelte';
 	import { type ShowMetadataInfo, type ShowInfo } from '$lib/types/export_types';
+	import ShowMetadataSearchOverlay from '../overlays/ShowMetadataSearchOverlay.svelte';
 
 	let { show }: { show: ShowInfo } = $props();
 	let metadata = $state<ShowMetadataInfo[]>([]);
 	let loading = $state(true);
+	let showMetadataOverlay = $state(false);
 
 	async function loadMetadata() {
 		try {
@@ -37,7 +39,12 @@
 			<span>
 				Metadata: {metadata.length}
 			</span>
-			<button> Details </button>
+			<button
+				class="cursor-pointer"
+				onclick={() => {
+					showMetadataOverlay = true;
+				}}>Show Details</button
+			>
 		</div>
 		<div class="mt-4 flex flex-col gap-2">
 			{#each metadata as m (m.id)}
@@ -74,3 +81,13 @@
 		</div>
 	{/if}
 </div>
+
+{#if showMetadataOverlay}
+	<ShowMetadataSearchOverlay
+		close={() => {
+			showMetadataOverlay = false;
+			loadMetadata();
+		}}
+		{show}
+	/>
+{/if}
