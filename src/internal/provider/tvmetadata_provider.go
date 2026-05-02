@@ -39,6 +39,7 @@ type ShowImage struct {
 }
 
 type TVMetadataProvider interface {
+	GetShowByID(id int) (*ShowMetadata, error)
 	SearchShow(name string, year int) ([]ShowSearchResult, error)
 	SearchSeasons(showId int) ([]SeasonMetadata, error)
 	SearchEpisodes(seasonId int) ([]EpisodeMetadata, error)
