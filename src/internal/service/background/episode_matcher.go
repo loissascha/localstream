@@ -102,7 +102,12 @@ func (self *EpisodeMatcher) RunBackground() {
 				continue
 			}
 			if seasonMetadata == nil {
-				logger.Warning(nil, "[EpisodeMatcher] Season Metadata is empty")
+				err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, entity.FetchSourceEmpty)
+				if err != nil {
+					logger.Error(err, "[EpisodeMatcher] Erorr resetting Season Metadata")
+					continue
+				}
+				logger.Warning(nil, "[EpisodeMatcher] Season Metadata is empty. Resetting Season fetch source.")
 				continue
 			}
 
