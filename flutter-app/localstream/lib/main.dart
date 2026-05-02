@@ -230,9 +230,9 @@ class _ServerWebViewScreenState extends State<ServerWebViewScreen> {
             return;
           }
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to load ${widget.serverUrl}: ${error.description}')),
-          );
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Failed to load ${widget.serverUrl}: ${error.description}')),
+          // );
         },
       ),
     )
