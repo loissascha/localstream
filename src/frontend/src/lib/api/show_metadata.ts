@@ -21,6 +21,26 @@ export async function loadShowMetadata(
 	}
 }
 
+export async function setPrimaryShowMetadataByFetchID(
+	bearerToken: string,
+	showID: string,
+	fetchID: number
+) {
+	try {
+		const res = await fetch(`/api/v1/show/metadata/${showID}/set/primary/by-fetchid/${fetchID}`, {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + bearerToken
+			}
+		});
+		if (!res.ok) {
+			throw new Error(`Failed to set fetch id: ${res.status}`);
+		}
+	} catch (e) {
+		throw e;
+	}
+}
+
 export async function searchShowMetadata(bearerToken: string, searchQuery: string) {
 	try {
 		const res = await fetch('/api/v1/show/metadata/search?q=' + encodeURIComponent(searchQuery), {

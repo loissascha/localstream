@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { searchShowMetadata } from '$lib/api/show_metadata';
+	import { searchShowMetadata, setPrimaryShowMetadataByFetchID } from '$lib/api/show_metadata';
+	import { loadShows } from '$lib/api/shows';
 	import { auth } from '$lib/auth.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { ShowInfo, ShowSearchResult } from '$lib/types/export_types';
@@ -92,17 +93,22 @@
 							<button
 								onclick={() => {
 									if (!auth.token) return;
-									// setPrimaryMovieMetadataByFetchID(auth.token, movie.id, result.id)
-									// 	.then(() => {
-									// 		searchResults = [];
-									// 		searchQuery = '';
-									// 		success_message = 'Updated primary metadata!';
-									// 		reloadSingleMovie(movie.id);
-									// 	})
-									// 	.catch((e) => {
-									// 		const m = (e as Error).message;
-									// 		alert(m);
-									// 	});
+									setPrimaryShowMetadataByFetchID(auth.token, show.id, result.show.id)
+										.then(() => {
+											searchResults = [];
+											searchQuery = '';
+											success_message = 'Updated primary metadata!';
+
+											// TODO: invent reloadSingleShow
+											// reloadSingleShow(show.id);
+											if (auth.token) {
+												loadShows(auth.token);
+											}
+										})
+										.catch((e) => {
+											const m = (e as Error).message;
+											alert(m);
+										});
 								}}
 								class="mt-4 mb-4 cursor-pointer rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600"
 								>Select as Primary</button
