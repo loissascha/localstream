@@ -107,7 +107,7 @@ func (self *EpisodeMatcher) RunBackground() {
 					logger.Error(err, "[EpisodeMatcher] Erorr resetting Season Metadata")
 					continue
 				}
-				logger.Warning(nil, "[EpisodeMatcher] Season Metadata is empty. Resetting Season fetch source.")
+				logger.Warning(nil, "[EpisodeMatcher] Season Metadata for season {SeasonNumber} of show {ShowName} is empty. Resetting Season fetch source.", season.Number, show.Name)
 				continue
 			}
 
