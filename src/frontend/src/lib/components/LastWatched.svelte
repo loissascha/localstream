@@ -4,17 +4,13 @@
 	import { listLatestWatchstateByShow } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
-	import type { ShowInfo, WatchstateResponse } from '$lib/types/export_types';
+	import type { WatchstateResponse } from '$lib/types/export_types';
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
-	import ShowMetadataSearchOverlay from './overlays/ShowMetadataSearchOverlay.svelte';
+	import ShowContextMenu from './ShowContextMenu.svelte';
 	import ShowInfoDisplay from './ShowInfoDisplay.svelte';
-	import ContextMenu from './ui/ContextMenu.svelte';
 
 	let data = $state<WatchstateResponse[]>([]);
-
-	let showMetadataOverlayOpen = $state(false);
-	let showMetadataShow = $state<ShowInfo | null>(null);
 
 	async function updateData() {
 		if (!auth.token) {
@@ -48,7 +44,7 @@
 		<ItemGrid>
 			{#each data as d (d.id)}
 				{#if !d.finished}
-					<ContextMenu closeOnItemClick={true}>
+					<ShowContextMenu show={d.show_info}>
 						<ListItemA
 							href={resolve(
 								'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
@@ -69,31 +65,9 @@
 								<div>S{d.season_info.number}:E{d.episode_info.number}</div>
 							</div>
 						</ListItemA>
-						{#snippet items(closeMenu)}
-							<button
-								role="menuitem"
-								onclick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									closeMenu();
-									showMetadataOverlayOpen = true;
-									showMetadataShow = d.show_info;
-								}}
-								class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
-							>
-						{/snippet}
-					</ContextMenu>
+					</ShowContextMenu>
 				{/if}
 			{/each}
 		</ItemGrid>
 	{/if}
 </section>
-
-{#if showMetadataOverlayOpen && showMetadataShow}
-	<ShowMetadataSearchOverlay
-		show={showMetadataShow}
-		close={() => {
-			showMetadataOverlayOpen = false;
-		}}
-	/>
-{/if}
