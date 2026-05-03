@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { ShowInfo } from '$lib/types/export_types';
+	import type { MovieInfo } from '$lib/types/export_types';
 	import type { Snippet } from 'svelte';
-	import ShowMetadataSearchOverlay from './overlays/ShowMetadataSearchOverlay.svelte';
+	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
 	import ContextMenu from './ui/ContextMenu.svelte';
 
 	interface Props {
 		children: Snippet;
-		show: ShowInfo;
+		movie: MovieInfo;
 	}
-	let { children, show }: Props = $props();
+	let { children, movie }: Props = $props();
 
-	let showMetadataOverlayOpen = $state(false);
+	let movieMetadataOverlayOpen = $state(false);
 </script>
 
 <ContextMenu closeOnItemClick={true}>
@@ -22,18 +22,18 @@
 				e.preventDefault();
 				e.stopPropagation();
 				closeMenu();
-				showMetadataOverlayOpen = true;
+				movieMetadataOverlayOpen = true;
 			}}
 			class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
 		>
 	{/snippet}
 </ContextMenu>
 
-{#if showMetadataOverlayOpen}
-	<ShowMetadataSearchOverlay
-		{show}
+{#if movieMetadataOverlayOpen}
+	<MovieMetadataSearchOverlay
+		{movie}
 		close={() => {
-			showMetadataOverlayOpen = false;
+			movieMetadataOverlayOpen = false;
 		}}
 	/>
 {/if}

@@ -7,6 +7,7 @@
 	import { type WatchstateMovieResponse } from '$lib/types/export_types';
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
+	import MovieContextMenu from './MovieContextMenu.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
 
 	let data = $state<WatchstateMovieResponse[]>([]);
@@ -42,15 +43,17 @@
 		</h2>
 		<ItemGrid>
 			{#each data as d (d.id)}
-				<ListItemA
-					href={resolve('/(protected)/watch/movies/[movieID]', {
-						movieID: d.movie_id
-					})}
-				>
-					<div>
-						<MovieInfoDisplay movie={d.movie_info} nameLink />
-					</div>
-				</ListItemA>
+				<MovieContextMenu movie={d.movie_info}>
+					<ListItemA
+						href={resolve('/(protected)/watch/movies/[movieID]', {
+							movieID: d.movie_id
+						})}
+					>
+						<div>
+							<MovieInfoDisplay movie={d.movie_info} nameLink />
+						</div>
+					</ListItemA>
+				</MovieContextMenu>
 			{/each}
 		</ItemGrid>
 	{/if}

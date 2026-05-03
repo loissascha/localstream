@@ -2,9 +2,9 @@
 	import { resolve } from '$app/paths';
 	import type { MovieInfo } from '$lib/types/export_types';
 	import ListItemA from './ListItemA.svelte';
+	import MovieContextMenu from './MovieContextMenu.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
 	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
-	import ContextMenu from './ui/ContextMenu.svelte';
 
 	interface Props {
 		movie: MovieInfo;
@@ -18,23 +18,11 @@
 </script>
 
 <div class="relative">
-	<ContextMenu closeOnItemClick={true}>
+	<MovieContextMenu {movie}>
 		<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
 			<MovieInfoDisplay {movie} />
 		</ListItemA>
-		{#snippet items(closeMenu)}
-			<button
-				role="menuitem"
-				onclick={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					closeMenu();
-					movieMetadataOverlayOpen = true;
-				}}
-				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
-			>
-		{/snippet}
-	</ContextMenu>
+	</MovieContextMenu>
 
 	{#if movie.finished}
 		<div class="absolute top-2 right-2 z-10">
