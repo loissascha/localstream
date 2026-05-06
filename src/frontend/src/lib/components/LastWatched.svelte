@@ -62,7 +62,10 @@
 								showPercentage
 							/>
 							<div>
-								<div>S{d.season_info.number}:E{d.episode_info.number}</div>
+								<div class="truncate">
+									S{d.season_info.number}:E{d.episode_info.number}
+									{d.episode_info.name}
+								</div>
 							</div>
 						</ListItemA>
 					</ShowContextMenu>
