@@ -6,17 +6,15 @@ It combines a Go backend and a SvelteKit frontend to scan local media libraries,
 
 ## Current scope
 
-- Stream local video files without loading full files into memory
-- Organize content by libraries, shows, seasons, episodes, and movies
-- Track user watch progress and "continue watching"
+- Stream local video files
+- Track user watch progress
 - Fetch metadata from TVMaze (shows) and TMDB (movies)
-- Basic JWT auth with user/admin areas
 
 This is an actively evolving side project, not a production-hardened platform.
 
 ## Stack
 
-- Backend: Go, PostgreSQL, goose migrations
+- Backend: Go, PostgreSQL
 - Frontend: SvelteKit 5
 
 ## Repository layout
@@ -50,7 +48,9 @@ At minimum, set `DATABASE_URL` and `PORT` in `src/.env`.
 cp src/frontend/.env.example src/frontend/.env
 ```
 
-Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:42069`).
+Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:42069`). 
+This is only required for the development environment. In production the frontend is hosted by the backend and therefore the frontend doesn't need this.
+If you're running the default PORT setup on the backend you don't need to create tne .env file.
 
 3) Install dependencies
 
@@ -59,7 +59,7 @@ Set `VITE_API_URL` to your backend origin (default local dev: `http://localhost:
 cd src && go mod download
 
 # frontend
-cd frontend && pnpm install
+cd src/frontend && pnpm install
 ```
 
 4) Run backend
@@ -78,91 +78,30 @@ pnpm dev
 
 Open the app at Vite's dev URL (typically `http://localhost:5173`).
 
-## Useful commands
-
-Backend (run from `src/`):
-
-- `go run ./cmd/server`
-- `go build ./...`
-- `go test ./...`
-- `go vet ./...`
-- `gofmt -w .`
-
-Frontend (run from `src/frontend/`):
-
-- `pnpm dev`
-- `pnpm check`
-- `pnpm lint`
-- `pnpm build`
-- `pnpm format`
-
-## Environment variables
-
-Backend (`src/.env`):
-
-- `PORT` (required)
-- `DATABASE_URL` (required)
-- `DB_MAX_OPEN_CONNS` (optional)
-- `DB_MAX_IDLE_CONNS` (optional)
-- `DB_CONN_MAX_LIFETIME` (optional)
-- `VIDEO_LIBRARY_DIR` (optional, default `./videos`)
-- `VIDEO_ALLOWED_EXTENSIONS` (optional, default `.mp4`)
-- `APP_ENV` (optional, `development`/`production`)
-- `TMDB_API_KEY` (optional; needed for TMDB movie metadata)
-- `ALLOWED_ORIGINS` (required for production environment. set to '*' to allow all hosts or set to frontend url for proper CORS handling)
-
-Frontend (`src/frontend/.env`):
-
-- `VITE_API_URL` (backend base URL used by frontend API calls)
-
 ## Production
 
-In production, the frontend is built into `src/frontend/build` and served by the main Go server. There is no separate frontend server process.
+The Go server serves the built frontend from `src/frontend/build` and serves the API from the same process.
 
-1) Configure environment files
-
-```bash
-cp src/.env.example src/.env
-```
-
-Set at least `PORT` and `DATABASE_URL` in `src/.env`. Set `APP_ENV=production` and configure `ALLOWED_ORIGINS` as needed.
-
-2) Install dependencies
-
-```bash
-cd src && go mod download
-cd frontend && pnpm install
-```
-
-3) Build the frontend
-
-```bash
-cd src/frontend
-pnpm build
-```
-
-4) Start the Go server
-
-```bash
-cd src
-go run ./cmd/server
-```
-
-Or build a binary first:
-
-```bash
-cd src
-go build -o localstream ./cmd/server
-./localstream
-```
-
-The Go server serves the built frontend from `src/frontend/build`, serves the API from the same process, and falls back to `index.html` for client-side routes.
+I chose this path because it's the easiest when the app is self hosted in a home network environment and someone tries to access it by for example Tailscale IP the frontend can still connect to the backend by its relative path.
 
 ## Notes
 
 - Database migrations run automatically on backend startup.
 - Type exports for frontend are generated in development by the backend server.
 - In development, the frontend uses Vite and proxies `/api` requests to `VITE_API_URL`.
+
+## Usage of AI 
+
+This project was *not* vibe-coded or heavily influenced by AI. 
+
+I used AI in a very controlled manner. 
+
+For example: 
+- using it as a replacement to "Googling something" 
+- creating a set of svg icons in the frontend (most of them as placeholders that have already been replaced)
+- writing documentation (parts of this README for example)
+- letting it fill out some pre-defined boilerplate code (for example: creating the repository interface/struct for a new entity with basic CRUD operations)
+- writing small (often temporary / later refactored) components (for example: the original VideoPlayer.svelte component; regex parsers in the backend to extract show/movie names, episode numbers, season numbers from raw path/file names; the original byte range video stream backend handler)
 
 ## License
 
