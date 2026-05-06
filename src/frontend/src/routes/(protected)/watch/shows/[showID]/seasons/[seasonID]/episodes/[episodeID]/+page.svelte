@@ -182,7 +182,11 @@
 				</a>
 				<a
 					class="p-2 text-slate-300 no-underline hover:text-white"
-					href={resolve('/(protected)/(user)/shows/[showID]', { showID: showId })}
+					href={resolve('/(protected)/(user)/shows/[showID]', {
+						showID: showId
+					}) +
+						'?season=' +
+						seasonId}
 				>
 					<ChevronLeftIcon />
 				</a>
