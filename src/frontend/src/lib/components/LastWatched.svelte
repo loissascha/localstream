@@ -61,7 +61,7 @@
 								percentage={d.percentage}
 								showPercentage
 							/>
-							<div class="truncate">
+							<div class="truncate text-center text-sm font-bold text-neutral-400">
 								S{d.season_info.number}:E{d.episode_info.number}
 								{d.episode_info.name}
 							</div>
