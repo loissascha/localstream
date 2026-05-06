@@ -142,7 +142,7 @@ func (h *UserMovieWatchstateHandler) saveWatchstate(w http.ResponseWriter, r *ht
 	finished := requestBody.Finished
 	if !finished {
 		percent := (100 / requestBody.Duration) * requestBody.Position
-		if percent >= 95 {
+		if percent >= 90 {
 			finished = true
 		}
 	}
