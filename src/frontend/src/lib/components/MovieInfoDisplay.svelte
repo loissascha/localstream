@@ -25,7 +25,7 @@
 				goto(resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id }));
 			}
 		}}
-		class={`my-1 w-full cursor-pointer font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
+		class={`my-1 w-full max-w-full cursor-pointer truncate font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
 	>
 		<div class="w-full text-center">{movie.name}</div>
 		{#if movie.year > 0}
