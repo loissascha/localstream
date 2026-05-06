@@ -20,6 +20,8 @@
 
 	const showId = $derived(page.params.showID ?? '');
 
+	const seasonId = page.url.searchParams.get('season');
+
 	let loadingSeasons = $state(true);
 	let loadingEpisodes = $state(true);
 
@@ -64,7 +66,16 @@
 			seasonData = r.seasons;
 
 			if (selectedSeason == null && seasonData.length > 0) {
-				selectedSeason = seasonData[0];
+				if (seasonId != null) {
+					for (var s of seasonData) {
+						if (s.id == seasonId) {
+							selectedSeason = s;
+						}
+					}
+				}
+				if (selectedSeason == null) {
+					selectedSeason = seasonData[0];
+				}
 			}
 		} catch (error) {
 			errorMessage =
@@ -72,6 +83,13 @@
 		} finally {
 			loadingSeasons = false;
 		}
+	}
+
+	function selectSeason(season: SeasonInfo) {
+		selectedSeason = season;
+		const url = new URL(page.url);
+		url.searchParams.set('season', season.id);
+		history.replaceState(history.state, '', url);
 	}
 
 	$effect(() => {
@@ -135,7 +153,7 @@
 				{#each seasonData as season (season.id)}
 					<button
 						class={`cursor-pointer ${selectedSeason == season ? 'font-bold' : ''}`}
-						onclick={() => (selectedSeason = season)}
+						onclick={() => selectSeason(season)}
 					>
 						Season {season.number}
 					</button>
