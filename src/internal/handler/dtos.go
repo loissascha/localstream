@@ -5,59 +5,13 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
-	"github.com/loissascha/localstream/internal/repository"
 )
 
 type AnyInfoStruct interface{}
 
-type MovieInfo struct {
-	ID               string    `json:"id"`
-	Name             string    `json:"name"`
-	Year             int       `json:"year"`
-	Description      string    `json:"description"`
-	FetchSource      string    `json:"fetch_source"`
-	MediumImageUrl   string    `json:"medium_image_url"`
-	BackdropImageUrl string    `json:"backdrop_image_url"`
-	Position         float64   `json:"position"`
-	Duration         float64   `json:"duration"`
-	Finished         bool      `json:"finished"`
-	Percentage       float64   `json:"percentage"`
-	CreatedAt        time.Time `json:"created_at"`
-}
-
-type MovieListResponse struct {
-	Movies []MovieInfo `json:"movies"`
-}
-
-type ShowInfo struct {
-	ID             string    `json:"id"`
-	Name           string    `json:"name"`
-	Year           int       `json:"year"`
-	FetchSource    string    `json:"fetch_source"`
-	Description    string    `json:"description"`
-	MediumImageUrl string    `json:"medium_image_url"`
-	CreatedAt      time.Time `json:"created_at"`
-}
-
-type ShowListResponse struct {
-	Shows []ShowInfo `json:"shows"`
-}
-
 type SearchResponse struct {
 	Shows  []ShowInfo  `json:"shows"`
 	Movies []MovieInfo `json:"movies"`
-}
-
-type EpisodeInfo struct {
-	ID               string         `json:"id"`
-	SeasonID         string         `json:"season_id"`
-	Number           int            `json:"number"`
-	Watchstate       WatchstateInfo `json:"watchstate"`
-	Name             string         `json:"name"`
-	Summary          string         `json:"summary"`
-	MediumImageUrl   string         `json:"medium_image_url"`
-	OriginalImageUrl string         `json:"original_image_url"`
-	FetchID          int            `json:"fetch_id"`
 }
 
 type WatchstateMovieResponse struct {
@@ -93,10 +47,6 @@ type WatchstateInfo struct {
 	Duration   float64 `json:"duration"`
 	Percentage float64 `json:"percentage"`
 	Finished   bool    `json:"finished"`
-}
-
-type EpisodeListResponse struct {
-	Episodes []EpisodeInfo `json:"episodes"`
 }
 
 type SeasonInfo struct {
@@ -136,29 +86,6 @@ type CollectionDetailResponse struct {
 	Shows      []ShowInfo     `json:"shows"`
 }
 
-type ShowMetadataInfo struct {
-	ID               string             `json:"id"`
-	ShowID           string             `json:"show_id"`
-	Name             string             `json:"name"`
-	Url              string             `json:"url"`
-	Description      string             `json:"description"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	OriginalImageUrl string             `json:"original_image_url"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
-}
-
-type MovieMetadataInfo struct {
-	ID               string             `json:"id"`
-	MovieID          string             `json:"movie_id"`
-	Name             string             `json:"name"`
-	ReleaseYear      int                `json:"release_year"`
-	Url              string             `json:"url"`
-	Description      string             `json:"description"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	BackdropImageUrl string             `json:"backdrop_image_url"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
-}
-
 type SeasonMetadataInfo struct {
 	ID               string             `json:"id"`
 	SeasonID         string             `json:"season_id"`
@@ -170,46 +97,6 @@ type SeasonMetadataInfo struct {
 	OriginalImageUrl string             `json:"original_image_url"`
 	FetchID          int                `json:"fetch_id"`
 	FetchSource      entity.FetchSource `json:"fetch_source"`
-}
-
-type EpisodeMetadataInfo struct {
-	ID               string             `json:"id"`
-	EpisodeID        string             `json:"episode_id"`
-	Url              string             `json:"url"`
-	Name             string             `json:"name"`
-	Number           int                `json:"number"`
-	Summary          string             `json:"summary"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	OriginalImageUrl string             `json:"original_image_url"`
-	FetchID          int                `json:"fetch_id"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
-}
-
-func toMovieMetadataInfo(m *entity.MovieMetadata) MovieMetadataInfo {
-	return MovieMetadataInfo{
-		ID:               encoders.EncodeUUID(m.ID),
-		MovieID:          encoders.EncodeUUID(m.MovieID),
-		Name:             m.Name,
-		ReleaseYear:      m.ReleaseYear,
-		Url:              m.Url,
-		Description:      m.Description,
-		MediumImageUrl:   m.MediumImageUrl,
-		BackdropImageUrl: m.BackdropImageUrl,
-		FetchSource:      m.FetchSource,
-	}
-}
-
-func toShowMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {
-	return ShowMetadataInfo{
-		ID:               encoders.EncodeUUID(m.ID),
-		ShowID:           encoders.EncodeUUID(m.ShowID),
-		Name:             m.Name,
-		Url:              m.Url,
-		Description:      m.Description,
-		MediumImageUrl:   m.MediumImageUrl,
-		OriginalImageUrl: m.OriginalImageUrl,
-		FetchSource:      m.FetchSource,
-	}
 }
 
 func toSeasonMetadataInfo(m *entity.SeasonMetadata) SeasonMetadataInfo {
@@ -224,45 +111,6 @@ func toSeasonMetadataInfo(m *entity.SeasonMetadata) SeasonMetadataInfo {
 		OriginalImageUrl: m.OriginalImageUrl,
 		FetchID:          m.FetchID,
 		FetchSource:      m.FetchSource,
-	}
-}
-
-func toEpisodeMetadataInfo(m *entity.EpisodeMetadata) EpisodeMetadataInfo {
-	return EpisodeMetadataInfo{
-		ID:               encoders.EncodeUUID(m.ID),
-		EpisodeID:        encoders.EncodeUUID(m.EpisodeID),
-		Url:              m.Url,
-		Name:             m.Name,
-		Number:           m.Number,
-		Summary:          m.Summary,
-		MediumImageUrl:   m.MediumImageUrl,
-		OriginalImageUrl: m.OriginalImageUrl,
-		FetchID:          m.FetchID,
-		FetchSource:      m.FetchSource,
-	}
-}
-
-func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
-	percent := 0.0
-	if m.Duration > 0 {
-		percent = (100 / m.Duration) * m.Position
-	}
-	if m.Finished {
-		percent = 100
-	}
-	return MovieInfo{
-		ID:               encoders.EncodeUUID(m.ID),
-		Name:             m.Name,
-		Year:             m.Year,
-		Description:      m.Description,
-		FetchSource:      string(m.FetchSource),
-		MediumImageUrl:   m.MediumImageUrl,
-		BackdropImageUrl: m.BackdropImageUrl,
-		Duration:         m.Duration,
-		Finished:         m.Finished,
-		Position:         m.Position,
-		Percentage:       percent,
-		CreatedAt:        m.CreatedAt,
 	}
 }
 
@@ -281,40 +129,6 @@ func toCollectionInfo(c *entity.Collection) CollectionInfo {
 		Name:      c.Name,
 		CreatedAt: c.CreatedAt,
 		UpdatedAt: c.UpdatedAt,
-	}
-}
-
-func toEpisodeInfo(episode *repository.EpisodeWithMetadata, infos ...AnyInfoStruct) EpisodeInfo {
-	var watchstateInfo WatchstateInfo
-	for _, info := range infos {
-		i, ok := info.(WatchstateInfo)
-		if ok {
-			watchstateInfo = i
-		}
-	}
-
-	return EpisodeInfo{
-		ID:               encoders.EncodeUUID(episode.ID),
-		SeasonID:         encoders.EncodeUUID(episode.SeasonID),
-		Number:           episode.Number,
-		Watchstate:       watchstateInfo,
-		Name:             episode.Name,
-		Summary:          episode.Summary,
-		MediumImageUrl:   episode.MediumImageUrl,
-		OriginalImageUrl: episode.OriginalImageUrl,
-		FetchID:          episode.FetchID,
-	}
-}
-
-func toShowInfo(show *repository.ShowSelectItem) ShowInfo {
-	return ShowInfo{
-		ID:             encoders.EncodeUUID(show.ID),
-		Name:           show.Name,
-		Year:           show.Year,
-		FetchSource:    string(show.FetchSource),
-		Description:    show.Description,
-		MediumImageUrl: show.MediumImageUrl,
-		CreatedAt:      show.CreatedAt,
 	}
 }
 
