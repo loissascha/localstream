@@ -92,7 +92,7 @@ func (r *EpisodeRepository) DeleteByID(ctx context.Context, episodeId uuid.UUID)
 
 func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path string, seasonId uuid.UUID) (*entity.Episode, error) {
 	const query = `
-		SELECT id, season_id, number, path, created_at, fetch_source
+		SELECT *
 		FROM episodes
 		WHERE path = $1 AND season_id = $2
 		LIMIT 1
@@ -111,7 +111,7 @@ func (r *EpisodeRepository) GetByPathAndSeasonID(ctx context.Context, path strin
 
 func (r *EpisodeRepository) ListBySeasonID(ctx context.Context, seasonId uuid.UUID) ([]entity.Episode, error) {
 	const query = `
-		SELECT id, season_id, number, path, created_at, fetch_source
+		SELECT *
 		FROM episodes
 		WHERE season_id = $1
 		ORDER BY number ASC
@@ -125,15 +125,33 @@ func (r *EpisodeRepository) ListBySeasonID(ctx context.Context, seasonId uuid.UU
 	return episodes, nil
 }
 
-func (r *EpisodeRepository) GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*entity.Episode, error) {
+func (r *EpisodeRepository) ListBySeasonIDWithMetadata(ctx context.Context, seasonId uuid.UUID) ([]repository.EpisodeWithMetadata, error) {
 	const query = `
-		SELECT id, season_id, number, path, created_at, fetch_source
-		FROM episodes
-		WHERE season_id = $1 AND number = $2
+		SELECT e.id, coalesce(m.name, '') as "name", coalesce(m.summary, '') as "summary", coalesce(m.medium_image_url, '') as "medium_image_url", coalesce(m.original_image_url, '') as "original_image_url", coalesce(m.fetch_id, 0) as "fetch_id", e.season_id, e.number, e.path, e.created_at, e.fetch_source
+		FROM episodes e
+		LEFT JOIN episode_metadata m ON m.episode_id=e.id
+		WHERE e.season_id = $1
+		ORDER BY e.number ASC
+	`
+
+	var episodes []repository.EpisodeWithMetadata
+	if err := r.db.SelectContext(ctx, &episodes, query, seasonId); err != nil {
+		return nil, fmt.Errorf("list episodes by season id: %w", err)
+	}
+
+	return episodes, nil
+}
+
+func (r *EpisodeRepository) GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*repository.EpisodeWithMetadata, error) {
+	const query = `
+		SELECT e.id, coalesce(m.name, '') as "name", coalesce(m.summary, '') as "summary", coalesce(m.medium_image_url, '') as "medium_image_url", coalesce(m.original_image_url, '') as "original_image_url", coalesce(m.fetch_id, 0) as "fetch_id", e.season_id, e.number, e.path, e.created_at, e.fetch_source
+		FROM episodes e
+		LEFT JOIN episode_metadata m ON m.episode_id=e.id
+		WHERE e.season_id = $1 AND e.number = $2
 		LIMIT 1
 	`
 
-	var episode entity.Episode
+	var episode repository.EpisodeWithMetadata
 	if err := r.db.GetContext(ctx, &episode, query, seasonId, number); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

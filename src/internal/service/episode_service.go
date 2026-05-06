@@ -33,6 +33,20 @@ func (s *EpisodeService) ListBySeasonID(ctx context.Context, seasonId string) ([
 	return episodes, nil
 }
 
+func (s *EpisodeService) ListBySeasonIDWithMetadata(ctx context.Context, seasonId string) ([]repository.EpisodeWithMetadata, error) {
+	seasonUUID, err := encoders.DecodeUUID(seasonId)
+	if err != nil {
+		return nil, fmt.Errorf("parse season id: %w", err)
+	}
+
+	episodes, err := s.episodeRepo.ListBySeasonIDWithMetadata(ctx, seasonUUID)
+	if err != nil {
+		return nil, fmt.Errorf("list episodes by season id: %w", err)
+	}
+
+	return episodes, nil
+}
+
 func (s *EpisodeService) GetByID(ctx context.Context, episodeId string) (*repository.EpisodeWithMetadata, error) {
 	id, err := encoders.DecodeUUID(episodeId)
 	if err != nil {
@@ -64,7 +78,7 @@ func (s *EpisodeService) DeleteByID(ctx context.Context, episodeId string) error
 	return nil
 }
 
-func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (*entity.Episode, error) {
+func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (*repository.EpisodeWithMetadata, error) {
 	id, err := encoders.DecodeUUID(episodeId)
 	if err != nil {
 		return nil, err
@@ -82,7 +96,7 @@ func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (
 		return nil, err
 	}
 
-	episodes, err := s.episodeRepo.ListBySeasonID(ctx, seasonId)
+	episodes, err := s.episodeRepo.ListBySeasonIDWithMetadata(ctx, seasonId)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +121,7 @@ func (s *EpisodeService) GetNextEpisode(ctx context.Context, episodeId string) (
 	if nextSeasonId == uuid.Nil {
 		return nil, nil
 	}
-	episodes, err = s.episodeRepo.ListBySeasonID(ctx, nextSeasonId)
+	episodes, err = s.episodeRepo.ListBySeasonIDWithMetadata(ctx, nextSeasonId)
 	if err != nil {
 		return nil, err
 	}

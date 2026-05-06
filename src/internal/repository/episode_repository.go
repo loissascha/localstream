@@ -15,9 +15,10 @@ type EpisodeRepository interface {
 	Create(ctx context.Context, episode *entity.Episode) error
 	GetByPathAndSeasonID(ctx context.Context, path string, seasonId uuid.UUID) (*entity.Episode, error)
 	ListBySeasonID(ctx context.Context, seasonId uuid.UUID) ([]entity.Episode, error)
+	ListBySeasonIDWithMetadata(ctx context.Context, seasonId uuid.UUID) ([]EpisodeWithMetadata, error)
 	GetByID(ctx context.Context, episodeId uuid.UUID) (*EpisodeWithMetadata, error)
 	DeleteByID(ctx context.Context, episodeId uuid.UUID) error
-	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*entity.Episode, error)
+	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*EpisodeWithMetadata, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
 }
 

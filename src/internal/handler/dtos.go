@@ -284,7 +284,7 @@ func toCollectionInfo(c *entity.Collection) CollectionInfo {
 	}
 }
 
-func toEpisodeInfoFromEpisodeWithMetadata(episode *repository.EpisodeWithMetadata, infos ...AnyInfoStruct) EpisodeInfo {
+func toEpisodeInfo(episode *repository.EpisodeWithMetadata, infos ...AnyInfoStruct) EpisodeInfo {
 	var watchstateInfo WatchstateInfo
 	for _, info := range infos {
 		i, ok := info.(WatchstateInfo)
@@ -303,28 +303,6 @@ func toEpisodeInfoFromEpisodeWithMetadata(episode *repository.EpisodeWithMetadat
 		MediumImageUrl:   episode.MediumImageUrl,
 		OriginalImageUrl: episode.OriginalImageUrl,
 		FetchID:          episode.FetchID,
-	}
-}
-
-func toEpisodeInfo(episode *entity.Episode, infos ...AnyInfoStruct) EpisodeInfo {
-	var watchstateInfo WatchstateInfo
-	for _, info := range infos {
-		i, ok := info.(WatchstateInfo)
-		if ok {
-			watchstateInfo = i
-		}
-	}
-
-	return EpisodeInfo{
-		ID:               encoders.EncodeUUID(episode.ID),
-		SeasonID:         encoders.EncodeUUID(episode.SeasonID),
-		Number:           episode.Number,
-		Watchstate:       watchstateInfo,
-		Name:             "",
-		Summary:          "",
-		MediumImageUrl:   "",
-		OriginalImageUrl: "",
-		FetchID:          0,
 	}
 }
 

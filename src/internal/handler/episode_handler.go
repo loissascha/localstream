@@ -139,7 +139,7 @@ func (h *EpisodeHandler) episodeDetails(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	episodeInfo := toEpisodeInfoFromEpisodeWithMetadata(episode)
+	episodeInfo := toEpisodeInfo(episode)
 	respond.JSON(w, http.StatusOK, episodeInfo)
 }
 
@@ -158,7 +158,7 @@ func (h *EpisodeHandler) nextEpisode(w http.ResponseWriter, r *http.Request) {
 
 func (h *EpisodeHandler) listEpisodes(w http.ResponseWriter, r *http.Request) {
 	seasonID := r.PathValue("seasonID")
-	episodes, err := h.episodeService.ListBySeasonID(r.Context(), seasonID)
+	episodes, err := h.episodeService.ListBySeasonIDWithMetadata(r.Context(), seasonID)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read episodes"})
 		return
