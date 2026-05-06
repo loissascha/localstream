@@ -39,6 +39,11 @@ export interface EpisodeInfo {
   season_id: string;
   number: number;
   watchstate: WatchstateInfo;
+  name: string;
+  summary: string;
+  medium_image_url: string;
+  original_image_url: string;
+  fetch_id: number;
 }
 export interface EpisodeListResponse {
   episodes: EpisodeInfo[];

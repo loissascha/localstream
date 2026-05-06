@@ -47,15 +47,16 @@ func (r *EpisodeRepository) Create(ctx context.Context, episode *entity.Episode)
 	return nil
 }
 
-func (r *EpisodeRepository) GetByID(ctx context.Context, episodeId uuid.UUID) (*entity.Episode, error) {
+func (r *EpisodeRepository) GetByID(ctx context.Context, episodeId uuid.UUID) (*repository.EpisodeWithMetadata, error) {
 	const query = `
-		SELECT id, season_id, number, path, created_at, fetch_source
-		FROM episodes
-		WHERE id = $1
+		SELECT e.id, coalesce(m.name, '') as "name", coalesce(m.summary, '') as "summary", coalesce(m.medium_image_url, '') as "medium_image_url", coalesce(m.original_image_url, '') as "original_image_url", coalesce(m.fetch_id, 0) as "fetch_id", e.season_id, e.number, e.path, e.created_at, e.fetch_source
+		FROM episodes e
+		LEFT JOIN episode_metadata m ON m.episode_id=e.id
+		WHERE e.id = $1
 		LIMIT 1
 	`
 
-	var episode entity.Episode
+	var episode repository.EpisodeWithMetadata
 	if err := r.db.GetContext(ctx, &episode, query, episodeId); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

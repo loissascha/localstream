@@ -139,7 +139,7 @@ func (h *EpisodeHandler) episodeDetails(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	episodeInfo := toEpisodeInfo(episode)
+	episodeInfo := toEpisodeInfoFromEpisodeWithMetadata(episode)
 	respond.JSON(w, http.StatusOK, episodeInfo)
 }
 

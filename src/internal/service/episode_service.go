@@ -33,7 +33,7 @@ func (s *EpisodeService) ListBySeasonID(ctx context.Context, seasonId string) ([
 	return episodes, nil
 }
 
-func (s *EpisodeService) GetByID(ctx context.Context, episodeId string) (*entity.Episode, error) {
+func (s *EpisodeService) GetByID(ctx context.Context, episodeId string) (*repository.EpisodeWithMetadata, error) {
 	id, err := encoders.DecodeUUID(episodeId)
 	if err != nil {
 		return nil, err

@@ -280,7 +280,7 @@ func (h *UserWatchstateHandler) listLatestWatchstatesByShow(w http.ResponseWrite
 			return
 		}
 
-		response = append(response, toWatchstateResponse(watchstate, toShowInfo(show), toSeasonInfo(season), toEpisodeInfo(episode)))
+		response = append(response, toWatchstateResponse(watchstate, toShowInfo(show), toSeasonInfo(season), toEpisodeInfoFromEpisodeWithMetadata(episode)))
 	}
 
 	respond.JSON(w, http.StatusOK, WatchstateListResponse{Watchstates: response})
