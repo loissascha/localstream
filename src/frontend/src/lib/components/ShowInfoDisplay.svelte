@@ -34,7 +34,7 @@
 				goto(resolve('/(protected)/(user)/shows/[showID]', { showID: show.id }));
 			}
 		}}
-		class={`w-full max-w-full cursor-pointer truncate text-center font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
+		class={`mt-1 w-full max-w-full cursor-pointer truncate text-center font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
 	>
 		{show.name}
 	</button>
