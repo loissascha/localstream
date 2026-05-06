@@ -16,6 +16,7 @@
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import { addShowToCollection } from '$lib/api/collections';
 	import { shows } from '$lib/shows.svelte';
+	import PercentageBar from '$lib/components/ui/PercentageBar.svelte';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -150,66 +151,73 @@
 					seasonID: selectedSeason!.id,
 					episodeID: episode.id
 				})}
-				class="flex aspect-square shrink-0 flex-col justify-between rounded bg-neutral-800 md:w-34"
+				class="relative flex aspect-video shrink-0 flex-col justify-between rounded md:w-54"
 			>
 				<div>
-					<div class="flex justify-end px-2 py-1">
-						{#if episode.watchstate.finished}
-							<button
-								class="cursor-pointer text-brand"
-								onclick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									if (auth.token && selectedSeason) {
-										deleteWatchstate(auth.token, episode.id)
-											.then(() => {
-												if (selectedSeason) {
-													loadEpisodes(selectedSeason.id);
-												}
-											})
-											.catch((e) => {
-												const m = (e as Error).message;
-												alert(m);
-											});
-									}
-								}}><CheckIcon /></button
-							>
-						{:else}
-							<button
-								class="cursor-pointer text-neutral-500"
-								onclick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									if (auth.token) {
-										setWatchstateFinished(auth.token, episode.id)
-											.then((res) => {
-												if (selectedSeason) {
-													loadEpisodes(selectedSeason.id);
-												}
-											})
-											.catch((e) => {
-												const m = (e as Error).message;
-												alert(m);
-											});
-									}
-								}}
-							>
-								<CheckIcon />
-							</button>
-						{/if}
-					</div>
+					{#if episode.medium_image_url != ''}
+						<img
+							class="aspect-video w-full rounded"
+							alt={`Episode ${episode.number}`}
+							src={episode.medium_image_url}
+						/>
+					{:else}
+						<div class="aspect-video w-full rounded bg-neutral-800"></div>
+					{/if}
 				</div>
-				<div class="grow content-center text-center text-2xl font-bold">
-					{episode.number}
+				<div class="mt-1 w-full truncate font-bold text-neutral-400">
+					E{episode.number}: {episode.name}
 				</div>
 				<div>
 					{#if episode.watchstate.percentage > 0 && !episode.watchstate.finished}
-						<div
-							style={`width: ${episode.watchstate.percentage}%;`}
-							class={`h-2 bg-brand text-sm`}
-						></div>
+						<PercentageBar percentage={episode.watchstate.percentage} />
 					{:else}
 						<div class="h-2 w-full"></div>
+					{/if}
+				</div>
+
+				<div class="absolute top-2 right-2 z-10">
+					{#if episode.watchstate.finished}
+						<button
+							class="cursor-pointer rounded-full bg-neutral-800 text-brand"
+							onclick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								if (auth.token && selectedSeason) {
+									deleteWatchstate(auth.token, episode.id)
+										.then(() => {
+											if (selectedSeason) {
+												loadEpisodes(selectedSeason.id);
+											}
+										})
+										.catch((e) => {
+											const m = (e as Error).message;
+											alert(m);
+										});
+								}
+							}}><CheckIcon /></button
+						>
+					{:else}
+						<button
+							class="cursor-pointer rounded-full bg-neutral-800 text-neutral-100"
+							onclick={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+								if (auth.token) {
+									setWatchstateFinished(auth.token, episode.id)
+										.then((res) => {
+											if (selectedSeason) {
+												loadEpisodes(selectedSeason.id);
+											}
+										})
+										.catch((e) => {
+											const m = (e as Error).message;
+											alert(m);
+										});
+								}
+							}}
+						>
+							<CheckIcon />
+						</button>
 					{/if}
 				</div>
 			</a>
