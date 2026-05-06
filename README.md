@@ -92,16 +92,17 @@ I chose this path because it's the easiest when the app is self hosted in a home
 
 ## Usage of AI 
 
-This project was *not* vibe-coded or heavily influenced by AI. 
+This project was **not** vibe-coded or heavily influenced by AI. 
 
-I used AI in a very controlled manner. 
+But I did use AI in a very controlled manner and would like to point that out. 
 
 For example: 
-- using it as a replacement to "Googling something" 
-- creating a set of svg icons in the frontend (most of them as placeholders that have already been replaced)
+- using it as a replacement to _"Googling something"_ 
+- creating a set of svg icons for the frontend (most of them as placeholders that have already been replaced as they found their use in the project)
 - writing documentation (parts of this README for example)
-- letting it fill out some pre-defined boilerplate code (for example: creating the repository interface/struct for a new entity with basic CRUD operations)
-- writing small (often temporary / later refactored) components (for example: the original VideoPlayer.svelte component; regex parsers in the backend to extract show/movie names, episode numbers, season numbers from raw path/file names; the original byte range video stream backend handler)
+- letting it fill out some boilerplate code (for example: creating the repository interface/struct for a new entity with basic CRUD operations)
+- writing small (often temporary / later refactored) components (for example: the original VideoPlayer.svelte component; regex parsers in the backend to extract show/movie names and season/episode numbers from raw path/file names; the original byte range video stream backend handler)
+
 
 ## License
 
