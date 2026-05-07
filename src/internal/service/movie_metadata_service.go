@@ -8,6 +8,7 @@ import (
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -110,13 +111,26 @@ func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context
 func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie *entity.Movie, r provider.MovieResult) error {
 	logger.Debug(nil, "------------ RESULT ------------ ")
 
+	uuid, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+
 	backdropLink := ""
 	posterLink := ""
 	if r.BackdropPath != "" {
 		backdropLink = "https://image.tmdb.org/t/p/w780" + r.BackdropPath
+		backdropLink, err = helper.DownloadImageAndGetStaticPath(backdropLink, fmt.Sprintf("backd_M_%s", uuid.String()))
+		if err != nil {
+			return err
+		}
 	}
 	if r.PosterPath != "" {
 		posterLink = "https://image.tmdb.org/t/p/w500" + r.PosterPath
+		posterLink, err = helper.DownloadImageAndGetStaticPath(posterLink, fmt.Sprintf("poster_M_%s", uuid.String()))
+		if err != nil {
+			return err
+		}
 	}
 
 	logger.Debug(nil, "Title: {Title}", r.Title)
@@ -127,11 +141,6 @@ func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie
 	releaseYear := r.ReleaseYear
 	if releaseYear == 0 {
 		releaseYear = movie.Year
-	}
-
-	uuid, err := uuid.NewV7()
-	if err != nil {
-		return err
 	}
 
 	err = self.movieMetadataRepo.Create(ctx, &entity.MovieMetadata{
