@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -83,13 +84,31 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, showID str
 		return err
 	}
 
+	description := ""
+	if metadata.Summary != nil {
+		description = *metadata.Summary
+	}
+
+	mediumImage := ""
+	originalImage := ""
+	if metadata.Image != nil {
+		mediumImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_SH_%s", uid.String()))
+		if err != nil {
+			return err
+		}
+		originalImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_SH_%s", uid.String()))
+		if err != nil {
+			return err
+		}
+	}
+
 	m := entity.ShowMetadata{
 		ID:               uid,
 		Name:             metadata.Name,
 		Url:              metadata.URL,
-		Description:      *metadata.Summary,
-		MediumImageUrl:   metadata.Image.Medium,
-		OriginalImageUrl: metadata.Image.Original,
+		Description:      description,
+		MediumImageUrl:   mediumImage,
+		OriginalImageUrl: originalImage,
 		FetchID:          metadata.ID,
 		FetchSource:      entity.FetchSourceTVMaze,
 	}
