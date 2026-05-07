@@ -24,24 +24,6 @@
 		</ListItemA>
 	</MovieContextMenu>
 
-	{#if movie.finished}
-		<div class="absolute top-2 right-2 z-10">
-			<span
-				class={`flex h-7 w-7 items-center justify-center rounded-full border bg-neutral-950/80 text-brand shadow-sm transition-all duration-150`}
-			>
-				<svg aria-hidden="true" class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-					<path
-						d="M3.5 8.5L6.5 11.5L12.5 4.5"
-						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-					/>
-				</svg>
-			</span>
-		</div>
-	{/if}
-
 	{#if selectable}
 		<button
 			type="button"
