@@ -137,6 +137,9 @@ func main() {
 	searchH.RegisterRoutes()
 	collectionH.RegisterRoutes()
 
+	fs := http.FileServer(http.Dir("./static"))
+	s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
+
 	frontendBuildDir := os.Getenv("FRONTEND_APP_DIR")
 	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))
 	s.Handle("/", func(w http.ResponseWriter, r *http.Request) {
