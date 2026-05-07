@@ -11,6 +11,10 @@ export default defineConfig({
 			'/api': {
 				target: backendOrigin,
 				changeOrigin: true
+			},
+			'/static': {
+				target: backendOrigin,
+				changeOrigin: true
 			}
 		}
 	}
