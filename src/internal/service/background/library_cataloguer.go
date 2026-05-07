@@ -21,6 +21,9 @@ import (
 type LibraryCataloguer struct {
 	libService         *service.LibraryService
 	movieMetaService   *service.MovieMetadataService
+	showMetaService    *service.ShowMetadataService
+	seasonMetaService  *service.SeasonMetadataService
+	episodeMetaService *service.EpisodeMetadataService
 	tvmetadataProvider provider.TVMetadataProvider
 	showRepo           repository.ShowRepository
 	seasonRepo         repository.SeasonRepository
@@ -45,17 +48,20 @@ func NewLibraryCataloguer(
 	movieMetadataRepo repository.MovieMetadataRepository,
 	seasonMetaRepo repository.SeasonMetadataRepository,
 	episodeMetaRepo repository.EpisodeMetadataRepository,
+	showMetaService *service.ShowMetadataService,
+	seasonMetaService *service.SeasonMetadataService,
+	episodeMetaService *service.EpisodeMetadataService,
 ) *LibraryCataloguer {
-	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo, seasonMetaRepo, episodeMetaRepo)
+	showMatcher := NewShowMatcher(metadataProvider, showRepo, showMetadataRepo, seasonMetaRepo, episodeMetaRepo, showMetaService)
 	showMatcher.RunBackground()
 
 	movieMatcher := NewMovieMatcher(movieMetadataProvider, movieRepo, movieMetadataRepo, movieMetaService)
 	movieMatcher.RunBackground()
 
-	seasonMatcher := NewSeasonMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo)
+	seasonMatcher := NewSeasonMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo, seasonMetaService)
 	seasonMatcher.RunBackground()
 
-	episodeMatcher := NewEpisodeMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo, episodeRepo, episodeMetaRepo)
+	episodeMatcher := NewEpisodeMatcher(metadataProvider, seasonMetaRepo, seasonRepo, showRepo, showMetadataRepo, episodeRepo, episodeMetaRepo, episodeMetaService)
 	episodeMatcher.RunBackground()
 
 	return &LibraryCataloguer{

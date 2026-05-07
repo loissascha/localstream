@@ -170,7 +170,7 @@ func main() {
 		http.ServeFile(w, r, filepath.Join(frontendBuildDir, "index.html"))
 	})
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo)
+	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
 	libraryCataloguer.RunBackground()
 
 	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
