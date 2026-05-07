@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -90,7 +91,12 @@ func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Sh
 	mediumImage := ""
 	originalImage := ""
 	if res.Show.Image != nil {
-		mediumImage = res.Show.Image.Medium
+		mediumImageName := fmt.Sprintf("medium_%s.jpg", mid.String())
+		err = downloadImage(res.Show.Image.Medium, mediumImageName)
+		if err != nil {
+			return nil, err
+		}
+		mediumImage = fmt.Sprintf("/static/%s", mediumImageName)
 		originalImage = res.Show.Image.Original
 	}
 	metadata := entity.ShowMetadata{
