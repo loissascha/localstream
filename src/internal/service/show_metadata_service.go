@@ -104,6 +104,7 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, show *enti
 
 	m := entity.ShowMetadata{
 		ID:               uid,
+		ShowID:           show.ID,
 		Name:             metadata.Name,
 		Url:              metadata.URL,
 		Description:      description,
