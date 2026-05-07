@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/helper"
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -72,4 +75,40 @@ func (s *EpisodeMetadataService) GetByShowIDAndSeasonNumberAndEpisodeNumber(ctx 
 	}
 
 	return metadata, nil
+}
+
+func (self *EpisodeMetadataService) CreateEpisodeMetadata(ctx context.Context, episode *entity.Episode, metadata *provider.EpisodeMetadata) error {
+	mid, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	mediumImage := ""
+	originalImage := ""
+	if metadata.Image != nil {
+		mediumImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_E_%s", mid.String()))
+		if err != nil {
+			return err
+		}
+		originalImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_E_%s", mid.String()))
+		if err != nil {
+			return err
+		}
+	}
+	m := entity.EpisodeMetadata{
+		ID:               mid,
+		EpisodeID:        episode.ID,
+		Url:              metadata.Url,
+		Name:             metadata.Name,
+		Number:           metadata.Number,
+		Summary:          metadata.Summary,
+		MediumImageUrl:   mediumImage,
+		OriginalImageUrl: originalImage,
+		FetchSource:      entity.FetchSourceTVMaze,
+		FetchID:          metadata.ID,
+	}
+	err = self.episodeMetadataRepo.Create(ctx, &m)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -2,14 +2,13 @@ package background
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 type episodeMetadataCache struct {
@@ -27,9 +26,10 @@ type EpisodeMatcher struct {
 	showMetadataRepo     repository.ShowMetadataRepository
 	episodeRepo          repository.EpisodeRepository
 	episodeMetadataRepo  repository.EpisodeMetadataRepository
+	episodeMetaService   *service.EpisodeMetadataService
 }
 
-func NewEpisodeMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository, episodeRepo repository.EpisodeRepository, episodeMetadataRepo repository.EpisodeMetadataRepository) *EpisodeMatcher {
+func NewEpisodeMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository, episodeRepo repository.EpisodeRepository, episodeMetadataRepo repository.EpisodeMetadataRepository, episodeMetaService *service.EpisodeMetadataService) *EpisodeMatcher {
 	ch := make(chan *entity.Episode)
 	return &EpisodeMatcher{
 		Channel:              ch,
@@ -41,6 +41,7 @@ func NewEpisodeMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaR
 		showMetadataRepo:     showMetaRepo,
 		episodeRepo:          episodeRepo,
 		episodeMetadataRepo:  episodeMetadataRepo,
+		episodeMetaService:   episodeMetaService,
 	}
 }
 
@@ -121,7 +122,7 @@ func (self *EpisodeMatcher) RunBackground() {
 			hasError := false
 			for _, emr := range episodeMetadataResult {
 				if emr.Number == episode.Number {
-					err := self.createEpisodeMetadata(ctx, episode, &emr)
+					err := self.episodeMetaService.CreateEpisodeMetadata(ctx, episode, &emr)
 					if err != nil {
 						logger.Error(err, "[EpisodeMatcher] Error creating metadata for episode")
 						hasError = true
@@ -138,43 +139,6 @@ func (self *EpisodeMatcher) RunBackground() {
 					continue
 				}
 			}
-
 		}
 	}()
-}
-
-func (self *EpisodeMatcher) createEpisodeMetadata(ctx context.Context, episode *entity.Episode, metadata *provider.EpisodeMetadata) error {
-	mid, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
-	mediumImage := ""
-	originalImage := ""
-	if metadata.Image != nil {
-		mediumImage, err = downloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_E_%s", mid.String()))
-		if err != nil {
-			return err
-		}
-		originalImage, err = downloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_E_%s", mid.String()))
-		if err != nil {
-			return err
-		}
-	}
-	m := entity.EpisodeMetadata{
-		ID:               mid,
-		EpisodeID:        episode.ID,
-		Url:              metadata.Url,
-		Name:             metadata.Name,
-		Number:           metadata.Number,
-		Summary:          metadata.Summary,
-		MediumImageUrl:   mediumImage,
-		OriginalImageUrl: originalImage,
-		FetchSource:      entity.FetchSourceTVMaze,
-		FetchID:          metadata.ID,
-	}
-	err = self.episodeMetadataRepo.Create(ctx, &m)
-	if err != nil {
-		return err
-	}
-	return nil
 }
