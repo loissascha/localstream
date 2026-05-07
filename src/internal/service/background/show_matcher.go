@@ -2,14 +2,13 @@ package background
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 type ShowMatcher struct {
@@ -19,9 +18,10 @@ type ShowMatcher struct {
 	showMetadataRepo    repository.ShowMetadataRepository
 	seasonMetadataRepo  repository.SeasonMetadataRepository
 	episodeMetadataRepo repository.EpisodeMetadataRepository
+	showMetadataService *service.ShowMetadataService
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository) *ShowMatcher {
+func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository, showMetaService *service.ShowMetadataService) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
 		Channel:             ch,
@@ -30,6 +30,7 @@ func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repos
 		showMetadataRepo:    showMetadataRepo,
 		seasonMetadataRepo:  seasonMetaRepo,
 		episodeMetadataRepo: episodeMetaRepo,
+		showMetadataService: showMetaService,
 	}
 }
 
@@ -49,14 +50,12 @@ func (self *ShowMatcher) RunBackground() {
 			defer cancel()
 
 			hasError := false
-			createdMetadata := []*entity.ShowMetadata{}
 			for _, res := range showSearchResults {
-				m, err := self.createShowMetadata(ctx, show, res)
+				err := self.showMetadataService.CreateShowMetadata(ctx, show, &res.Show)
 				if err != nil {
 					logger.Error(err, "Error creating show metadata")
 					hasError = true
 				}
-				createdMetadata = append(createdMetadata, m)
 			}
 
 			if hasError {
@@ -78,123 +77,3 @@ func (self *ShowMatcher) RunBackground() {
 		}
 	}()
 }
-
-func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Show, res provider.ShowSearchResult) (*entity.ShowMetadata, error) {
-	mid, err := uuid.NewV7()
-	if err != nil {
-		return nil, err
-	}
-	description := ""
-	if res.Show.Summary != nil {
-		description = *res.Show.Summary
-	}
-	mediumImage := ""
-	originalImage := ""
-	if res.Show.Image != nil {
-		mediumImage, err = downloadImageAndGetStaticPath(res.Show.Image.Medium, fmt.Sprintf("med_SH_%s", mid.String()))
-		if err != nil {
-			return nil, err
-		}
-		originalImage, err = downloadImageAndGetStaticPath(res.Show.Image.Original, fmt.Sprintf("org_SH_%s", mid.String()))
-		if err != nil {
-			return nil, err
-		}
-	}
-	metadata := entity.ShowMetadata{
-		ID:               mid,
-		ShowID:           show.ID,
-		Name:             res.Show.Name,
-		Url:              res.Show.URL,
-		Description:      description,
-		MediumImageUrl:   mediumImage,
-		OriginalImageUrl: originalImage,
-		FetchSource:      entity.FetchSourceTVMaze,
-		FetchID:          res.Show.ID,
-	}
-	err = self.showMetadataRepo.Create(ctx, &metadata)
-	if err != nil {
-		return nil, err
-	}
-	// err = self.createShowSeasonsMetadata(ctx, show, &metadata)
-	if err != nil {
-		return nil, err
-	}
-	return &metadata, nil
-}
-
-// func (self *ShowMatcher) createShowSeasonsMetadata(ctx context.Context, show *entity.Show, metadata *entity.ShowMetadata) error {
-// 	seasonMetadatas, err := self.metadataProvider.SearchSeasons(metadata.FetchID)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	for _, sm := range seasonMetadatas {
-// 		mid, err := uuid.NewV7()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		mediumImage := ""
-// 		originalImage := ""
-// 		if sm.Image != nil {
-// 			mediumImage = sm.Image.Medium
-// 			originalImage = sm.Image.Original
-// 		}
-// 		m := entity.SeasonMetadata{
-// 			ID:               mid,
-// 			ShowID:           show.ID,
-// 			ShowMetadataID:   metadata.ID,
-// 			Url:              sm.Url,
-// 			Number:           sm.Number,
-// 			Summary:          sm.Summary,
-// 			PremiereDate:     sm.PremiereDate,
-// 			MediumImageUrl:   mediumImage,
-// 			OriginalImageUrl: originalImage,
-// 			FetchSource:      entity.FetchSourceTVMaze,
-// 			FetchID:          sm.ID,
-// 		}
-// 		err = self.seasonMetadataRepo.Create(ctx, &m)
-// 		if err != nil {
-// 			return err
-// 		}
-// 		err = self.createSeasonEpisodeMetadata(ctx, show, &m)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }
-//
-// func (self *ShowMatcher) createSeasonEpisodeMetadata(ctx context.Context, show *entity.Show, metadata *entity.SeasonMetadata) error {
-// 	episodeMetas, err := self.metadataProvider.SearchEpisodes(metadata.FetchID)
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	for _, em := range episodeMetas {
-// 		mediumImage := ""
-// 		originalImage := ""
-// 		if em.Image != nil {
-// 			mediumImage = em.Image.Medium
-// 			originalImage = em.Image.Original
-// 		}
-//
-// 		m := entity.EpisodeMetadata{
-// 			ShowID:           show.ID,
-// 			SeasonMetadataID: metadata.ID,
-// 			Url:              em.Url,
-// 			Name:             em.Name,
-// 			Number:           em.Number,
-// 			Summary:          em.Summary,
-// 			MediumImageUrl:   mediumImage,
-// 			OriginalImageUrl: originalImage,
-// 			FetchSource:      entity.FetchSourceTVMaze,
-// 			FetchID:          em.ID,
-// 		}
-//
-// 		err = self.episodeMetadataRepo.Create(ctx, &m)
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }

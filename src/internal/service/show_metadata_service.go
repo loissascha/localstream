@@ -61,7 +61,7 @@ func (s *ShowMetadataService) SetPrimaryForShowIDByFetchID(ctx context.Context, 
 	}
 
 	// create new metadata from the provider result
-	err = s.CreateShowMetadata(ctx, showID, showResult)
+	err = s.CreateShowMetadata(ctx, show, showResult)
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (s *ShowMetadataService) Search(ctx context.Context, searchQuery string) ([
 	return s.showMetadataProvider.SearchShow(searchQuery, 0)
 }
 
-func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, showID string, metadata *provider.ShowMetadata) error {
+func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, show *entity.Show, metadata *provider.ShowMetadata) error {
 	uid, err := uuid.NewV7()
 	if err != nil {
 		return err
@@ -112,7 +112,10 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, showID str
 		FetchID:          metadata.ID,
 		FetchSource:      entity.FetchSourceTVMaze,
 	}
-	return s.Create(ctx, showID, &m)
+	if err := s.showMetadataRepo.Create(ctx, &m); err != nil {
+		return fmt.Errorf("create show metadata: %w", err)
+	}
+	return nil
 }
 
 func (s *ShowMetadataService) Create(ctx context.Context, showID string, metadata *entity.ShowMetadata) error {
