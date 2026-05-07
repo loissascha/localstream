@@ -1,4 +1,4 @@
-package background
+package helper
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-func downloadImageAndGetStaticPath(url string, filename string) (string, error) {
+func DownloadImageAndGetStaticPath(url string, filename string) (string, error) {
 	ext, err := getExtensionFromUrl(url)
 	if err != nil {
 		return "", err
