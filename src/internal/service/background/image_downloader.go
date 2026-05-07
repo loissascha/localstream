@@ -4,12 +4,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 )
 
-func downloadImageAndGetStaticPath(originalUrl string, filename string) (string, error) {
-	err := downloadImage(originalUrl, filename)
+func downloadImageAndGetStaticPath(url string, filename string) (string, error) {
+	ext, err := getExtensionFromUrl(url)
+	if err != nil {
+		return "", err
+	}
+	filename = filename + ext
+	err = downloadImage(url, filename)
 	if err != nil {
 		return "", err
 	}
@@ -44,4 +51,18 @@ func downloadImage(url string, filename string) error {
 		return err
 	}
 	return nil
+}
+
+func getExtensionFromUrl(rawUrl string) (string, error) {
+	parsed, err := url.Parse(rawUrl)
+	if err != nil {
+		return "", err
+	}
+
+	ext := path.Ext(parsed.Path)
+	if ext == "" {
+		return "", fmt.Errorf("url has no file extension")
+	}
+
+	return ext, nil
 }

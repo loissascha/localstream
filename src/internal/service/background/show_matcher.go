@@ -91,11 +91,11 @@ func (self *ShowMatcher) createShowMetadata(ctx context.Context, show *entity.Sh
 	mediumImage := ""
 	originalImage := ""
 	if res.Show.Image != nil {
-		mediumImage, err = downloadImageAndGetStaticPath(res.Show.Image.Medium, fmt.Sprintf("medium_%s.jpg", mid.String()))
+		mediumImage, err = downloadImageAndGetStaticPath(res.Show.Image.Medium, fmt.Sprintf("med_SH_%s", mid.String()))
 		if err != nil {
 			return nil, err
 		}
-		originalImage, err = downloadImageAndGetStaticPath(res.Show.Image.Original, fmt.Sprintf("original_%s.jpg", mid.String()))
+		originalImage, err = downloadImageAndGetStaticPath(res.Show.Image.Original, fmt.Sprintf("org_SH_%s", mid.String()))
 		if err != nil {
 			return nil, err
 		}

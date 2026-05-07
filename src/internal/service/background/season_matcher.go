@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -130,8 +131,14 @@ func (self *SeasonMatcher) createSeasonMetadata(ctx context.Context, season *ent
 	mediumImage := ""
 	originalImage := ""
 	if metadata.Image != nil {
-		mediumImage = metadata.Image.Medium
-		originalImage = metadata.Image.Original
+		mediumImage, err = downloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_SE_%s", mid.String()))
+		if err != nil {
+			return err
+		}
+		originalImage, err = downloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_%s", mid.String()))
+		if err != nil {
+			return err
+		}
 	}
 	m := entity.SeasonMetadata{
 		ID:               mid,

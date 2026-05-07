@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -150,8 +151,14 @@ func (self *EpisodeMatcher) createEpisodeMetadata(ctx context.Context, episode *
 	mediumImage := ""
 	originalImage := ""
 	if metadata.Image != nil {
-		mediumImage = metadata.Image.Medium
-		originalImage = metadata.Image.Original
+		mediumImage, err = downloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_E_%s", mid.String()))
+		if err != nil {
+			return err
+		}
+		originalImage, err = downloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_E_%s", mid.String()))
+		if err != nil {
+			return err
+		}
 	}
 	m := entity.EpisodeMetadata{
 		ID:               mid,
