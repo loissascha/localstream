@@ -2,14 +2,13 @@ package background
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 type seasonMetadataCache struct {
@@ -18,25 +17,27 @@ type seasonMetadataCache struct {
 }
 
 type SeasonMatcher struct {
-	Channel             chan *entity.Season
-	seasonMetadataCache map[int]seasonMetadataCache
-	metadataProvider    provider.TVMetadataProvider
-	seasonRepo          repository.SeasonRepository
-	seasonMetadataRepo  repository.SeasonMetadataRepository
-	showRepo            repository.ShowRepository
-	showMetadataRepo    repository.ShowMetadataRepository
+	Channel               chan *entity.Season
+	seasonMetadataCache   map[int]seasonMetadataCache
+	metadataProvider      provider.TVMetadataProvider
+	seasonRepo            repository.SeasonRepository
+	seasonMetadataRepo    repository.SeasonMetadataRepository
+	showRepo              repository.ShowRepository
+	showMetadataRepo      repository.ShowMetadataRepository
+	seasonMetadataService *service.SeasonMetadataService
 }
 
-func NewSeasonMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository) *SeasonMatcher {
+func NewSeasonMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository, seasonMetaService *service.SeasonMetadataService) *SeasonMatcher {
 	ch := make(chan *entity.Season)
 	return &SeasonMatcher{
-		Channel:             ch,
-		seasonMetadataCache: make(map[int]seasonMetadataCache),
-		metadataProvider:    metadataProvider,
-		seasonRepo:          seasonRepo,
-		seasonMetadataRepo:  seasonMetaRepo,
-		showRepo:            showRepo,
-		showMetadataRepo:    showMetaRepo,
+		Channel:               ch,
+		seasonMetadataCache:   make(map[int]seasonMetadataCache),
+		metadataProvider:      metadataProvider,
+		seasonRepo:            seasonRepo,
+		seasonMetadataRepo:    seasonMetaRepo,
+		showRepo:              showRepo,
+		showMetadataRepo:      showMetaRepo,
+		seasonMetadataService: seasonMetaService,
 	}
 }
 
@@ -102,7 +103,7 @@ func (self *SeasonMatcher) RunBackground() {
 			hasError := false
 			for _, smr := range seasonMetadataResult {
 				if smr.Number == season.Number {
-					err := self.createSeasonMetadata(ctx, season, &smr)
+					err := self.seasonMetadataService.CreateSeasonMetadata(ctx, season, &smr)
 					if err != nil {
 						logger.Error(err, "[SeasonMatcher] Error creating metadata for season")
 						hasError = true
@@ -121,40 +122,4 @@ func (self *SeasonMatcher) RunBackground() {
 			}
 		}
 	}()
-}
-
-func (self *SeasonMatcher) createSeasonMetadata(ctx context.Context, season *entity.Season, metadata *provider.SeasonMetadata) error {
-	mid, err := uuid.NewV7()
-	if err != nil {
-		return err
-	}
-	mediumImage := ""
-	originalImage := ""
-	if metadata.Image != nil {
-		mediumImage, err = downloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_SE_%s", mid.String()))
-		if err != nil {
-			return err
-		}
-		originalImage, err = downloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_%s", mid.String()))
-		if err != nil {
-			return err
-		}
-	}
-	m := entity.SeasonMetadata{
-		ID:               mid,
-		SeasonID:         season.ID,
-		Url:              metadata.Url,
-		Number:           metadata.Number,
-		Summary:          metadata.Summary,
-		PremiereDate:     metadata.PremiereDate,
-		MediumImageUrl:   mediumImage,
-		OriginalImageUrl: originalImage,
-		FetchSource:      entity.FetchSourceTVMaze,
-		FetchID:          metadata.ID,
-	}
-	err = self.seasonMetadataRepo.Create(ctx, &m)
-	if err != nil {
-		return err
-	}
-	return nil
 }
