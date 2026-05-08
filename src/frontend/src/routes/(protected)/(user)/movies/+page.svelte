@@ -4,9 +4,41 @@
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import { addSelectedMoviesToCollection, movies } from '$lib/movies.svelte';
 
-	let selectedMoviesCount = $state(0);
-	let showAddToCollection = $state(false);
+	const VISIBLE_PER_PAGE = 10;
 
+	let showAddToCollectionOverlay = $state(false);
+
+	let visibleCount = $state(VISIBLE_PER_PAGE);
+	let visibleMovies = $derived(movies.movies.slice(0, visibleCount));
+	let sentinel = $state<HTMLDivElement | null>(null);
+
+	function loadMore() {
+		console.log('load More');
+		if (visibleCount < movies.movies.length) {
+			visibleCount += VISIBLE_PER_PAGE;
+		}
+	}
+
+	$effect(() => {
+		if (!sentinel) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0]?.isIntersecting) {
+					loadMore();
+				}
+			},
+			{
+				rootMargin: '600px'
+			}
+		);
+
+		observer.observe(sentinel);
+
+		return () => observer.disconnect();
+	});
+
+	let selectedMoviesCount = $state(0);
 	$effect(() => {
 		movies.selectedMovies;
 		var sc = 0;
@@ -27,7 +59,7 @@
 			<button
 				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 				onclick={() => {
-					showAddToCollection = true;
+					showAddToCollectionOverlay = true;
 				}}>Add all to Collection</button
 			>
 			<div>{selectedMoviesCount} selected</div>
@@ -35,26 +67,27 @@
 	{/if}
 	<section class="my-8">
 		<ItemGrid>
-			{#each movies.movies as movie (movie.id)}
+			{#each visibleMovies as movie (movie.id)}
 				<MovieListItem {movie} selectable bind:selected={movies.selectedMovies[movie.id]} />
 			{/each}
 		</ItemGrid>
+		<div bind:this={sentinel}></div>
 	</section>
 </main>
 
-{#if showAddToCollection}
+{#if showAddToCollectionOverlay}
 	<SelectCollectionOverlay
 		selectedCollection={(collectionId) => {
 			addSelectedMoviesToCollection(collectionId)
 				.then(() => {
-					showAddToCollection = false;
+					showAddToCollectionOverlay = false;
 				})
 				.catch((e) => {
 					const m = (e as Error).message;
 				});
 		}}
 		close={() => {
-			showAddToCollection = false;
+			showAddToCollectionOverlay = false;
 		}}
 	/>
 {/if}
