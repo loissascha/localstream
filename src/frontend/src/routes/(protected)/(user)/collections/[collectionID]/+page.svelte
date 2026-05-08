@@ -121,7 +121,7 @@
 					class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 					onclick={() => {
 						removeSelectedMoviesFromCollection();
-					}}>Remove all from Collection</button
+					}}>Remove from Collection</button
 				>
 				<div>{selectedCount} selected</div>
 			</section>
