@@ -4,7 +4,7 @@
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import { addSelectedMoviesToCollection, movies } from '$lib/movies.svelte';
 
-	const VISIBLE_PER_PAGE = 30;
+	const VISIBLE_PER_PAGE = 50;
 
 	let showAddToCollectionOverlay = $state(false);
 
@@ -13,7 +13,6 @@
 	let sentinel = $state<HTMLDivElement | null>(null);
 
 	function loadMore() {
-		console.log('load More');
 		if (visibleCount < movies.movies.length) {
 			visibleCount += VISIBLE_PER_PAGE;
 		}
