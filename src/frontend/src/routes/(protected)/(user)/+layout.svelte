@@ -161,7 +161,7 @@
 	});
 </script>
 
-<section id="header" class="flex items-center justify-between px-4 py-4">
+<section id="header" class="flex items-center justify-between px-4 py-4 sticky top-0 bg-neutral-900 z-40">
 	<div class="flex grow items-center gap-2">
 		<a
 			href={resolve('/(protected)/(user)')}
