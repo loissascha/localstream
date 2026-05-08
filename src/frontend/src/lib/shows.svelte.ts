@@ -33,6 +33,10 @@ export async function loadShowsDatabase() {
 	shows.initialized = true;
 }
 
+export async function clearShowsSelection() {
+	shows.selectedShows = Object.fromEntries(shows.shows.map((show) => [show.id, false]));
+}
+
 export async function addSelectedShowsToCollection(collectionId: string) {
 	try {
 		if (!auth.token) return;

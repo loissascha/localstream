@@ -2,7 +2,7 @@
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
-	import { addSelectedMoviesToCollection, movies } from '$lib/movies.svelte';
+	import { addSelectedMoviesToCollection, clearMoviesSelection, movies } from '$lib/movies.svelte';
 
 	const VISIBLE_PER_PAGE = 50;
 
@@ -53,13 +53,19 @@
 <main>
 	{#if selectedMoviesCount > 0}
 		<section
-			class="sticky top-0 right-0 left-0 z-10 flex items-center justify-end gap-4 bg-neutral-900 p-4"
+			class="sticky top-0 right-0 left-0 z-50 flex items-center justify-end gap-4 bg-neutral-900 p-4"
 		>
 			<button
 				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 				onclick={() => {
+					clearMoviesSelection();
+				}}>Clear selection</button
+			>
+			<button
+				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+				onclick={() => {
 					showAddToCollectionOverlay = true;
-				}}>Add all to Collection</button
+				}}>Add to Collection</button
 			>
 			<div>{selectedMoviesCount} selected</div>
 		</section>

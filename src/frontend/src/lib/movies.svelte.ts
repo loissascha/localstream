@@ -47,6 +47,10 @@ export async function addSelectedMoviesToCollection(collectionId: string) {
 	}
 }
 
+export async function clearMoviesSelection() {
+	movies.selectedMovies = Object.fromEntries(movies.movies.map((movie) => [movie.id, false]));
+}
+
 export async function reloadSingleMovie(movieId: string) {
 	try {
 		if (!auth.token) return;

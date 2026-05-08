@@ -2,7 +2,7 @@
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
-	import { addSelectedShowsToCollection, shows } from '$lib/shows.svelte';
+	import { addSelectedShowsToCollection, clearShowsSelection, shows } from '$lib/shows.svelte';
 
 	const VISIBLE_PER_PAGE = 50;
 
@@ -53,13 +53,19 @@
 <main>
 	{#if selectedShowsCount > 0}
 		<section
-			class="sticky top-0 right-0 left-0 z-10 flex items-center justify-end gap-4 bg-neutral-900 p-4"
+			class="sticky top-0 right-0 left-0 z-50 flex items-center justify-end gap-4 bg-neutral-900 p-4"
 		>
 			<button
 				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 				onclick={() => {
+					clearShowsSelection();
+				}}>Clear selection</button
+			>
+			<button
+				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+				onclick={() => {
 					showAddToCollection = true;
-				}}>Add all to Collection</button
+				}}>Add to Collection</button
 			>
 			<div>{selectedShowsCount} selected</div>
 		</section>
