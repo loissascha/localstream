@@ -4,8 +4,39 @@
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
 	import { addSelectedShowsToCollection, shows } from '$lib/shows.svelte';
 
+	const VISIBLE_PER_PAGE = 50;
+
 	let showAddToCollection = $state(false);
 	let selectedShowsCount = $state(0);
+
+	let visibleCount = $state(VISIBLE_PER_PAGE);
+	let visibleShows = $derived(shows.shows.slice(0, visibleCount));
+	let sentinel = $state<HTMLDivElement | null>(null);
+
+	function loadMore() {
+		if (visibleCount < shows.shows.length) {
+			visibleCount += VISIBLE_PER_PAGE;
+		}
+	}
+
+	$effect(() => {
+		if (!sentinel) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0]?.isIntersecting) {
+					loadMore();
+				}
+			},
+			{
+				rootMargin: '600px'
+			}
+		);
+
+		observer.observe(sentinel);
+
+		return () => observer.disconnect();
+	});
 
 	$effect(() => {
 		shows.selectedShows;
@@ -35,10 +66,11 @@
 	{/if}
 	<section class="my-8">
 		<ItemGrid>
-			{#each shows.shows as show (show.id)}
+			{#each visibleShows as show (show.id)}
 				<ShowListItem {show} selectable bind:selected={shows.selectedShows[show.id]} />
 			{/each}
 		</ItemGrid>
+		<div bind:this={sentinel}></div>
 	</section>
 </main>
 
