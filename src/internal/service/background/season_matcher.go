@@ -27,7 +27,14 @@ type SeasonMatcher struct {
 	seasonMetadataService *service.SeasonMetadataService
 }
 
-func NewSeasonMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository, seasonMetaService *service.SeasonMetadataService) *SeasonMatcher {
+func NewSeasonMatcher(
+	metadataProvider provider.TVMetadataProvider,
+	seasonMetaRepo repository.SeasonMetadataRepository,
+	seasonRepo repository.SeasonRepository,
+	showRepo repository.ShowRepository,
+	showMetaRepo repository.ShowMetadataRepository,
+	seasonMetaService *service.SeasonMetadataService,
+) *SeasonMatcher {
 	ch := make(chan *entity.Season)
 	return &SeasonMatcher{
 		Channel:               ch,

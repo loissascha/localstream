@@ -29,7 +29,16 @@ type EpisodeMatcher struct {
 	episodeMetaService   *service.EpisodeMetadataService
 }
 
-func NewEpisodeMatcher(metadataProvider provider.TVMetadataProvider, seasonMetaRepo repository.SeasonMetadataRepository, seasonRepo repository.SeasonRepository, showRepo repository.ShowRepository, showMetaRepo repository.ShowMetadataRepository, episodeRepo repository.EpisodeRepository, episodeMetadataRepo repository.EpisodeMetadataRepository, episodeMetaService *service.EpisodeMetadataService) *EpisodeMatcher {
+func NewEpisodeMatcher(
+	metadataProvider provider.TVMetadataProvider,
+	seasonMetaRepo repository.SeasonMetadataRepository,
+	seasonRepo repository.SeasonRepository,
+	showRepo repository.ShowRepository,
+	showMetaRepo repository.ShowMetadataRepository,
+	episodeRepo repository.EpisodeRepository,
+	episodeMetadataRepo repository.EpisodeMetadataRepository,
+	episodeMetaService *service.EpisodeMetadataService,
+) *EpisodeMatcher {
 	ch := make(chan *entity.Episode)
 	return &EpisodeMatcher{
 		Channel:              ch,

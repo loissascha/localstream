@@ -17,7 +17,12 @@ type LibraryUncataloguer struct {
 	movieRepo   repository.MovieRepository
 }
 
-func NewLibraryUncataloguer(showRepo repository.ShowRepository, seasonRepo repository.SeasonRepository, episodeRepo repository.EpisodeRepository, movieRepo repository.MovieRepository) *LibraryUncataloguer {
+func NewLibraryUncataloguer(
+	showRepo repository.ShowRepository,
+	seasonRepo repository.SeasonRepository,
+	episodeRepo repository.EpisodeRepository,
+	movieRepo repository.MovieRepository,
+) *LibraryUncataloguer {
 	return &LibraryUncataloguer{
 		showRepo:    showRepo,
 		seasonRepo:  seasonRepo,

@@ -21,7 +21,14 @@ type ShowMatcher struct {
 	showMetadataService *service.ShowMetadataService
 }
 
-func NewShowMatcher(metadataProvider provider.TVMetadataProvider, showRepo repository.ShowRepository, showMetadataRepo repository.ShowMetadataRepository, seasonMetaRepo repository.SeasonMetadataRepository, episodeMetaRepo repository.EpisodeMetadataRepository, showMetaService *service.ShowMetadataService) *ShowMatcher {
+func NewShowMatcher(
+	metadataProvider provider.TVMetadataProvider,
+	showRepo repository.ShowRepository,
+	showMetadataRepo repository.ShowMetadataRepository,
+	seasonMetaRepo repository.SeasonMetadataRepository,
+	episodeMetaRepo repository.EpisodeMetadataRepository,
+	showMetaService *service.ShowMetadataService,
+) *ShowMatcher {
 	ch := make(chan *entity.Show)
 	return &ShowMatcher{
 		Channel:             ch,

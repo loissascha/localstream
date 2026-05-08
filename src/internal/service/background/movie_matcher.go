@@ -19,7 +19,12 @@ type MovieMatcher struct {
 	movieMetaService *service.MovieMetadataService
 }
 
-func NewMovieMatcher(metadataProvider provider.MovieMetadataProvider, movieRepo repository.MovieRepository, movieMetaRepo repository.MovieMetadataRepository, movieMetaService *service.MovieMetadataService) *MovieMatcher {
+func NewMovieMatcher(
+	metadataProvider provider.MovieMetadataProvider,
+	movieRepo repository.MovieRepository,
+	movieMetaRepo repository.MovieMetadataRepository,
+	movieMetaService *service.MovieMetadataService,
+) *MovieMatcher {
 	ch := make(chan *entity.Movie)
 	return &MovieMatcher{
 		Channel:          ch,
