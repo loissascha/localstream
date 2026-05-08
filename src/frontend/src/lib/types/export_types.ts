@@ -19,6 +19,8 @@ export interface CollectionInfo {
   name: string;
   created_at: string;
   updated_at: string;
+  movies: MovieInfo[];
+  shows: ShowInfo[];
 }
 export interface CollectionListResponse {
   collections: CollectionInfo[];

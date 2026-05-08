@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-http-server/respond"
 	"github.com/loissascha/go-http-server/server"
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/repository"
 	"github.com/loissascha/localstream/internal/service"
@@ -106,7 +107,25 @@ func (h *CollectionHandler) listCollections(w http.ResponseWriter, r *http.Reque
 
 	result := make([]CollectionInfo, 0, len(collections))
 	for _, collection := range collections {
-		result = append(result, toCollectionInfo(&collection))
+		movies, err := h.collectionService.ListMovies(r.Context(), userID, encoders.EncodeUUID(collection.ID))
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		shows, err := h.collectionService.ListShows(r.Context(), userID, encoders.EncodeUUID(collection.ID))
+		if err != nil {
+			respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+		movieInfos := make([]MovieInfo, 0, len(movies))
+		showInfos := make([]ShowInfo, 0, len(shows))
+		for _, m := range movies {
+			movieInfos = append(movieInfos, toMovieInfo(&m))
+		}
+		for _, s := range shows {
+			showInfos = append(showInfos, toShowInfo(&s))
+		}
+		result = append(result, toCollectionInfo(&collection, withCollectionMovies(movieInfos), withCollectionShows(showInfos)))
 	}
 
 	respond.JSON(w, http.StatusOK, CollectionListResponse{Collections: result})
