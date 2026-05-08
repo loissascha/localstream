@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { getMovie } from '$lib/api/movies';
 	import { getWatchstateForMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
+	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { setMovieWatchstate } from '$lib/movies.svelte';
+	import type { MovieInfo } from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
+
+	var movie = $state<MovieInfo | null>(null);
 	var loadingWatchstate = $state(true);
 
 	let duration = $state(0);
@@ -80,6 +85,14 @@
 					alert(m);
 				}
 			});
+		getMovie(auth.token, movieId)
+			.then((res) => {
+				movie = res;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
 	});
 </script>
 
@@ -97,6 +110,15 @@
 				<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
 					<HomeIcon />
 				</a>
+				<a
+					class="p-2 text-slate-300 no-underline hover:text-white"
+					href={resolve('/(protected)/(user)/movies/[movieID]', {
+						movieID: movieId
+					})}
+				>
+					<ChevronLeftIcon />
+				</a>
+				<span>{movie?.name}</span>
 			{/snippet}
 		</VideoPlayer>
 	</section>
