@@ -4,7 +4,7 @@
 	let { collection }: { collection: CollectionInfo } = $props();
 
 	let images = $state<string[]>([]);
-	let gridCols = $derived(images.length == 1 ? 'grid-cols-1' : 'grid-cols-2');
+	let gridCols = $derived(images.length <= 1 ? 'grid-cols-1' : 'grid-cols-2');
 
 	$effect(() => {
 		if (!collection) return;
@@ -28,4 +28,7 @@
 	{#each images as image (image)}
 		<img src={image} alt={image} class="" />
 	{/each}
+	{#if images.length == 0}
+		<div class="aspect-video w-full bg-neutral-800"></div>
+	{/if}
 </div>
