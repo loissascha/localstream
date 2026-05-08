@@ -4,7 +4,7 @@
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
 	import { addSelectedMoviesToCollection, movies } from '$lib/movies.svelte';
 
-	const VISIBLE_PER_PAGE = 10;
+	const VISIBLE_PER_PAGE = 30;
 
 	let showAddToCollectionOverlay = $state(false);
 
