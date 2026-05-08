@@ -8,7 +8,9 @@
 	import { auth } from '$lib/auth.svelte';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
+	import RenameCollectionOverlay from '$lib/components/overlays/RenameCollectionOverlay.svelte';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
+	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import type { MovieInfo, ShowInfo, CollectionInfo } from '$lib/types/export_types';
 
 	const collectionId = $derived(page.params.collectionID ?? '');
@@ -42,6 +44,8 @@
 	let selectedMovies = $state<Record<string, boolean>>({});
 	let selectedShows = $state<Record<string, boolean>>({});
 	let selectedCount = $state(0);
+
+	let showRenameOverlay = $state(false);
 
 	let error_message = $state('');
 
@@ -126,7 +130,17 @@
 				<div>{selectedCount} selected</div>
 			</section>
 		{/if}
-		<h1 class="mb-8 text-2xl font-bold tracking-wide">{collection.name}</h1>
+		<div class="flex items-center gap-2">
+			<h1 class="text-2xl font-bold tracking-wide">{collection.name}</h1>
+			<button
+				onclick={() => {
+					showRenameOverlay = true;
+				}}
+				class="cursor-pointer text-neutral-400 hover:text-neutral-200"
+			>
+				<EditIcon />
+			</button>
+		</div>
 		{#if shows.length > 0}
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Shows</h2>
 			<ItemGrid>
@@ -139,13 +153,18 @@
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Movies</h2>
 			<ItemGrid>
 				{#each sortedMovies as movie (movie.id)}
-					<MovieListItem
-						{movie}
-						selectable
-						bind:selected={selectedMovies[movie.id]}
-					/>
+					<MovieListItem {movie} selectable bind:selected={selectedMovies[movie.id]} />
 				{/each}
 			</ItemGrid>
 		{/if}
 	</section>
+{/if}
+
+{#if showRenameOverlay && collection}
+	<RenameCollectionOverlay
+		close={() => {
+			showRenameOverlay = false;
+		}}
+		{collection}
+	/>
 {/if}
