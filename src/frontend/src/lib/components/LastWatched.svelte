@@ -57,6 +57,7 @@
 						>
 							<ShowInfoDisplay
 								show={d.show_info}
+								seasonId={d.season_id}
 								nameLink
 								percentage={d.percentage}
 								showPercentage

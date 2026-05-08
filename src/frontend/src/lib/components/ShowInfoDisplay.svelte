@@ -7,11 +7,13 @@
 	let {
 		show,
 		nameLink = false,
+		seasonId = '',
 		showPercentage = false,
 		percentage = 0
 	}: {
 		show: ShowInfo;
 		nameLink?: boolean;
+		seasonId?: string;
 		percentage?: number;
 		showPercentage?: boolean;
 	} = $props();
@@ -31,7 +33,9 @@
 			if (nameLink) {
 				e.preventDefault();
 				e.stopPropagation();
-				goto(resolve('/(protected)/(user)/shows/[showID]', { showID: show.id }));
+				goto(
+					resolve('/(protected)/(user)/shows/[showID]', { showID: show.id }) + '?season=' + seasonId
+				);
 			}
 		}}
 		class={`mt-1 w-full max-w-full cursor-pointer truncate text-center font-bold text-neutral-200 ${nameLink ? 'hover:text-white' : ''}`}
