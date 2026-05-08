@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { updateCollection } from '$lib/api/collections';
 	import { auth } from '$lib/auth.svelte';
 	import type { CollectionInfo } from '$lib/types/export_types';
 	import Overlay from './Overlay.svelte';
@@ -25,11 +26,9 @@
 				return;
 			}
 
-			// await createCollection(auth.token, {
-			// 	name: name
-			// });
-			// TODO: implement
-			alert('not implemented');
+			await updateCollection(auth.token, collection.id, {
+				name: name
+			});
 
 			collection.name = name;
 			close();
