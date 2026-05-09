@@ -5,6 +5,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import { type WatchstateMovieResponse } from '$lib/types/export_types';
+	import ItemCarousel from './ItemCarousel.svelte';
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
 	import MovieContextMenu from './MovieContextMenu.svelte';
@@ -41,20 +42,22 @@
 			<ChevronRightIcon />
 			Continue Movies
 		</h2>
-		<ItemGrid>
+		<ItemCarousel>
 			{#each data as d (d.id)}
-				<MovieContextMenu movie={d.movie_info}>
-					<ListItemA
-						href={resolve('/(protected)/watch/movies/[movieID]', {
-							movieID: d.movie_id
-						})}
-					>
-						<div>
-							<MovieInfoDisplay movie={d.movie_info} nameLink />
-						</div>
-					</ListItemA>
-				</MovieContextMenu>
+				<div class="w-60 shrink-0">
+					<MovieContextMenu movie={d.movie_info}>
+						<ListItemA
+							href={resolve('/(protected)/watch/movies/[movieID]', {
+								movieID: d.movie_id
+							})}
+						>
+							<div>
+								<MovieInfoDisplay movie={d.movie_info} nameLink />
+							</div>
+						</ListItemA>
+					</MovieContextMenu>
+				</div>
 			{/each}
-		</ItemGrid>
+		</ItemCarousel>
 	{/if}
 </section>

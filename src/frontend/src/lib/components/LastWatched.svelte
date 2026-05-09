@@ -5,6 +5,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import type { WatchstateResponse } from '$lib/types/export_types';
+	import ItemCarousel from './ItemCarousel.svelte';
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
 	import ShowContextMenu from './ShowContextMenu.svelte';
@@ -41,35 +42,37 @@
 			<ChevronRightIcon />
 			Continue Shows
 		</h2>
-		<ItemGrid>
+		<ItemCarousel>
 			{#each data as d (d.id)}
 				{#if !d.finished}
-					<ShowContextMenu show={d.show_info}>
-						<ListItemA
-							href={resolve(
-								'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
-								{
-									showID: d.show_id,
-									seasonID: d.season_id,
-									episodeID: d.episode_id
-								}
-							)}
-						>
-							<ShowInfoDisplay
-								show={d.show_info}
-								seasonId={d.season_id}
-								nameLink
-								percentage={d.percentage}
-								showPercentage
-							/>
-							<div class="truncate text-center text-sm font-bold text-neutral-400">
-								S{d.season_info.number}:E{d.episode_info.number}
-								{d.episode_info.name}
-							</div>
-						</ListItemA>
-					</ShowContextMenu>
+					<div class="w-60 shrink-0">
+						<ShowContextMenu show={d.show_info}>
+							<ListItemA
+								href={resolve(
+									'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+									{
+										showID: d.show_id,
+										seasonID: d.season_id,
+										episodeID: d.episode_id
+									}
+								)}
+							>
+								<ShowInfoDisplay
+									show={d.show_info}
+									seasonId={d.season_id}
+									nameLink
+									percentage={d.percentage}
+									showPercentage
+								/>
+								<div class="truncate text-center text-sm font-bold text-neutral-400">
+									S{d.season_info.number}:E{d.episode_info.number}
+									{d.episode_info.name}
+								</div>
+							</ListItemA>
+						</ShowContextMenu>
+					</div>
 				{/if}
 			{/each}
-		</ItemGrid>
+		</ItemCarousel>
 	{/if}
 </section>

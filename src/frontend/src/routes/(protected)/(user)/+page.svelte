@@ -57,11 +57,13 @@
 			<ShowIcon />
 			Recent Shows
 		</h2>
-		<ItemGrid>
+		<ItemCarousel>
 			{#each latestShows as show (show.id)}
-				<ShowListItem {show} />
+				<div class="w-60 shrink-0">
+					<ShowListItem {show} />
+				</div>
 			{/each}
-		</ItemGrid>
+		</ItemCarousel>
 	</section>
 
 	<section class="my-8">
