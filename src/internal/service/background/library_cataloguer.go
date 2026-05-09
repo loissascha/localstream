@@ -33,6 +33,7 @@ type LibraryCataloguer struct {
 	movieMatcher       *MovieMatcher
 	seasonMatcher      *SeasonMatcher
 	episodeMatcher     *EpisodeMatcher
+	allShows           []entity.Show
 }
 
 func NewLibraryCataloguer(
@@ -94,6 +95,12 @@ func (l *LibraryCataloguer) RunOnce() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
+	shows, err := l.showRepo.All(ctx)
+	if err != nil {
+		return err
+	}
+	l.allShows = shows
+
 	libraries, err := l.libService.List(ctx)
 	if err != nil {
 		return err
@@ -105,6 +112,9 @@ func (l *LibraryCataloguer) RunOnce() error {
 			return err
 		}
 	}
+
+	l.allShows = nil
+
 	return nil
 }
 
@@ -197,11 +207,15 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	p := path.Join(basePath, showInfo.RawName)
-	show, err := l.showRepo.GetByPath(ctx, p)
-	if err != nil {
-		logger.Error(err, "Couldn't get show by path")
-		return nil, err
+
+	var show *entity.Show
+	for _, sp := range l.allShows {
+		if sp.Path == p {
+			show = &sp
+			break
+		}
 	}
+
 	if show != nil {
 		if show.FetchSource == entity.FetchSourceNone {
 			l.showMatcher.Channel <- show
@@ -221,7 +235,7 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		show.Year = *showInfo.Year
 	}
 
-	err = l.showRepo.Create(ctx, show)
+	err := l.showRepo.Create(ctx, show)
 	if err != nil {
 		logger.Error(err, "Error creating show")
 		return nil, err
