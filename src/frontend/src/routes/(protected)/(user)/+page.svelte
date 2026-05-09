@@ -54,7 +54,7 @@
 	<section class="my-8">
 		<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 			<ShowIcon />
-			Recent Shows (WIP)
+			Recent Shows
 		</h2>
 		<ItemGrid>
 			{#each latestShows as show (show.id)}
@@ -66,7 +66,7 @@
 	<section class="my-8">
 		<h2 class="mb-2 flex items-center gap-1 text-xl tracking-wider">
 			<MovieIcon />
-			Recent Movies (WIP)
+			Recent Movies
 		</h2>
 		<ItemGrid>
 			{#each latestMovies as movie (movie.id)}
