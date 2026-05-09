@@ -241,6 +241,7 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 
+	l.allShows = append(l.allShows, *show)
 	l.showMatcher.Channel <- show
 	return show, nil
 }
