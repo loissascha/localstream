@@ -34,6 +34,7 @@ type LibraryCataloguer struct {
 	seasonMatcher      *SeasonMatcher
 	episodeMatcher     *EpisodeMatcher
 	allShows           []entity.Show
+	allMovies          []entity.Movie
 }
 
 func NewLibraryCataloguer(
@@ -95,11 +96,16 @@ func (l *LibraryCataloguer) RunOnce() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
-	shows, err := l.showRepo.All(ctx)
+	var err error
+	l.allShows, err = l.showRepo.All(ctx)
 	if err != nil {
 		return err
 	}
-	l.allShows = shows
+
+	l.allMovies, err = l.movieRepo.All(ctx)
+	if err != nil {
+		return err
+	}
 
 	libraries, err := l.libService.List(ctx)
 	if err != nil {
@@ -114,6 +120,7 @@ func (l *LibraryCataloguer) RunOnce() error {
 	}
 
 	l.allShows = nil
+	l.allMovies = nil
 
 	return nil
 }
@@ -141,9 +148,7 @@ func (l *LibraryCataloguer) extractShows(basePath string, input []fResult) map[s
 	return res
 }
 
-func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string, allExistingEpisodes []entity.Episode) (*entity.Episode, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func (l *LibraryCataloguer) findOrCreateEpisode(ctx context.Context, seasonId uuid.UUID, episodeInfo *parsers.EpisodeInfo, basePath string, allExistingEpisodes []entity.Episode) (*entity.Episode, error) {
 	p := path.Join(basePath, episodeInfo.RawName)
 
 	var episode *entity.Episode
@@ -178,9 +183,7 @@ func (l *LibraryCataloguer) findOrCreateEpisode(seasonId uuid.UUID, episodeInfo 
 	return episode, nil
 }
 
-func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string, allExistingSeasons []entity.Season) (*entity.Season, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func (l *LibraryCataloguer) findOrCreateSeason(ctx context.Context, showId uuid.UUID, seasonInfo *parsers.SeasonInfo, basePath string, allExistingSeasons []entity.Season) (*entity.Season, error) {
 	p := path.Join(basePath, seasonInfo.RawName)
 
 	var season *entity.Season
@@ -215,9 +218,7 @@ func (l *LibraryCataloguer) findOrCreateSeason(showId uuid.UUID, seasonInfo *par
 	return season, nil
 }
 
-func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func (l *LibraryCataloguer) findOrCreateShow(ctx context.Context, showInfo *parsers.ShowInfo, basePath string) (*entity.Show, error) {
 	p := path.Join(basePath, showInfo.RawName)
 
 	var show *entity.Show
@@ -253,7 +254,6 @@ func (l *LibraryCataloguer) findOrCreateShow(showInfo *parsers.ShowInfo, basePat
 		return nil, err
 	}
 
-	l.allShows = append(l.allShows, *show)
 	l.showMatcher.Channel <- show
 	return show, nil
 }
@@ -271,7 +271,7 @@ func (l *LibraryCataloguer) RunLibrary(ctx context.Context, library entity.Libra
 		}
 		break
 	case entity.LibraryTypeMovies:
-		err := l.RunMoviesLibrary(&library, results)
+		err := l.RunMoviesLibrary(ctx, &library, results)
 		if err != nil {
 			return err
 		}
@@ -291,7 +291,7 @@ func (l *LibraryCataloguer) RunShowsLibrary(ctx context.Context, library *entity
 			continue
 		}
 
-		show, err := l.findOrCreateShow(showInfo, library.Path)
+		show, err := l.findOrCreateShow(ctx, showInfo, library.Path)
 		if err != nil {
 			return err
 		}
@@ -309,7 +309,7 @@ func (l *LibraryCataloguer) RunShowsLibrary(ctx context.Context, library *entity
 				continue
 			}
 
-			season, err := l.findOrCreateSeason(show.ID, seasonInfo, show.Path, allExistingSeasons)
+			season, err := l.findOrCreateSeason(ctx, show.ID, seasonInfo, show.Path, allExistingSeasons)
 			if err != nil {
 				return err
 			}
@@ -327,7 +327,7 @@ func (l *LibraryCataloguer) RunShowsLibrary(ctx context.Context, library *entity
 					continue
 				}
 
-				_, err := l.findOrCreateEpisode(season.ID, episodeInfo, season.Path, allExistingEpisodes)
+				_, err := l.findOrCreateEpisode(ctx, season.ID, episodeInfo, season.Path, allExistingEpisodes)
 				if err != nil {
 					return err
 				}
@@ -337,15 +337,16 @@ func (l *LibraryCataloguer) RunShowsLibrary(ctx context.Context, library *entity
 	return nil
 }
 
-func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []fResult) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
+func (l *LibraryCataloguer) RunMoviesLibrary(ctx context.Context, library *entity.Library, results []fResult) error {
 	for _, f := range results {
-		movie, err := l.movieRepo.GetByPath(ctx, f.Path)
-		if err != nil {
-			return err
+		var movie *entity.Movie
+		for _, m := range l.allMovies {
+			if m.Path == f.Path {
+				movie = &m
+				break
+			}
 		}
+
 		if movie != nil {
 			l.movieMatcher.Channel <- movie
 			continue
@@ -365,7 +366,7 @@ func (l *LibraryCataloguer) RunMoviesLibrary(library *entity.Library, results []
 			CreatedAt: time.Now().UTC(),
 			Path:      f.Path,
 		}
-		err = l.movieRepo.Create(ctx, movie)
+		err := l.movieRepo.Create(ctx, movie)
 		if err != nil {
 			return err
 		}
