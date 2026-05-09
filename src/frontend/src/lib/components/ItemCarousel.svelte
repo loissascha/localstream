@@ -63,24 +63,32 @@
 	</div>
 
 	{#if canScroll && canScrollLeft}
-		<button
-			onclick={() => scroll('left')}
-			class="absolute top-0 bottom-0 left-0 cursor-pointer bg-linear-to-l via-black/55 to-black/70 px-4 text-neutral-300 transition-all duration-300 hover:via-black/80 hover:to-black/90 hover:text-neutral-50"
-			class:opacity-0={!isHovered}
-			class:pointer-events-none={!isHovered}
+		<div
+			class="pointer-events-none absolute top-0 bottom-0 left-0 flex items-center justify-center px-4"
 		>
-			<ChevronLeftIcon />
-		</button>
+			<button
+				onclick={() => scroll('left')}
+				class="pointer-events-auto cursor-pointer rounded-full bg-neutral-800 p-4 text-brand shadow transition-all duration-200 hover:scale-110"
+				class:opacity-0={!isHovered}
+				class:pointer-events-none={!isHovered}
+			>
+				<ChevronLeftIcon size={26} />
+			</button>
+		</div>
 	{/if}
 
 	{#if canScroll && canScrollRight}
-		<button
-			onclick={() => scroll('right')}
-			class="absolute top-0 right-0 bottom-0 cursor-pointer bg-linear-to-r via-black/55 to-black/70 px-4 text-neutral-300 transition-all duration-300 hover:via-black/80 hover:to-black/90 hover:text-neutral-50"
-			class:opacity-0={!isHovered}
-			class:pointer-events-none={!isHovered}
+		<div
+			class="pointer-events-none absolute top-0 right-0 bottom-0 flex items-center justify-center px-4"
 		>
-			<ChevronRightIcon />
-		</button>
+			<button
+				onclick={() => scroll('right')}
+				class="pointer-events-auto cursor-pointer rounded-full bg-neutral-800 p-4 text-brand shadow transition-all duration-200 hover:scale-110"
+				class:opacity-0={!isHovered}
+				class:pointer-events-none={!isHovered}
+			>
+				<ChevronRightIcon size={26} />
+			</button>
+		</div>
 	{/if}
 </section>
