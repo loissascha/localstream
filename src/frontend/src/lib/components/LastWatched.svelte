@@ -6,6 +6,7 @@
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import type { WatchstateResponse } from '$lib/types/export_types';
 	import ItemCarousel from './ItemCarousel.svelte';
+	import ItemCarouselItem from './ItemCarouselItem.svelte';
 	import ItemGrid from './ItemGrid.svelte';
 	import ListItemA from './ListItemA.svelte';
 	import ShowContextMenu from './ShowContextMenu.svelte';
@@ -45,7 +46,7 @@
 		<ItemCarousel>
 			{#each data as d (d.id)}
 				{#if !d.finished}
-					<div class="w-60 shrink-0">
+					<ItemCarouselItem>
 						<ShowContextMenu show={d.show_info}>
 							<ListItemA
 								href={resolve(
@@ -70,7 +71,7 @@
 								</div>
 							</ListItemA>
 						</ShowContextMenu>
-					</div>
+					</ItemCarouselItem>
 				{/if}
 			{/each}
 		</ItemCarousel>

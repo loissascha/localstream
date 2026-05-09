@@ -10,6 +10,7 @@
 	import { loadShowsDatabase, shows } from '$lib/shows.svelte';
 	import { auth } from '$lib/auth.svelte';
 	import ItemCarousel from '$lib/components/ItemCarousel.svelte';
+	import ItemCarouselItem from '$lib/components/ItemCarouselItem.svelte';
 
 	let latestMovies = $derived.by(() => {
 		return [...movies.movies]
@@ -59,9 +60,9 @@
 		</h2>
 		<ItemCarousel>
 			{#each latestShows as show (show.id)}
-				<div class="w-60 shrink-0">
+				<ItemCarouselItem>
 					<ShowListItem {show} />
-				</div>
+				</ItemCarouselItem>
 			{/each}
 		</ItemCarousel>
 	</section>
@@ -73,9 +74,9 @@
 		</h2>
 		<ItemCarousel>
 			{#each latestMovies as movie (movie.id)}
-				<div class="w-60 shrink-0">
+				<ItemCarouselItem>
 					<MovieListItem {movie} />
-				</div>
+				</ItemCarouselItem>
 			{/each}
 		</ItemCarousel>
 	</section>
