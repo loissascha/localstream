@@ -7,7 +7,6 @@
 	const VISIBLE_PER_PAGE = 50;
 
 	let showAddToCollection = $state(false);
-	let selectedShowsCount = $state(0);
 
 	let visibleCount = $state(VISIBLE_PER_PAGE);
 	let visibleShows = $derived(shows.shows.slice(0, visibleCount));
@@ -38,15 +37,14 @@
 		return () => observer.disconnect();
 	});
 
-	$effect(() => {
-		shows.selectedShows;
-		var sc = 0;
+	let selectedShowsCount = $derived.by(() => {
+		let sc = 0;
 		for (const [id, isSelected] of Object.entries(shows.selectedShows)) {
 			if (isSelected) {
 				sc++;
 			}
 		}
-		selectedShowsCount = sc;
+		return sc;
 	});
 </script>
 

@@ -44,16 +44,14 @@
 		return () => observer.disconnect();
 	});
 
-	let selectedMoviesCount = $state(0);
-	$effect(() => {
-		movies.selectedMovies;
-		var sc = 0;
+	let selectedMoviesCount = $derived.by(() => {
+		let sc = 0;
 		for (const [id, isSelected] of Object.entries(movies.selectedMovies)) {
 			if (isSelected) {
 				sc++;
 			}
 		}
-		selectedMoviesCount = sc;
+		return sc;
 	});
 </script>
 
