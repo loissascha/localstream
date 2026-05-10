@@ -58,14 +58,14 @@
 			<button
 				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 				onclick={() => {
-					clearShowsSelection();
-				}}>Clear selection</button
+					showAddToCollection = true;
+				}}>Add to Collection</button
 			>
 			<button
 				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 				onclick={() => {
-					showAddToCollection = true;
-				}}>Add to Collection</button
+					clearShowsSelection();
+				}}>Clear selection</button
 			>
 			<div>{selectedShowsCount} selected</div>
 		</section>

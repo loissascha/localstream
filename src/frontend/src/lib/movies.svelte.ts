@@ -1,6 +1,10 @@
 import { addMovieToCollection } from './api/collections';
 import { getMovie, listMovies } from './api/movies';
-import { updateWatchstateMovie } from './api/watchstate_movie';
+import {
+	deleteWatchstateMovie,
+	setWatchstateFinishedMovie,
+	updateWatchstateMovie
+} from './api/watchstate_movie';
 import { auth } from './auth.svelte';
 import type { MovieInfo } from './types/export_types';
 
@@ -59,6 +63,32 @@ export async function reloadSingleMovie(movieId: string) {
 			if (movie.id !== movieId) return movie;
 			return response;
 		});
+	} catch (e) {
+		alert((e as Error).message);
+	}
+}
+
+export async function setSelectedMoviesToWatched() {
+	try {
+		if (!auth.token) return;
+		for (const [id, isSelected] of Object.entries(movies.selectedMovies)) {
+			if (isSelected) {
+				await setWatchstateFinishedMovie(auth.token, id);
+			}
+		}
+	} catch (e) {
+		alert((e as Error).message);
+	}
+}
+
+export async function deleteWatchstateForSelectedMovies() {
+	try {
+		if (!auth.token) return;
+		for (const [id, isSelected] of Object.entries(movies.selectedMovies)) {
+			if (isSelected) {
+				await deleteWatchstateMovie(auth.token, id);
+			}
+		}
 	} catch (e) {
 		alert((e as Error).message);
 	}

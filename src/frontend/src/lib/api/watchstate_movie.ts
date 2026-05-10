@@ -2,8 +2,7 @@ import type {
 	SaveMovieWatchstateRequest,
 	WatchstateInfo,
 	WatchstateMovieResponse,
-	WatchstateMoviesListResponse,
-	WatchstateResponse
+	WatchstateMoviesListResponse
 } from '$lib/types/export_types';
 
 export async function updateWatchstateMovie(
@@ -23,6 +22,37 @@ export async function updateWatchstateMovie(
 	}
 	const result = (await response.json()) as WatchstateInfo;
 	return result;
+}
+
+export async function setWatchstateFinishedMovie(
+	bearerToken: string,
+	movieID: string
+): Promise<WatchstateMovieResponse> {
+	const response = await fetch('/api/v1/watchstate/movie/' + movieID + '/finished', {
+		method: 'POST',
+		headers: {
+			Authorization: 'Bearer ' + bearerToken
+		}
+	});
+	if (response.status !== 200) {
+		console.error(response);
+		throw new Error('Error: ' + response.status);
+	}
+	const result = (await response.json()) as WatchstateMovieResponse;
+	return result;
+}
+
+export async function deleteWatchstateMovie(bearerToken: string, movieId: string) {
+	const response = await fetch('/api/v1/watchstate/movie/' + movieId + '/delete', {
+		method: 'DELETE',
+		headers: {
+			Authorization: 'Bearer ' + bearerToken
+		}
+	});
+	if (response.status !== 200) {
+		console.error(response);
+		throw new Error('Error: ' + response.status);
+	}
 }
 
 export async function listLatestWatchstateByMovie(

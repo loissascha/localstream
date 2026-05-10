@@ -56,14 +56,14 @@ func (h *UserMovieWatchstateHandler) RegisterHandlers() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
-	h.s.POST("/api/watchstate/movie/{movieID}/finished",
+	h.s.POST("/api/v1/watchstate/movie/{movieID}/finished",
 		h.setMovieWatchstateFinished,
 		server.WithExportType[WatchstateMovieResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 		server.WithDescription("Sets the movie to watched"),
 	)
 
-	h.s.DELETEI("/api/watchstate/movie/{movieID}/delete",
+	h.s.DELETEI("/api/v1/watchstate/movie/{movieID}/delete",
 		h.deleteMovieWatchstate,
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 		server.WithDescription("deletes the watchstate of a movie"),
