@@ -21,6 +21,26 @@ import (
 	backgroundservice "github.com/loissascha/localstream/internal/service/background"
 )
 
+func setupFileDirs() error {
+	err := os.MkdirAll("./static/images/movies", os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll("./static/images/shows", os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll("./static/subtitles/movies", os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll("./static/subtitles/shows", os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	godotenv.Load()
 
@@ -46,6 +66,11 @@ func main() {
 				logger.Error(err, "pprof server stopped")
 			}
 		}()
+	}
+
+	err := setupFileDirs()
+	if err != nil {
+		panic(err)
 	}
 
 	s, err := server.NewServer(
