@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 )
 
+// TODO: update so that files go to their respective paths
+
 func DownloadImageAndGetStaticPath(url string, filename string) (string, error) {
 	ext, err := getExtensionFromUrl(url)
 	if err != nil {
