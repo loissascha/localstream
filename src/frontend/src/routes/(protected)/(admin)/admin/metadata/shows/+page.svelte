@@ -10,7 +10,7 @@
 	<label for="hidesingle" class="cursor-pointer"> Hide items with single metadata</label>
 </div>
 
-<section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+<section class="grid grid-cols-1 gap-4">
 	{#each shows.shows as show (show.id)}
 		{#if !hideSingle || show.fetch_source == 'multiple' || show.fetch_source == 'empty'}
 			<AdminShowMetadataBlock {show} />

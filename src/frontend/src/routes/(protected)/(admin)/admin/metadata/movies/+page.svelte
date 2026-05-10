@@ -15,7 +15,7 @@
 	<p class="text-red-500">{errorMessage}</p>
 {/if}
 
-<section class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+<section class="mt-4 grid grid-cols-1 gap-4">
 	{#each movies.movies as movie (movie.id)}
 		{#if !hideSingle || movie.fetch_source == 'multiple' || movie.fetch_source == 'empty'}
 			<AdminMovieMetadataBlock {movie} />

@@ -4,6 +4,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import { type ShowMetadataInfo, type ShowInfo } from '$lib/types/export_types';
 	import ShowMetadataSearchOverlay from '../overlays/ShowMetadataSearchOverlay.svelte';
+	import DOMPurify from 'dompurify';
 
 	let { show }: { show: ShowInfo } = $props();
 	let metadata = $state<ShowMetadataInfo[]>([]);
@@ -29,11 +30,11 @@
 </script>
 
 <div class="rounded bg-neutral-800 p-4">
-	<div class="font-bold">
+	<div class="text-xl font-bold">
 		{show.name}
 	</div>
 	{#if loading}
-		Loading metadata...
+		Loading...
 	{:else}
 		<div class="flex items-center justify-between">
 			<span>
@@ -49,11 +50,10 @@
 		<div class="mt-4 flex flex-col gap-2">
 			{#each metadata as m (m.id)}
 				<div class="">
-					<div class="font-bold">{m.id}</div>
 					<div class="font-bold">{m.name}</div>
-					<div class="grid grid-cols-2">
+					<div class="grid grid-cols-[1fr_auto] gap-4">
 						<div>
-							<p>{m.description}</p>
+							<p class="text-sm">{@html DOMPurify.sanitize(m.description)}</p>
 							{#if metadata.length > 1}
 								<button
 									onclick={() => {
@@ -72,7 +72,7 @@
 								>
 							{/if}
 						</div>
-						<div>
+						<div class="w-60">
 							<img class="w-full" src={m.medium_image_url} alt={m.name} />
 						</div>
 					</div>
