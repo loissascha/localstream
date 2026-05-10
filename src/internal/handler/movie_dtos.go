@@ -35,8 +35,28 @@ type MovieMetadataInfo struct {
 	FetchSource      entity.FetchSource `json:"fetch_source"`
 }
 
+type MovieSubtitleInfo struct {
+	ID        string `json:"id"`
+	MovieID   string `json:"movie_id"`
+	Name      string `json:"name"`
+	Path      string `json:"path"`
+	LangShort string `json:"lang_short"`
+	Lang      string `json:"lang"`
+}
+
 type MovieListResponse struct {
 	Movies []MovieInfo `json:"movies"`
+}
+
+func toMovieSubtitleInfo(m *entity.MovieSubtitle) MovieSubtitleInfo {
+	return MovieSubtitleInfo{
+		ID:        encoders.EncodeUUID(m.ID),
+		MovieID:   encoders.EncodeUUID(m.MovieID),
+		Name:      m.Name,
+		Path:      m.Path,
+		LangShort: m.LangShort,
+		Lang:      m.Lang,
+	}
 }
 
 func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
