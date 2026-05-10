@@ -11,35 +11,46 @@
 	import RenameCollectionOverlay from '$lib/components/overlays/RenameCollectionOverlay.svelte';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
+	import { movies } from '$lib/movies.svelte';
+	import { shows } from '$lib/shows.svelte';
 	import type { MovieInfo, ShowInfo, CollectionInfo } from '$lib/types/export_types';
 
 	const collectionId = $derived(page.params.collectionID ?? '');
 
 	let collection = $state<CollectionInfo | null>(null);
-	let movies = $state<MovieInfo[]>([]);
-	let shows = $state<ShowInfo[]>([]);
-	let sortedMovies = $derived(
-		[...movies].sort((a, b) => {
-			if (a.year < b.year) {
-				return -1;
-			}
-			if (a.year > b.year) {
-				return 1;
-			}
-			return 0;
-		})
-	);
-	let sortedShows = $derived(
-		[...shows].sort((a, b) => {
-			if (a.year < b.year) {
-				return -1;
-			}
-			if (a.year > b.year) {
-				return 1;
-			}
-			return 0;
-		})
-	);
+	let collectionMovies = $state<MovieInfo[]>([]);
+	let collectionShows = $state<ShowInfo[]>([]);
+
+	let sortedMovies = $derived.by(() => {
+		const collectionMovieIds = new Set(collectionMovies.map((movie) => movie.id));
+
+		return movies.movies
+			.filter((movie) => collectionMovieIds.has(movie.id))
+			.sort((a, b) => {
+				if (a.year < b.year) {
+					return -1;
+				}
+				if (a.year > b.year) {
+					return 1;
+				}
+				return 0;
+			});
+	});
+	let sortedShows = $derived.by(() => {
+		const collectionShowIds = new Set(collectionShows.map((show) => show.id));
+
+		return shows.shows
+			.filter((show) => collectionShowIds.has(show.id))
+			.sort((a, b) => {
+				if (a.year < b.year) {
+					return -1;
+				}
+				if (a.year > b.year) {
+					return 1;
+				}
+				return 0;
+			});
+	});
 
 	let selectedMovies = $state<Record<string, boolean>>({});
 	let selectedShows = $state<Record<string, boolean>>({});
@@ -54,10 +65,10 @@
 			if (!auth.token) return;
 			const result = await getCollection(auth.token, collectionId);
 			collection = result.collection;
-			movies = result.movies;
-			shows = result.shows;
-			selectedMovies = Object.fromEntries(movies.map((movie) => [movie.id, false]));
-			selectedShows = Object.fromEntries(shows.map((show) => [show.id, false]));
+			collectionMovies = result.movies;
+			collectionShows = result.shows;
+			selectedMovies = Object.fromEntries(collectionMovies.map((movie) => [movie.id, false]));
+			selectedShows = Object.fromEntries(collectionShows.map((show) => [show.id, false]));
 		} catch (e) {
 			error_message = (e as Error).message;
 		}
@@ -76,8 +87,8 @@
 					await removeShowFromCollection(auth.token, collectionId, id);
 				}
 			}
-			selectedMovies = Object.fromEntries(movies.map((movie) => [movie.id, false]));
-			selectedShows = Object.fromEntries(shows.map((show) => [show.id, false]));
+			selectedMovies = Object.fromEntries(collectionMovies.map((movie) => [movie.id, false]));
+			selectedShows = Object.fromEntries(collectionShows.map((show) => [show.id, false]));
 			await fetchData();
 		} catch (e) {
 			alert((e as Error).message);
@@ -141,7 +152,7 @@
 				<EditIcon />
 			</button>
 		</div>
-		{#if shows.length > 0}
+		{#if collectionShows.length > 0}
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Shows</h2>
 			<ItemGrid>
 				{#each sortedShows as show (show.id)}
@@ -149,7 +160,7 @@
 				{/each}
 			</ItemGrid>
 		{/if}
-		{#if movies.length > 0}
+		{#if collectionMovies.length > 0}
 			<h2 class="mt-8 mb-2 text-xl font-bold tracking-wide">Movies</h2>
 			<ItemGrid>
 				{#each sortedMovies as movie (movie.id)}
