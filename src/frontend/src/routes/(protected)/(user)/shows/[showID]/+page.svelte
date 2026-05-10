@@ -85,6 +85,26 @@
 		}
 	}
 
+	async function setWatched() {
+		if (!auth.token) return;
+		if (!episodeData) return;
+		if (!selectedSeason) return;
+		for (const e of episodeData) {
+			await setWatchstateFinished(auth.token, e.id);
+		}
+		await loadEpisodes(selectedSeason.id);
+	}
+
+	async function setNotWatched() {
+		if (!auth.token) return;
+		if (!episodeData) return;
+		if (!selectedSeason) return;
+		for (const e of episodeData) {
+			await deleteWatchstate(auth.token, e.id);
+		}
+		await loadEpisodes(selectedSeason.id);
+	}
+
 	function selectSeason(season: SeasonInfo) {
 		selectedSeason = season;
 		const url = new URL(page.url);
@@ -131,7 +151,7 @@
 			<div>
 				{@html DOMPurify.sanitize(show?.description ?? '')}
 			</div>
-			<div class="p-4">
+			<div class="flex flex-wrap gap-4 px-4">
 				<button
 					onclick={() => {
 						showAddToCollection = true;
@@ -141,6 +161,24 @@
 					<PlusIcon />
 					Add to Collection
 				</button>
+				{#if selectedSeason}
+					<button
+						onclick={() => {
+							setWatched();
+						}}
+						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+					>
+						Set Watched
+					</button>
+					<button
+						onclick={() => {
+							setNotWatched();
+						}}
+						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+					>
+						Set not Watched
+					</button>
+				{/if}
 			</div>
 		</div>
 	</div>
