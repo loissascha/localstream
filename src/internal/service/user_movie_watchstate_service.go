@@ -73,6 +73,16 @@ func (s *UserMovieWatchstateService) GetByMovieID(ctx context.Context, userID in
 	return watchstate, nil
 }
 
+func (s *UserMovieWatchstateService) DeleteByMovieID(ctx context.Context, userId int64, movieId string) error {
+	movieUUID, err := encoders.DecodeUUID(movieId)
+	if err != nil {
+		return fmt.Errorf("decode movie id: %w", err)
+	}
+
+	err = s.watchstateRepo.DeleteByUserAndMovieID(ctx, userId, movieUUID)
+	return err
+}
+
 func (s *UserMovieWatchstateService) ListByUserID(ctx context.Context, userID int64) ([]entity.UserMovieWatchstate, error) {
 	if userID <= 0 {
 		return nil, ErrInvalidMovieWatchstateInput

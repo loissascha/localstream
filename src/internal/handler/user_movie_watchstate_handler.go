@@ -18,7 +18,12 @@ type UserMovieWatchstateHandler struct {
 	movieService               *service.MovieService
 }
 
-func NewUserMovieWatchstateHandler(s *server.Server, authM *middleware.AuthMiddleware, userWatchstateS *service.UserMovieWatchstateService, movieS *service.MovieService) *UserMovieWatchstateHandler {
+func NewUserMovieWatchstateHandler(
+	s *server.Server,
+	authM *middleware.AuthMiddleware,
+	userWatchstateS *service.UserMovieWatchstateService,
+	movieS *service.MovieService,
+) *UserMovieWatchstateHandler {
 	return &UserMovieWatchstateHandler{
 		s:                          s,
 		authMiddleware:             authM,
@@ -50,6 +55,62 @@ func (h *UserMovieWatchstateHandler) RegisterHandlers() {
 		server.WithExportType[MovieInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+
+	h.s.POST("/api/watchstate/movie/{movieID}/finished",
+		h.setMovieWatchstateFinished,
+		server.WithExportType[WatchstateMovieResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("Sets the movie to watched"),
+	)
+
+	h.s.DELETEI("/api/watchstate/movie/{movieID}/delete",
+		h.deleteMovieWatchstate,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("deletes the watchstate of a movie"),
+	)
+}
+
+func (h *UserMovieWatchstateHandler) setMovieWatchstateFinished(w http.ResponseWriter, r *http.Request) {
+	movieID := r.PathValue("movieID")
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	watchstate, err := h.userMovieWatchstateService.Save(r.Context(), userID, service.SaveMovieWatchstateInput{
+		MovieID:  movieID,
+		Position: 0,
+		Duration: 0,
+		Finished: true,
+	})
+	if err != nil {
+		if errors.Is(err, service.ErrInvalidWatchstateInput) {
+			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid watchstate input"})
+			return
+		}
+
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to save watchstate"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toWatchstateInfoMovie(watchstate))
+}
+
+func (h *UserMovieWatchstateHandler) deleteMovieWatchstate(w http.ResponseWriter, r *http.Request) {
+	movieID := r.PathValue("movieID")
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	err := h.userMovieWatchstateService.DeleteByMovieID(r.Context(), userID, movieID)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	respond.JSON(w, http.StatusOK, true)
 }
 
 func (h *UserMovieWatchstateHandler) listLatestWatchstates(w http.ResponseWriter, r *http.Request) {
