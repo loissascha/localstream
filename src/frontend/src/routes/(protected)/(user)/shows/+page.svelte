@@ -37,15 +37,9 @@
 		return () => observer.disconnect();
 	});
 
-	let selectedShowsCount = $derived.by(() => {
-		let sc = 0;
-		for (const [id, isSelected] of Object.entries(shows.selectedShows)) {
-			if (isSelected) {
-				sc++;
-			}
-		}
-		return sc;
-	});
+	let selectedShowsCount = $derived(
+		Object.entries(shows.selectedShows).filter(([id, isSelected]) => isSelected).length
+	);
 </script>
 
 <main>

@@ -44,15 +44,9 @@
 		return () => observer.disconnect();
 	});
 
-	let selectedMoviesCount = $derived.by(() => {
-		let sc = 0;
-		for (const [id, isSelected] of Object.entries(movies.selectedMovies)) {
-			if (isSelected) {
-				sc++;
-			}
-		}
-		return sc;
-	});
+	let selectedMoviesCount = $derived(
+		Object.entries(movies.selectedMovies).filter(([id, isSelected]) => isSelected).length
+	);
 </script>
 
 <main>
