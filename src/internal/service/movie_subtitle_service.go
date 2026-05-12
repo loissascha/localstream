@@ -6,15 +6,23 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
 type MovieSubtitleService struct {
 	movieSubtitleRepo repository.MovieSubtitleRepository
+	subtitleProvider  provider.SubtitleProvider
 }
 
-func NewMovieSubtitleService(movieSubtitleRepo repository.MovieSubtitleRepository) *MovieSubtitleService {
-	return &MovieSubtitleService{movieSubtitleRepo: movieSubtitleRepo}
+func NewMovieSubtitleService(
+	movieSubtitleRepo repository.MovieSubtitleRepository,
+	subtitleProvider provider.SubtitleProvider,
+) *MovieSubtitleService {
+	return &MovieSubtitleService{
+		movieSubtitleRepo: movieSubtitleRepo,
+		subtitleProvider:  subtitleProvider,
+	}
 }
 
 func (s *MovieSubtitleService) Create(ctx context.Context, subtitle *entity.MovieSubtitle) error {
@@ -77,4 +85,8 @@ func (s *MovieSubtitleService) DeleteByID(ctx context.Context, id string) error 
 	}
 
 	return nil
+}
+
+func (s *MovieSubtitleService) SearchByTerm(ctx context.Context, term string) ([]provider.SubtitleProviderResult, error) {
+	return s.subtitleProvider.SearchMovie(term)
 }

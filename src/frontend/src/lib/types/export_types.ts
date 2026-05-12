@@ -192,6 +192,12 @@ export interface ShowSearchResult {
   score: number;
   show: ShowMetadata;
 }
+export interface SubtitleProviderResult {
+  name: string;
+  lang: string;
+  author: string;
+  url: string;
+}
 export interface UpdateCollectionRequest {
   name: string;
 }

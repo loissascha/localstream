@@ -14,6 +14,7 @@ import (
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	"github.com/loissascha/localstream/internal/middleware"
+	"github.com/loissascha/localstream/internal/provider/subdl"
 	"github.com/loissascha/localstream/internal/provider/tmdb"
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
@@ -101,6 +102,7 @@ func main() {
 	// metadata providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
+	subdlProvider := subdl.NewSubDlProvider(subDlApiKey)
 
 	// repositories
 	userRepo := repopostgres.NewUserRepository(db)
@@ -131,7 +133,7 @@ func main() {
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
-	movieSubtitleService := service.NewMovieSubtitleService(movieSubtitleRepo)
+	movieSubtitleService := service.NewMovieSubtitleService(movieSubtitleRepo, subdlProvider)
 	collectionService := service.NewCollectionService(collectionRepo)
 
 	// middleware
