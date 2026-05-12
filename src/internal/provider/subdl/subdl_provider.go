@@ -77,9 +77,9 @@ func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProvider
 	if err = json.Unmarshal(body, &searchResults); err != nil {
 		return nil, err
 	}
-	if !searchResults.Status {
-		return nil, fmt.Errorf("api call failed: status false")
-	}
+	// if !searchResults.Status {
+	// 	return nil, fmt.Errorf("api call failed: status false")
+	// }
 
 	var results = []provider.SubtitleProviderResult{}
 	for _, s := range searchResults.Subtitles {
