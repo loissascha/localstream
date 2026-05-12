@@ -57,6 +57,11 @@ func main() {
 		logger.Warning(nil, "No APP_ENV found. Setting 'development'")
 	}
 
+	subDlApiKey := os.Getenv("SUBDL_API_KEY")
+	if subDlApiKey == "" {
+		panic("SUBDL_API_KEY not set")
+	}
+
 	listenAddr := fmt.Sprintf(":%v", port)
 	if env == "development" {
 		go func() {
