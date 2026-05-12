@@ -6,6 +6,7 @@
 	import { deleteWatchstateMovie, setWatchstateFinishedMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
 	import { reloadSingleMovie } from '$lib/movies.svelte';
+	import MovieSubtitleSearchOverlay from './overlays/MovieSubtitleSearchOverlay.svelte';
 
 	interface Props {
 		children: Snippet;
@@ -14,6 +15,7 @@
 	let { children, movie }: Props = $props();
 
 	let movieMetadataOverlayOpen = $state(false);
+	let movieSubtitleSearchOverlayOpen = $state(false);
 </script>
 
 <ContextMenu closeOnItemClick={true}>
@@ -31,6 +33,18 @@
 				class="cursor-pointer px-4 py-2 hover:bg-neutral-700">Update Metadata</button
 			>
 		{/if}
+		<button
+			role="menuitem"
+			onclick={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				closeMenu();
+				movieSubtitleSearchOverlayOpen = true;
+			}}
+			class="cursor-pointer px-4 py-2 hover:bg-neutral-700"
+		>
+			Subtitles
+		</button>
 		{#if movie.finished}
 			<button
 				role="menuitem"
@@ -72,6 +86,14 @@
 		{movie}
 		close={() => {
 			movieMetadataOverlayOpen = false;
+		}}
+	/>
+{/if}
+{#if movieSubtitleSearchOverlayOpen}
+	<MovieSubtitleSearchOverlay
+		{movie}
+		close={() => {
+			movieSubtitleSearchOverlayOpen = false;
 		}}
 	/>
 {/if}

@@ -4,7 +4,6 @@
 	import ListItemA from './ListItemA.svelte';
 	import MovieContextMenu from './MovieContextMenu.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
-	import MovieMetadataSearchOverlay from './overlays/MovieMetadataSearchOverlay.svelte';
 
 	interface Props {
 		movie: MovieInfo;
@@ -13,8 +12,6 @@
 	}
 
 	let { movie, selectable = false, selected = $bindable(false) }: Props = $props();
-
-	let movieMetadataOverlayOpen = $state(false);
 </script>
 
 <div class="relative">
@@ -53,12 +50,3 @@
 		</button>
 	{/if}
 </div>
-
-{#if movieMetadataOverlayOpen}
-	<MovieMetadataSearchOverlay
-		{movie}
-		close={() => {
-			movieMetadataOverlayOpen = false;
-		}}
-	/>
-{/if}
