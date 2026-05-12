@@ -77,8 +77,12 @@
 		</button>
 	</form>
 	{#each subtitleResult as subtitle}
-		<div class="flex items-center gap-1 border-b border-b-neutral-700 last-of-type:border-b-0">
-			<div class="grow">{subtitle.name}</div>
+		<div class="flex items-center gap-1 mb-1 pb-1 border-b border-b-neutral-700 last-of-type:border-b-0">
+			<div class="grow">
+				<div>{subtitle.name}</div>
+				<div class="font-serif text-sm">{subtitle.lang}</div>
+				<div class="text-sm text-neutral-400">{subtitle.url}</div>
+			</div>
 			<div>
 				<button class="cursor-pointer">
 					<DownloadIcon />
