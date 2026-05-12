@@ -297,7 +297,15 @@
 		ontimeupdate={syncState}
 		onseeking={syncState}
 		disablepictureinpicture
-	></video>
+	>
+		<!-- <track -->
+		<!-- 	src="/static/subtitles/TestSubtitle.vtt" -->
+		<!-- 	kind="subtitles" -->
+		<!-- 	srclang="en" -->
+		<!-- 	label="English" -->
+		<!-- 	default -->
+		<!-- /> -->
+	</video>
 
 	{#if paused}
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/20">
