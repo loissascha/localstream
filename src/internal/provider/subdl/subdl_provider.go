@@ -10,6 +10,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/internal/encoders"
+	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 )
 
@@ -39,6 +42,17 @@ func NewSubDlProvider(apiKey string) *SubDlProvider {
 }
 
 func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+	fullUrl := "https://dl.subdl.com" + providerResult.Url
+	movieIdStr := encoders.EncodeUUID(movieId)
+
+	downloadedPath, err := helper.DownloadSubtitleForMovie(fullUrl, movieIdStr)
+	if err != nil {
+		return err
+	}
+	logger.Info(nil, "Downloaded to {DownloadedPath}", downloadedPath)
+
+	// if it's a zip -> unpack it -> check if it's a .stl next
+	// if it's a .stl -> convert it
 	return nil
 }
 
