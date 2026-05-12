@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -51,9 +52,51 @@ func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResu
 	}
 	logger.Info(nil, "Downloaded to {DownloadedPath}", downloadedPath)
 
-	// if it's a zip -> unpack it -> check if it's a .stl next
-	// if it's a .stl -> convert it
+	ext, err := helper.GetExtensionFromUrl(downloadedPath)
+	if err != nil {
+		return err
+	}
+	ext = strings.TrimLeft(ext, ".")
+
+	if ext == "zip" {
+		downloadedPath, err = self.unpackSubtitleZip(downloadedPath)
+		if err != nil {
+			return err
+		}
+		ext, err := helper.GetExtensionFromUrl(downloadedPath)
+		if err != nil {
+			return err
+		}
+		ext = strings.TrimLeft(ext, ".")
+	}
+
+	if ext == "stl" {
+		downloadedPath, err = self.convertSubtitleStl(downloadedPath)
+		if err != nil {
+			return err
+		}
+		ext, err := helper.GetExtensionFromUrl(downloadedPath)
+		if err != nil {
+			return err
+		}
+		ext = strings.TrimLeft(ext, ".")
+	}
+
+	if ext != "vtt" {
+		return fmt.Errorf("wrong file format!")
+	}
+
+	// TODO: create database entry for the movie + downloaded subtitle path
+
 	return nil
+}
+
+func (self *SubDlProvider) unpackSubtitleZip(localPath string) (string, error) {
+	return "", fmt.Errorf("not implemented")
+}
+
+func (self *SubDlProvider) convertSubtitleStl(localPath string) (string, error) {
+	return "", fmt.Errorf("not implemented")
 }
 
 func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProviderResult, error) {
