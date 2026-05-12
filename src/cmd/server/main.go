@@ -99,11 +99,6 @@ func main() {
 		panic(err)
 	}
 
-	// metadata providers
-	tvMazeProvider := tvmaze.NewTVMazeProvider()
-	tmdbProvider := tmdb.NewTMDBProvider()
-	subdlProvider := subdl.NewSubDlProvider(subDlApiKey)
-
 	// repositories
 	userRepo := repopostgres.NewUserRepository(db)
 	libraryRepo := repopostgres.NewLibraryRepository(db)
@@ -119,6 +114,11 @@ func main() {
 	movieMetaRepo := repopostgres.NewMovieMetadataRepository(db)
 	movieSubtitleRepo := repopostgres.NewMovieSubtitleRepository(db)
 	collectionRepo := repopostgres.NewCollectionRepository(db)
+
+	// providers
+	tvMazeProvider := tvmaze.NewTVMazeProvider()
+	tmdbProvider := tmdb.NewTMDBProvider()
+	subdlProvider := subdl.NewSubDlProvider(subDlApiKey, movieSubtitleRepo)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))

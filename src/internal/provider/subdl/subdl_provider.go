@@ -15,10 +15,12 @@ import (
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
+	"github.com/loissascha/localstream/internal/repository"
 )
 
 type SubDlProvider struct {
-	apiKey string
+	apiKey            string
+	movieSubtitleRepo repository.MovieSubtitleRepository
 }
 
 type ApiSearchResult struct {
@@ -36,9 +38,13 @@ type ApiSubtitleResult struct {
 	SubtitlePage string `json:"subtitlePage"`
 }
 
-func NewSubDlProvider(apiKey string) *SubDlProvider {
+func NewSubDlProvider(
+	apiKey string,
+	movieSubtitleRepo repository.MovieSubtitleRepository,
+) *SubDlProvider {
 	return &SubDlProvider{
-		apiKey: apiKey,
+		apiKey:            apiKey,
+		movieSubtitleRepo: movieSubtitleRepo,
 	}
 }
 
