@@ -17,7 +17,18 @@ type SubDlProvider struct {
 }
 
 type ApiSearchResult struct {
-	Status bool `json:"status"`
+	Status    bool                `json:"status"`
+	Subtitles []ApiSubtitleResult `json:"subtitles"`
+}
+
+type ApiSubtitleResult struct {
+	ReleaseName  string `json:"release_name"`
+	Name         string `json:"name"`
+	Lang         string `json:"lang"`
+	Language     string `json:"language"`
+	Author       string `json:"author"`
+	Url          string `json:"url"`
+	SubtitlePage string `json:"subtitlePage"`
 }
 
 func NewSubDlProvider(apiKey string) *SubDlProvider {
@@ -66,10 +77,19 @@ func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProvider
 	if err = json.Unmarshal(body, &searchResults); err != nil {
 		return nil, err
 	}
+	if !searchResults.Status {
+		return nil, fmt.Errorf("api call failed: status false")
+	}
 
 	var results = []provider.SubtitleProviderResult{}
-	// for _, sr := range searchResults {
-	// }
+	for _, s := range searchResults.Subtitles {
+		results = append(results, provider.SubtitleProviderResult{
+			Name:   s.ReleaseName,
+			Lang:   s.Lang,
+			Author: s.Author,
+			Url:    s.Url,
+		})
+	}
 
 	return results, nil
 }
