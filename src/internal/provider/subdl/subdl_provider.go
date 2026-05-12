@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/provider"
 )
 
@@ -35,6 +36,10 @@ func NewSubDlProvider(apiKey string) *SubDlProvider {
 	return &SubDlProvider{
 		apiKey: apiKey,
 	}
+}
+
+func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+	return nil
 }
 
 func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProviderResult, error) {
