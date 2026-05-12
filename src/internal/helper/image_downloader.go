@@ -4,16 +4,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 )
 
 // TODO: update so that files go to their respective paths
 
 func DownloadImageAndGetStaticPath(url string, filename string) (string, error) {
-	ext, err := getExtensionFromUrl(url)
+	ext, err := GetExtensionFromUrl(url)
 	if err != nil {
 		return "", err
 	}
@@ -53,32 +51,4 @@ func downloadImage(url string, filename string) error {
 		return err
 	}
 	return nil
-}
-
-func getExtensionFromUrl(rawUrl string) (string, error) {
-	parsed, err := url.Parse(rawUrl)
-	if err != nil {
-		return "", err
-	}
-
-	ext := path.Ext(parsed.Path)
-	if ext == "" {
-		return "", fmt.Errorf("url has no file extension")
-	}
-
-	return ext, nil
-}
-
-func filenameFromUrl(rawURL string) (string, error) {
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return "", fmt.Errorf("parse url: %w", err)
-	}
-
-	filename := path.Base(u.Path)
-	if filename == "." || filename == "/" {
-		return "", fmt.Errorf("url has no filename")
-	}
-
-	return filename, nil
 }

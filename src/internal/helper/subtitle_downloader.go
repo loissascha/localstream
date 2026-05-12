@@ -25,7 +25,7 @@ func DownloadSubtitleForMovie(rawUrl string, movieIdStr string) (string, error) 
 		return "", fmt.Errorf("failed to download file: status %s", resp.Status)
 	}
 
-	filename, err := filenameFromUrl(rawUrl)
+	filename, err := FilenameFromUrl(rawUrl)
 	if err != nil {
 		return "", err
 	}
