@@ -68,3 +68,17 @@ func getExtensionFromUrl(rawUrl string) (string, error) {
 
 	return ext, nil
 }
+
+func filenameFromUrl(rawURL string) (string, error) {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		return "", fmt.Errorf("parse url: %w", err)
+	}
+
+	filename := path.Base(u.Path)
+	if filename == "." || filename == "/" {
+		return "", fmt.Errorf("url has no filename")
+	}
+
+	return filename, nil
+}
