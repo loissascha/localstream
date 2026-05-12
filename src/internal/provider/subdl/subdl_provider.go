@@ -76,6 +76,7 @@ func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResu
 		if err != nil {
 			return err
 		}
+		logger.Info(nil, "New Path after convert: {NewPath}", downloadedPath)
 		ext, err := helper.GetExtensionFromUrl(downloadedPath)
 		if err != nil {
 			return err
@@ -101,7 +102,11 @@ func (self *SubDlProvider) unpackSubtitleZip(localPath string) (string, error) {
 }
 
 func (self *SubDlProvider) convertSubtitleStl(localPath string) (string, error) {
-	return "", fmt.Errorf("not implemented")
+	p, err := helper.ConvertToVTT(localPath)
+	if err != nil {
+		return "", err
+	}
+	return p, nil
 }
 
 func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProviderResult, error) {
