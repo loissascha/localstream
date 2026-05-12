@@ -1,6 +1,10 @@
 package provider
 
-import "github.com/google/uuid"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type SubtitleProviderResult struct {
 	Name   string `json:"name"`
@@ -10,6 +14,6 @@ type SubtitleProviderResult struct {
 }
 
 type SubtitleProvider interface {
-	SearchMovie(name string) ([]SubtitleProviderResult, error)
-	DownloadMovieSubtitle(movieId uuid.UUID, providerResult SubtitleProviderResult) error
+	SearchMovie(ctx context.Context, name string) ([]SubtitleProviderResult, error)
+	DownloadMovieSubtitle(ctx context.Context, movieId uuid.UUID, providerResult SubtitleProviderResult) error
 }

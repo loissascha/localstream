@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
@@ -48,7 +48,7 @@ func NewSubDlProvider(
 	}
 }
 
-func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
 	fullUrl := "https://dl.subdl.com" + providerResult.Url
 	movieIdStr := encoders.EncodeUUID(movieId)
 
@@ -94,7 +94,22 @@ func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResu
 		return fmt.Errorf("wrong file format!")
 	}
 
-	// TODO: create database entry for the movie + downloaded subtitle path
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	subt := entity.MovieSubtitle{
+		ID:        id,
+		MovieID:   movieId,
+		Path:      downloadedPath,
+		Name:      providerResult.Name,
+		Lang:      providerResult.Lang,
+		LangShort: providerResult.Lang,
+	}
+	err = self.movieSubtitleRepo.Create(ctx, &subt)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -115,7 +130,7 @@ func (self *SubDlProvider) convertSubtitleStl(localPath string) (string, error) 
 	return p, nil
 }
 
-func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProviderResult, error) {
+func (self *SubDlProvider) SearchMovie(ctx context.Context, name string) ([]provider.SubtitleProviderResult, error) {
 	params := url.Values{}
 	params.Add("api_key", self.apiKey)
 	params.Add("film_name", name)
@@ -124,9 +139,6 @@ func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProvider
 	encoded := params.Encode()
 
 	fullUrl := "https://api.subdl.com/api/v1/subtitles?" + encoded
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
 	if err != nil {
@@ -155,9 +167,6 @@ func (self *SubDlProvider) SearchMovie(name string) ([]provider.SubtitleProvider
 	if err = json.Unmarshal(body, &searchResults); err != nil {
 		return nil, err
 	}
-	// if !searchResults.Status {
-	// 	return nil, fmt.Errorf("api call failed: status false")
-	// }
 
 	var results = []provider.SubtitleProviderResult{}
 	for _, s := range searchResults.Subtitles {

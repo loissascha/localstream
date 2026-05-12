@@ -88,5 +88,5 @@ func (s *MovieSubtitleService) DeleteByID(ctx context.Context, id string) error 
 }
 
 func (s *MovieSubtitleService) SearchByTerm(ctx context.Context, term string) ([]provider.SubtitleProviderResult, error) {
-	return s.subtitleProvider.SearchMovie(term)
+	return s.subtitleProvider.SearchMovie(ctx, term)
 }
