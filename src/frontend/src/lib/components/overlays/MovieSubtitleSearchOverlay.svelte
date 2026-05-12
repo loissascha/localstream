@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { searchMovieSubtitles } from '$lib/api/movie_subtitles';
 	import { auth } from '$lib/auth.svelte';
+	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type { SubtitleProviderResult, MovieInfo } from '$lib/types/export_types';
 	import Overlay from './Overlay.svelte';
@@ -76,8 +77,13 @@
 		</button>
 	</form>
 	{#each subtitleResult as subtitle}
-		<div>
-			{subtitle.name}
+		<div class="flex items-center gap-1 border-b border-b-neutral-700 last-of-type:border-b-0">
+			<div class="grow">{subtitle.name}</div>
+			<div>
+				<button class="cursor-pointer">
+					<DownloadIcon />
+				</button>
+			</div>
 		</div>
 	{/each}
 </Overlay>
