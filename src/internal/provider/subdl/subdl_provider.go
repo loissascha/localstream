@@ -63,6 +63,7 @@ func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResu
 		if err != nil {
 			return err
 		}
+		logger.Info(nil, "New Path {NewPath}", downloadedPath)
 		ext, err := helper.GetExtensionFromUrl(downloadedPath)
 		if err != nil {
 			return err
@@ -92,7 +93,11 @@ func (self *SubDlProvider) DownloadMovieSubtitle(movieId uuid.UUID, providerResu
 }
 
 func (self *SubDlProvider) unpackSubtitleZip(localPath string) (string, error) {
-	return "", fmt.Errorf("not implemented")
+	p, err := helper.UnzipSingleFile(localPath)
+	if err != nil {
+		return "", err
+	}
+	return p, nil
 }
 
 func (self *SubDlProvider) convertSubtitleStl(localPath string) (string, error) {
