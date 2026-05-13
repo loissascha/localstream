@@ -34,11 +34,33 @@ export async function searchMovieSubtitles(
 			}
 		});
 		if (!res.ok) {
-			throw new Error(`Failed to load metadata: ${res.status}`);
+			throw new Error(`Failed to search for subtitle: ${res.status}`);
 		}
 
 		const data = (await res.json()) as SubtitleProviderResult[];
 		return data;
+	} catch (error) {
+		throw error;
+	}
+}
+
+export async function downloadMovieSubtitle(
+	bearerToken: string,
+	movieId: string,
+	body: SubtitleProviderResult
+) {
+	try {
+		const res = await fetch('/api/v1/movie/subtitles/' + movieId + '/create', {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer ' + bearerToken,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+		if (!res.ok) {
+			throw new Error(`Failed to download: ${res.status}`);
+		}
 	} catch (error) {
 		throw error;
 	}

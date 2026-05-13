@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { searchMovieSubtitles } from '$lib/api/movie_subtitles';
+	import { downloadMovieSubtitle, searchMovieSubtitles } from '$lib/api/movie_subtitles';
 	import { auth } from '$lib/auth.svelte';
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
@@ -55,6 +55,17 @@
 			alert(m);
 		}
 	}
+
+	async function downloadSubtitle(item: SubtitleProviderResult) {
+		try {
+			if (!auth.token) return;
+			await downloadMovieSubtitle(auth.token, movie.id, item);
+			close();
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
 </script>
 
 <Overlay {close}>
@@ -77,14 +88,21 @@
 		</button>
 	</form>
 	{#each subtitleResult as subtitle}
-		<div class="flex items-center gap-1 mb-1 pb-1 border-b border-b-neutral-700 last-of-type:border-b-0">
+		<div
+			class="mb-1 flex items-center gap-1 border-b border-b-neutral-700 pb-1 last-of-type:border-b-0"
+		>
 			<div class="grow">
 				<div>{subtitle.name}</div>
 				<div class="font-serif text-sm">{subtitle.lang}</div>
 				<div class="text-sm text-neutral-400">{subtitle.url}</div>
 			</div>
 			<div>
-				<button class="cursor-pointer">
+				<button
+					class="cursor-pointer"
+					onclick={() => {
+						downloadSubtitle(subtitle);
+					}}
+				>
 					<DownloadIcon />
 				</button>
 			</div>
