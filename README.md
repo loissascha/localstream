@@ -106,4 +106,4 @@ For example:
 
 ## License
 
-MIT. See `LICENSE`.
+GNU AGPL v3. See `LICENSE`.
