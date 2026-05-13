@@ -7,10 +7,11 @@ import (
 )
 
 type SubtitleProviderResult struct {
-	Name   string `json:"name"`
-	Lang   string `json:"lang"`
-	Author string `json:"author"`
-	Url    string `json:"url"`
+	Name      string `json:"name"`
+	Lang      string `json:"lang"`
+	LangShort string `json:"lang_short"`
+	Author    string `json:"author"`
+	Url       string `json:"url"`
 }
 
 type SubtitleProvider interface {

@@ -195,6 +195,7 @@ export interface ShowSearchResult {
 export interface SubtitleProviderResult {
   name: string;
   lang: string;
+  lang_short: string;
   author: string;
   url: string;
 }

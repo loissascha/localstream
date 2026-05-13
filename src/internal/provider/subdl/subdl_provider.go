@@ -102,13 +102,21 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 	downloadedPath = strings.TrimLeft(downloadedPath, "/")
 	downloadedPath = "/" + downloadedPath
 
+	sub, err := self.movieSubtitleRepo.GetByPath(ctx, downloadedPath)
+	if err != nil {
+		return err
+	}
+	if sub != nil {
+		return nil
+	}
+
 	subt := entity.MovieSubtitle{
 		ID:        id,
 		MovieID:   movieId,
 		Path:      downloadedPath,
 		Name:      providerResult.Name,
 		Lang:      providerResult.Lang,
-		LangShort: providerResult.Lang,
+		LangShort: providerResult.LangShort,
 	}
 	err = self.movieSubtitleRepo.Create(ctx, &subt)
 	if err != nil {
@@ -175,10 +183,11 @@ func (self *SubDlProvider) SearchMovie(ctx context.Context, name string) ([]prov
 	var results = []provider.SubtitleProviderResult{}
 	for _, s := range searchResults.Subtitles {
 		results = append(results, provider.SubtitleProviderResult{
-			Name:   s.ReleaseName,
-			Lang:   s.Lang,
-			Author: s.Author,
-			Url:    s.Url,
+			Name:      s.ReleaseName,
+			Lang:      s.Lang,
+			LangShort: s.Language,
+			Author:    s.Author,
+			Url:       s.Url,
 		})
 	}
 

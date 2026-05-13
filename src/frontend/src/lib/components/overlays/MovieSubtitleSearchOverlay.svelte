@@ -93,7 +93,7 @@
 		>
 			<div class="grow">
 				<div>{subtitle.name}</div>
-				<div class="font-serif text-sm">{subtitle.lang}</div>
+				<div class="font-serif text-sm">{subtitle.lang} ({subtitle.lang_short})</div>
 				<div class="text-sm text-neutral-400">{subtitle.url}</div>
 			</div>
 			<div>
