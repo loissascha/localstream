@@ -70,7 +70,7 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 			return err
 		}
 		logger.Info(nil, "New Path {NewPath}", downloadedPath)
-		ext, err := helper.GetExtensionFromUrl(downloadedPath)
+		ext, err = helper.GetExtensionFromUrl(downloadedPath)
 		if err != nil {
 			return err
 		}
@@ -83,7 +83,7 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 			return err
 		}
 		logger.Info(nil, "New Path after convert: {NewPath}", downloadedPath)
-		ext, err := helper.GetExtensionFromUrl(downloadedPath)
+		ext, err = helper.GetExtensionFromUrl(downloadedPath)
 		if err != nil {
 			return err
 		}
@@ -98,6 +98,10 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 	if err != nil {
 		return err
 	}
+
+	downloadedPath = strings.TrimLeft(downloadedPath, "/")
+	downloadedPath = "/" + downloadedPath
+
 	subt := entity.MovieSubtitle{
 		ID:        id,
 		MovieID:   movieId,
