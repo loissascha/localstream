@@ -106,4 +106,8 @@ For example:
 
 ## License
 
+This project is licensed under the GNU Affero General Public License v3.0 or later.
+
+Copyright (C) 2026 Sascha Loishandl
+
 GNU AGPL v3. See `LICENSE`.
