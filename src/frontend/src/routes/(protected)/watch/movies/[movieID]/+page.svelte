@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import { loadMovieSubtitles } from '$lib/api/movie_subtitles';
 	import { getMovie } from '$lib/api/movies';
 	import { getWatchstateForMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
@@ -8,13 +9,14 @@
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { setMovieWatchstate } from '$lib/movies.svelte';
-	import type { MovieInfo } from '$lib/types/export_types';
+	import type { SubtitleInfo, MovieInfo } from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
 
 	var movie = $state<MovieInfo | null>(null);
 	var loadingWatchstate = $state(true);
+	let subtitles = $state<SubtitleInfo[]>([]);
 
 	let duration = $state(0);
 	let currentTime = $state(0);
@@ -93,6 +95,14 @@
 				const m = (e as Error).message;
 				alert(m);
 			});
+		loadMovieSubtitles(auth.token, movieId)
+			.then((r) => {
+				subtitles = r;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
 	});
 </script>
 
@@ -103,6 +113,7 @@
 			onplay={startPlaybackLogging}
 			onpause={stopPlaybackLogging}
 			onended={stopPlaybackLogging}
+			{subtitles}
 			bind:currentTime
 			bind:duration
 		>

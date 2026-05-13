@@ -9,6 +9,7 @@
 	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
 	import { getCookie, setCookie } from '$lib/cookies';
 	import FullscreenExitIcon from '$lib/icons/FullscreenExitIcon.svelte';
+	import type { SubtitleInfo } from '$lib/types/export_types';
 
 	interface OverlayState {
 		currentTime: number;
@@ -26,6 +27,7 @@
 		onended?: () => void;
 		overlay?: Snippet<[OverlayState]>;
 		topbar?: Snippet;
+		subtitles?: SubtitleInfo[];
 	}
 
 	let {
@@ -35,6 +37,7 @@
 		onended,
 		overlay,
 		topbar,
+		subtitles,
 		duration = $bindable(0),
 		currentTime = $bindable(0)
 	}: Props = $props();
@@ -298,13 +301,15 @@
 		onseeking={syncState}
 		disablepictureinpicture
 	>
-		<!-- <track -->
-		<!-- 	src="/static/subtitles/TestSubtitle.vtt" -->
-		<!-- 	kind="subtitles" -->
-		<!-- 	srclang="en" -->
-		<!-- 	label="English" -->
-		<!-- 	default -->
-		<!-- /> -->
+		{#each subtitles as subtitle}
+			<track
+				src={subtitle.path}
+				kind="subtitles"
+				srclang={subtitle.lang_short}
+				label={subtitle.lang}
+				default
+			/>
+		{/each}
 	</video>
 
 	{#if paused}
