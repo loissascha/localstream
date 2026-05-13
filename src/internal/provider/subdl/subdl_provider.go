@@ -77,8 +77,8 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 		ext = strings.TrimLeft(ext, ".")
 	}
 
-	if ext == "stl" {
-		downloadedPath, err = self.convertSubtitleStl(downloadedPath)
+	if ext == "srt" {
+		downloadedPath, err = self.convertSubtitleSrt(downloadedPath)
 		if err != nil {
 			return err
 		}
@@ -122,7 +122,7 @@ func (self *SubDlProvider) unpackSubtitleZip(localPath string) (string, error) {
 	return p, nil
 }
 
-func (self *SubDlProvider) convertSubtitleStl(localPath string) (string, error) {
+func (self *SubDlProvider) convertSubtitleSrt(localPath string) (string, error) {
 	p, err := helper.ConvertToVTT(localPath)
 	if err != nil {
 		return "", err

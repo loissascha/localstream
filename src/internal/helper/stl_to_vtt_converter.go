@@ -13,8 +13,8 @@ func ConvertToVTT(inputPath string) (string, error) {
 	}
 
 	ext := strings.ToLower(filepath.Ext(inputPath))
-	if ext != ".stl" {
-		return "", fmt.Errorf("expected .stl file, got %q", ext)
+	if ext != ".srt" {
+		return "", fmt.Errorf("expected .srt file, got %q", ext)
 	}
 
 	dir := filepath.Dir(inputPath)
