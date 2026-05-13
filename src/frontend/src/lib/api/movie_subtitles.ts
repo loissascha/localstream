@@ -1,9 +1,9 @@
-import type { MovieSubtitleInfo, SubtitleProviderResult } from '$lib/types/export_types';
+import type { SubtitleInfo, SubtitleProviderResult } from '$lib/types/export_types';
 
 export async function loadMovieSubtitles(
 	bearerToken: string,
 	movieId: string
-): Promise<MovieSubtitleInfo[]> {
+): Promise<SubtitleInfo[]> {
 	try {
 		const res = await fetch('/api/v1/movie/subtitles/' + movieId, {
 			headers: {
@@ -14,7 +14,7 @@ export async function loadMovieSubtitles(
 			throw new Error(`Failed to load metadata: ${res.status}`);
 		}
 
-		const data = (await res.json()) as MovieSubtitleInfo[];
+		const data = (await res.json()) as SubtitleInfo[];
 		return data;
 	} catch (error) {
 		throw error;

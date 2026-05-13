@@ -33,7 +33,7 @@ func NewMovieSubtitleHandler(
 func (h *MovieSubtitleHandler) RegisterRoutes() {
 	h.s.GETI("/api/v1/movie/subtitles/{movieID}",
 		h.listByMovie,
-		server.WithExportType[MovieSubtitleInfo](),
+		server.WithExportType[SubtitleInfo](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
@@ -87,9 +87,9 @@ func (h *MovieSubtitleHandler) listByMovie(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	result := []MovieSubtitleInfo{}
+	result := []SubtitleInfo{}
 	for _, ms := range subtitles {
-		result = append(result, toMovieSubtitleInfo(&ms))
+		result = append(result, toSubtitleInfoMovie(&ms))
 	}
 
 	respond.JSON(w, http.StatusOK, result)

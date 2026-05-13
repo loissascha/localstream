@@ -108,14 +108,6 @@ export interface MovieResult {
   backdrop_path: string;
   poster_path: string;
 }
-export interface MovieSubtitleInfo {
-  id: string;
-  movie_id: string;
-  name: string;
-  path: string;
-  lang_short: string;
-  lang: string;
-}
 export interface SaveMovieWatchstateRequest {
   movie_id: string;
   position: number;
@@ -191,6 +183,13 @@ export interface ShowMetadataInfo {
 export interface ShowSearchResult {
   score: number;
   show: ShowMetadata;
+}
+export interface SubtitleInfo {
+  id: string;
+  name: string;
+  path: string;
+  lang_short: string;
+  lang: string;
 }
 export interface SubtitleProviderResult {
   name: string;

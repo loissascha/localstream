@@ -14,6 +14,14 @@ type SearchResponse struct {
 	Movies []MovieInfo `json:"movies"`
 }
 
+type SubtitleInfo struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Path      string `json:"path"`
+	LangShort string `json:"lang_short"`
+	Lang      string `json:"lang"`
+}
+
 type WatchstateMovieResponse struct {
 	ID         string    `json:"id"`
 	MovieID    string    `json:"movie_id"`
