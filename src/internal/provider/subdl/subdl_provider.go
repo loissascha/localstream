@@ -117,18 +117,18 @@ func (self *SubDlProvider) processVtt(ctx context.Context, downloadedPath string
 }
 
 func (self *SubDlProvider) processSrt(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
-	downloadedPath, err := self.convertSubtitleSrt(downloadedPath)
+	newPath, err := self.convertSubtitleSrt(downloadedPath)
 	if err != nil {
 		return err
 	}
-	logger.Info(nil, "New Path after srt convert: {NewPath}", downloadedPath)
-	ext, err := helper.GetExtensionFromUrl(downloadedPath)
+	logger.Info(nil, "New Path after srt convert: {NewPath}", newPath)
+	ext, err := helper.GetExtensionFromUrl(newPath)
 	if err != nil {
 		return err
 	}
 	ext = strings.TrimLeft(ext, ".")
 	if ext == "vtt" {
-		self.processVtt(ctx, downloadedPath, movieId, providerResult)
+		self.processVtt(ctx, newPath, movieId, providerResult)
 	} else {
 		logger.Error(nil, "Resulting filea fter srt to vtt convert is not vtt...")
 	}
@@ -141,7 +141,7 @@ func (self *SubDlProvider) processZip(ctx context.Context, downloadedPath string
 		return err
 	}
 	for _, p := range paths {
-		ext, err := helper.GetExtensionFromUrl(downloadedPath)
+		ext, err := helper.GetExtensionFromUrl(p)
 		if err != nil {
 			return err
 		}
