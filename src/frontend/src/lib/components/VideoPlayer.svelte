@@ -50,7 +50,10 @@
 	let isFullscreen = $state(false);
 	let seekValue = $state(0);
 	let showControls = $state(true);
+	let selectedSubtitle = $state('off');
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
+
+	const subtitleOptions = $derived(subtitles ?? []);
 
 	function syncState() {
 		if (!videoEl) return;
@@ -60,6 +63,16 @@
 		paused = videoEl.paused;
 		muted = videoEl.muted;
 		volume = videoEl.volume;
+	}
+
+	function syncSubtitleTracks() {
+		if (!videoEl) return;
+
+		const tracks = Array.from(videoEl.textTracks);
+		for (const [index, track] of tracks.entries()) {
+			const subtitle = subtitleOptions[index];
+			track.mode = subtitle && subtitle.id === selectedSubtitle ? 'showing' : 'disabled';
+		}
 	}
 
 	function clearHideControlsTimer() {
@@ -139,6 +152,12 @@
 		if (!videoEl) return;
 		videoEl.muted = !videoEl.muted;
 		muted = videoEl.muted;
+	}
+
+	function setSubtitle(id: string) {
+		revealControls();
+		selectedSubtitle = id;
+		syncSubtitleTracks();
 	}
 
 	async function toggleFullscreen() {
@@ -260,6 +279,10 @@
 		}
 	});
 
+	$effect(() => {
+		syncSubtitleTracks();
+	});
+
 	onDestroy(() => {
 		clearHideControlsTimer();
 		if (document.fullscreenElement === containerEl) {
@@ -301,13 +324,12 @@
 		onseeking={syncState}
 		disablepictureinpicture
 	>
-		{#each subtitles as subtitle}
+		{#each subtitles ?? [] as subtitle}
 			<track
 				src={subtitle.path}
 				kind="subtitles"
 				srclang={subtitle.lang_short}
 				label={subtitle.lang}
-				default
 			/>
 		{/each}
 	</video>
@@ -392,6 +414,25 @@
 			</div>
 
 			<div class="ml-auto flex items-center gap-2 sm:ml-0">
+				{#if subtitleOptions.length > 0}
+					<div class="flex items-center gap-2">
+						<label class="sr-only" for="subtitle-selector">Subtitle</label>
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+						<select
+							id="subtitle-selector"
+							value={selectedSubtitle}
+							onchange={(event) => setSubtitle((event.currentTarget as HTMLSelectElement).value)}
+							class="cursor-pointer rounded-md border border-white/15 bg-black/50 px-2 py-1 text-sm text-white transition outline-none hover:bg-black/65"
+							aria-label="Subtitle track"
+						>
+							<option value="off">Off</option>
+							{#each subtitleOptions as subtitle}
+								<option value={subtitle.id}>{subtitle.name} ({subtitle.lang_short})</option>
+							{/each}
+						</select>
+					</div>
+				{/if}
+
 				<button
 					type="button"
 					class="cursor-pointer rounded-full p-2 text-white transition hover:bg-white/10"
