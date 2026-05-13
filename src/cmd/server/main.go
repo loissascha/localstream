@@ -60,7 +60,7 @@ func main() {
 
 	subDlApiKey := os.Getenv("SUBDL_API_KEY")
 	if subDlApiKey == "" {
-		panic("SUBDL_API_KEY not set")
+		logger.Warning(nil, "No SUBDL_API_KEY provided. Subtitle search won't work!")
 	}
 
 	listenAddr := fmt.Sprintf(":%v", port)
