@@ -25,6 +25,20 @@ func NewMovieSubtitleService(
 	}
 }
 
+func (s *MovieSubtitleService) CreateFromSubtitleResult(ctx context.Context, movieID string, subtitle provider.SubtitleProviderResult) error {
+	movieUUID, err := encoders.DecodeUUID(movieID)
+	if err != nil {
+		return err
+	}
+
+	err = s.subtitleProvider.DownloadMovieSubtitle(ctx, movieUUID, subtitle)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *MovieSubtitleService) Create(ctx context.Context, subtitle *entity.MovieSubtitle) error {
 	if subtitle == nil {
 		return fmt.Errorf("movie subtitle is nil")
