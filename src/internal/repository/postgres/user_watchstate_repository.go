@@ -98,6 +98,7 @@ func (r *UserWatchstateRepository) ListLatestByShowForUserID(ctx context.Context
 			ORDER BY show_id, updated_at DESC
 		) latest_watchstates
 		ORDER BY updated_at DESC
+		LIMIT 10
 	`
 
 	var watchstates []entity.UserWatchstate

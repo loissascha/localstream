@@ -72,8 +72,9 @@ func (r *UserMovieWatchstateRepository) ListByUserID(ctx context.Context, userID
 	const query = `
 		SELECT id, user_id, movie_id, position, duration, finished, created_at, updated_at
 		FROM user_movie_watchstates
-		WHERE user_id = $1
+		WHERE user_id = $1 AND finished = false
 		ORDER BY updated_at DESC
+		LIMIT 10
 	`
 
 	var watchstates []entity.UserMovieWatchstate
