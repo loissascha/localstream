@@ -175,7 +175,7 @@ func (self *SubDlProvider) SearchMovie(ctx context.Context, name string) ([]prov
 	params.Add("api_key", self.apiKey)
 	params.Add("film_name", name)
 	params.Add("type", "movie")
-	params.Add("languages", "EN")
+	// params.Add("languages", "EN")
 	encoded := params.Encode()
 
 	fullUrl := "https://api.subdl.com/api/v1/subtitles?" + encoded
