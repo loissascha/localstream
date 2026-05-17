@@ -422,7 +422,7 @@
 							id="subtitle-selector"
 							value={selectedSubtitle}
 							onchange={(event) => setSubtitle((event.currentTarget as HTMLSelectElement).value)}
-							class="cursor-pointer rounded-md border border-white/15 bg-black/50 px-2 py-1 text-sm text-white transition outline-none hover:bg-black/65"
+							class="max-w-40 cursor-pointer rounded-md border border-white/15 bg-black/50 px-2 py-1 text-sm text-white transition outline-none hover:bg-black/65"
 							aria-label="Subtitle track"
 						>
 							<option value="off">Off</option>
