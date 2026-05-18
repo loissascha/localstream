@@ -193,6 +193,7 @@ export interface SubtitleInfo {
 }
 export interface SubtitleProviderResult {
   name: string;
+  name2: string;
   lang: string;
   lang_short: string;
   author: string;

@@ -94,7 +94,7 @@
 			class="mb-1 flex items-center gap-1 border-b border-b-neutral-700 pb-1 last-of-type:border-b-0"
 		>
 			<div class="grow">
-				<div>{subtitle.name}</div>
+				<div>{subtitle.name} | {subtitle.name2}</div>
 				<div class="font-serif text-sm">{subtitle.lang} ({subtitle.lang_short})</div>
 				<div class="text-sm text-neutral-400">{subtitle.url}</div>
 			</div>

@@ -220,6 +220,7 @@ func (self *SubDlProvider) SearchEpisode(ctx context.Context, showName string, s
 	for _, s := range searchResults.Subtitles {
 		results = append(results, provider.SubtitleProviderResult{
 			Name:      s.ReleaseName,
+			Name2:     s.Name,
 			Lang:      s.Lang,
 			LangShort: s.Language,
 			Author:    s.Author,
@@ -273,6 +274,7 @@ func (self *SubDlProvider) SearchMovie(ctx context.Context, name string, lang st
 	for _, s := range searchResults.Subtitles {
 		results = append(results, provider.SubtitleProviderResult{
 			Name:      s.ReleaseName,
+			Name2:     s.Name,
 			Lang:      s.Lang,
 			LangShort: s.Language,
 			Author:    s.Author,

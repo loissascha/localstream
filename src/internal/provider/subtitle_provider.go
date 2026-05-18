@@ -8,6 +8,7 @@ import (
 
 type SubtitleProviderResult struct {
 	Name      string `json:"name"`
+	Name2     string `json:"name2"`
 	Lang      string `json:"lang"`
 	LangShort string `json:"lang_short"`
 	Author    string `json:"author"`
