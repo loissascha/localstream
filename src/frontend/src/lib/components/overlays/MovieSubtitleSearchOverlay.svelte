@@ -21,6 +21,7 @@
 		if (!auth.initialized) return;
 		if (!auth.token) return;
 		movie;
+		searchLang;
 		searchMovieSubtitles(auth.token, movie.name, searchLang)
 			.then((result) => {
 				subtitleResult = result;

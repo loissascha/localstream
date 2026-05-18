@@ -31,7 +31,7 @@ export async function searchMovieSubtitles(
 			q: searchTerm,
 			lang
 		});
-		const res = await fetch(`/api/v1/movie/subtitles/search?q=${params.toString()}`, {
+		const res = await fetch(`/api/v1/movie/subtitles/search?${params.toString()}`, {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer ' + bearerToken,
