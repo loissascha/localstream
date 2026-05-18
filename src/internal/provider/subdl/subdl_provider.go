@@ -186,6 +186,8 @@ func (self *SubDlProvider) SearchEpisode(ctx context.Context, showName string, s
 	encoded := params.Encode()
 
 	fullUrl := "https://api.subdl.com/api/v1/subtitles?" + encoded
+	logger.Debug(nil, "Subdl: {Query}", fullUrl)
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
 	if err != nil {
 		return nil, err
@@ -237,6 +239,7 @@ func (self *SubDlProvider) SearchMovie(ctx context.Context, name string, lang st
 	encoded := params.Encode()
 
 	fullUrl := "https://api.subdl.com/api/v1/subtitles?" + encoded
+	logger.Debug(nil, "Subdl: {Query}", fullUrl)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
 	if err != nil {
