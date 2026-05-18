@@ -19,11 +19,13 @@
 	}
 	let { close, show, season, episode }: Props = $props();
 
+	const INITIAL_LANGUAGE = 'EN';
+
 	let searchingMetadata = $state(false);
 	let showName = $state(show.name);
 	let seasonNumber = $state(season.number);
 	let episodeNumber = $state(episode.number);
-	let searchLang = $state('EN');
+	let searchLang = $state(INITIAL_LANGUAGE);
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
 
 	$effect(() => {
