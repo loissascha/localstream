@@ -27,6 +27,7 @@
 		onended?: () => void;
 		overlay?: Snippet<[OverlayState]>;
 		topbar?: Snippet;
+		bottomrightextensions?: Snippet;
 		subtitles?: SubtitleInfo[];
 	}
 
@@ -37,6 +38,7 @@
 		onended,
 		overlay,
 		topbar,
+		bottomrightextensions,
 		subtitles,
 		duration = $bindable(0),
 		currentTime = $bindable(0)
@@ -414,10 +416,12 @@
 			</div>
 
 			<div class="ml-auto flex items-center gap-2 sm:ml-0">
+				{#if bottomrightextensions}
+					{@render bottomrightextensions()}
+				{/if}
 				{#if subtitleOptions.length > 0}
 					<div class="flex items-center gap-2">
 						<label class="sr-only" for="subtitle-selector">Subtitle</label>
-						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
 						<select
 							id="subtitle-selector"
 							value={selectedSubtitle}

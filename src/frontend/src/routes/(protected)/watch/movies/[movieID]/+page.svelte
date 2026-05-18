@@ -5,6 +5,7 @@
 	import { getMovie } from '$lib/api/movies';
 	import { getWatchstateForMovie } from '$lib/api/watchstate_movie';
 	import { auth } from '$lib/auth.svelte';
+	import MovieSubtitleSearchOverlay from '$lib/components/overlays/MovieSubtitleSearchOverlay.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
@@ -14,9 +15,10 @@
 
 	const movieId = $derived(page.params.movieID ?? '');
 
-	var movie = $state<MovieInfo | null>(null);
-	var loadingWatchstate = $state(true);
+	let movie = $state<MovieInfo | null>(null);
+	let loadingWatchstate = $state(true);
 	let subtitles = $state<SubtitleInfo[]>([]);
+	let subtitleoverlayopen = $state(false);
 
 	let duration = $state(0);
 	let currentTime = $state(0);
@@ -95,6 +97,11 @@
 				const m = (e as Error).message;
 				alert(m);
 			});
+		reloadSubtitles();
+	});
+
+	function reloadSubtitles() {
+		if (!auth.token) return;
 		loadMovieSubtitles(auth.token, movieId)
 			.then((r) => {
 				subtitles = r;
@@ -103,7 +110,7 @@
 				const m = (e as Error).message;
 				alert(m);
 			});
-	});
+	}
 </script>
 
 <main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
@@ -131,6 +138,26 @@
 				</a>
 				<span>{movie?.name}</span>
 			{/snippet}
+			{#snippet bottomrightextensions()}
+				<button
+					class="cursor-pointer"
+					onclick={() => {
+						subtitleoverlayopen = true;
+					}}
+				>
+					<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+				</button>
+			{/snippet}
 		</VideoPlayer>
 	</section>
 </main>
+
+{#if subtitleoverlayopen && movie != null}
+	<MovieSubtitleSearchOverlay
+		close={() => {
+			subtitleoverlayopen = false;
+			reloadSubtitles();
+		}}
+		{movie}
+	/>
+{/if}
