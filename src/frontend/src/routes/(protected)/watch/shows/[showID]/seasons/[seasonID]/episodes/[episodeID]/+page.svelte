@@ -5,15 +5,17 @@
 	import { getSeasonDetails } from '$lib/api/seasons';
 	import { getWatchstateForEpisode } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
+	import ShowSubtitleSearchOverlay from '$lib/components/overlays/ShowSubtitleSearchOverlay.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
-	import { setShowWatchstate } from '$lib/shows.svelte';
+	import { setShowWatchstate, shows } from '$lib/shows.svelte';
 	import {
 		type SeasonInfo,
 		type EpisodeInfo,
-		type EpisodeMetadataInfo
+		type EpisodeMetadataInfo,
+		type ShowInfo
 	} from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
@@ -27,14 +29,26 @@
 	let currentTime = $state(0);
 
 	var episodeMetadataDetails = $state<EpisodeMetadataInfo | null>(null);
+	var showDetails = $state<ShowInfo | null>(null);
 	var episodeDetails = $state<EpisodeInfo | null>(null);
 	var seasonDetails = $state<SeasonInfo | null>(null);
 	var nextEpisode = $state<EpisodeInfo | null>(null);
+	let subtitleoverlayopen = $state(false);
 
 	const streamUrl = $derived(
 		`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
 	);
 	let logTimer: ReturnType<typeof setInterval> | null = null;
+
+	async function loadShowDetails() {
+		if (!auth.token) return;
+		let s = shows.shows.find((x) => x.id == showId);
+		if (s) {
+			showDetails = s;
+		} else {
+			showDetails = null;
+		}
+	}
 
 	async function loadEpisodeDetails() {
 		if (!auth.token) return;
@@ -122,6 +136,13 @@
 	});
 
 	$effect(() => {
+		showId;
+		if (!auth.initialized) return;
+		if (!auth.token) return;
+		loadShowDetails();
+	});
+
+	$effect(() => {
 		void episodeId;
 		almostDone = false;
 		nextEpisode = null;
@@ -194,6 +215,16 @@
 					S{seasonDetails?.number}:E{episodeDetails?.number} - {episodeMetadataDetails?.name}
 				</span>
 			{/snippet}
+			{#snippet bottomrightextensions()}
+				<button
+					class="cursor-pointer"
+					onclick={() => {
+						subtitleoverlayopen = true;
+					}}
+				>
+					<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+				</button>
+			{/snippet}
 			{#snippet overlay()}
 				{#if almostDone && nextEpisode != null}
 					<a
@@ -214,3 +245,14 @@
 		</VideoPlayer>
 	</section>
 </main>
+
+{#if subtitleoverlayopen && showDetails != null && seasonDetails != null && episodeDetails != null}
+	<ShowSubtitleSearchOverlay
+		close={() => {
+			subtitleoverlayopen = false;
+		}}
+		show={showDetails}
+		season={seasonDetails}
+		episode={episodeDetails}
+	/>
+{/if}
