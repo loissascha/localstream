@@ -22,18 +22,23 @@
 	const INITIAL_LANGUAGE = 'EN';
 
 	let searchingMetadata = $state(false);
-	let showName = $state(show.name);
-	let seasonNumber = $state(season.number);
-	let episodeNumber = $state(episode.number);
+	let showName = $state('');
+	let seasonNumber = $state(0);
+	let episodeNumber = $state(0);
 	let searchLang = $state(INITIAL_LANGUAGE);
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
 
 	$effect(() => {
 		if (!auth.initialized) return;
 		if (!auth.token) return;
-		if (searchingMetadata) return;
+		show;
+		season;
+		episode;
+		showName = show.name;
+		seasonNumber = season.number;
+		episodeNumber = episode.number;
 		searchingMetadata = true;
-		searchEpisodeSubtitles(auth.token, showName, seasonNumber, episodeNumber, searchLang)
+		searchEpisodeSubtitles(auth.token, show.name, season.number, episode.number, INITIAL_LANGUAGE)
 			.then((result) => {
 				subtitleResult = result;
 			})
@@ -46,31 +51,27 @@
 			});
 	});
 
-	// function submitSearchForm() {
-	// 	try {
-	// 		if (searchingMetadata) return;
-	// 		if (!auth.token) return;
-	// 		searchingMetadata = true;
-	// 		if (searchQuery == '') {
-	// 			alert('No query');
-	// 			return;
-	// 		}
-	// 		searchMovieSubtitles(auth.token, searchQuery, searchLang)
-	// 			.then((result) => {
-	// 				subtitleResult = result;
-	// 			})
-	// 			.catch((e) => {
-	// 				const m = (e as Error).message;
-	// 				alert(m);
-	// 			})
-	// 			.finally(() => {
-	// 				searchingMetadata = false;
-	// 			});
-	// 	} catch (e) {
-	// 		const m = (e as Error).message;
-	// 		alert(m);
-	// 	}
-	// }
+	function submitSearchForm() {
+		try {
+			if (searchingMetadata) return;
+			if (!auth.token) return;
+			searchingMetadata = true;
+			searchEpisodeSubtitles(auth.token, showName, seasonNumber, episodeNumber, searchLang)
+				.then((result) => {
+					subtitleResult = result;
+				})
+				.catch((e) => {
+					const m = (e as Error).message;
+					alert(m);
+				})
+				.finally(() => {
+					searchingMetadata = false;
+				});
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
 
 	// async function downloadSubtitle(item: SubtitleProviderResult) {
 	// 	try {
@@ -89,7 +90,7 @@
 	<form
 		onsubmit={(e) => {
 			e.preventDefault();
-			// submitSearchForm();
+			submitSearchForm();
 		}}
 		class="my-4 flex items-center gap-2"
 	>
