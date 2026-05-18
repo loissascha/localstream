@@ -16,5 +16,6 @@ type SubtitleProviderResult struct {
 
 type SubtitleProvider interface {
 	SearchMovie(ctx context.Context, name string, lang string) ([]SubtitleProviderResult, error)
+	SearchEpisode(ctx context.Context, showName string, seasonNumber int, episodeNumber int, lang string) ([]SubtitleProviderResult, error)
 	DownloadMovieSubtitle(ctx context.Context, movieId uuid.UUID, providerResult SubtitleProviderResult) error
 }
