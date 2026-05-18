@@ -70,7 +70,8 @@ func (h *MovieSubtitleHandler) createMovieSubtitle(w http.ResponseWriter, r *htt
 
 func (h *MovieSubtitleHandler) searchByTerm(w http.ResponseWriter, r *http.Request) {
 	term := strings.TrimSpace(r.URL.Query().Get("q"))
-	result, err := h.movieSubtitleService.SearchByTerm(r.Context(), term)
+	lang := strings.TrimSpace(r.URL.Query().Get("lang"))
+	result, err := h.movieSubtitleService.SearchByTerm(r.Context(), term, lang)
 	if err != nil {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return

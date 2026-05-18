@@ -14,13 +14,14 @@
 
 	let searchingMetadata = $state(false);
 	let searchQuery = $state('');
+	let searchLang = $state('EN');
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
 
 	$effect(() => {
 		if (!auth.initialized) return;
 		if (!auth.token) return;
 		movie;
-		searchMovieSubtitles(auth.token, movie.name)
+		searchMovieSubtitles(auth.token, movie.name, searchLang)
 			.then((result) => {
 				subtitleResult = result;
 			})
@@ -39,7 +40,7 @@
 				alert('No query');
 				return;
 			}
-			searchMovieSubtitles(auth.token, searchQuery)
+			searchMovieSubtitles(auth.token, searchQuery, searchLang)
 				.then((result) => {
 					subtitleResult = result;
 				})
@@ -83,6 +84,7 @@
 			class="my-4 w-full rounded bg-neutral-700 px-4 py-2"
 			placeholder="Search for new Metadata"
 		/>
+		<input bind:value={searchLang} type="text" class="my-4 w-30 rounded bg-neutral-700 px-4 py-2" />
 		<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600">
 			<SearchIcon /> Search
 		</button>

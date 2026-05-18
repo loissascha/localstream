@@ -170,12 +170,12 @@ func (self *SubDlProvider) convertSubtitleSrt(localPath string) (string, error) 
 	return p, nil
 }
 
-func (self *SubDlProvider) SearchMovie(ctx context.Context, name string) ([]provider.SubtitleProviderResult, error) {
+func (self *SubDlProvider) SearchMovie(ctx context.Context, name string, lang string) ([]provider.SubtitleProviderResult, error) {
 	params := url.Values{}
 	params.Add("api_key", self.apiKey)
 	params.Add("film_name", name)
 	params.Add("type", "movie")
-	// params.Add("languages", "EN")
+	params.Add("languages", lang)
 	encoded := params.Encode()
 
 	fullUrl := "https://api.subdl.com/api/v1/subtitles?" + encoded

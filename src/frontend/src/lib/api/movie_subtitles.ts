@@ -23,10 +23,15 @@ export async function loadMovieSubtitles(
 
 export async function searchMovieSubtitles(
 	bearerToken: string,
-	searchTerm: string
+	searchTerm: string,
+	lang: string
 ): Promise<SubtitleProviderResult[]> {
 	try {
-		const res = await fetch('/api/v1/movie/subtitles/search?q=' + searchTerm, {
+		const params = new URLSearchParams({
+			q: searchTerm,
+			lang
+		});
+		const res = await fetch(`/api/v1/movie/subtitles/search?q=${params.toString()}`, {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer ' + bearerToken,
