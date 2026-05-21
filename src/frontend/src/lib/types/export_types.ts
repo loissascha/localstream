@@ -199,6 +199,10 @@ export interface SubtitleProviderResult {
   author: string;
   url: string;
 }
+export interface SubtitleSupportedLanguage {
+  value: string;
+  name: string;
+}
 export interface UpdateCollectionRequest {
   name: string;
 }

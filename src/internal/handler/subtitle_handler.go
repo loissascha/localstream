@@ -29,7 +29,7 @@ func NewSubtitleHandler(
 }
 
 func (h *SubtitleHandler) RegisterRoutes() {
-	h.s.POSTI("/api/v1/subtitles/languages",
+	h.s.GETI("/api/v1/subtitles/languages",
 		h.languages,
 		server.WithExportType[provider.SubtitleSupportedLanguage](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),

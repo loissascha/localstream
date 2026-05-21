@@ -232,6 +232,7 @@ func (self *SubDlProvider) SearchEpisode(ctx context.Context, showName string, s
 }
 
 func (self *SubDlProvider) SupportedLanguages(ctx context.Context) ([]provider.SubtitleSupportedLanguage, error) {
+	logger.Debug(nil, "Loading supported languages...")
 	fullUrl := "https://subdl.com/api-files/language_list.json"
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)

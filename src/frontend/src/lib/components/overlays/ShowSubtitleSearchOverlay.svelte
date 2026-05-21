@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { searchEpisodeSubtitles } from '$lib/api/show_subtitles';
+	import { loadSupportedSubtitleLanguages } from '$lib/api/subtitles';
 	import { auth } from '$lib/auth.svelte';
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import type {
+		SubtitleSupportedLanguage,
 		EpisodeInfo,
 		SeasonInfo,
 		ShowInfo,
@@ -27,6 +29,19 @@
 	let episodeNumber = $state(0);
 	let searchLang = $state(INITIAL_LANGUAGE);
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
+	let supportedLanguages = $state<SubtitleSupportedLanguage[]>([]);
+
+	$effect(() => {
+		if (!auth.token) return;
+		loadSupportedSubtitleLanguages(auth.token)
+			.then((res) => {
+				supportedLanguages = res;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+	});
 
 	$effect(() => {
 		if (!auth.initialized) return;
