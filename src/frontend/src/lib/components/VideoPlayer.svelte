@@ -54,6 +54,7 @@
 	let showControls = $state(true);
 	let selectedSubtitle = $state('off');
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
+	let bufferedUntil = $state(0);
 
 	const subtitleOptions = $derived(subtitles ?? []);
 
@@ -65,6 +66,15 @@
 		paused = videoEl.paused;
 		muted = videoEl.muted;
 		volume = videoEl.volume;
+		syncBuffered();
+	}
+
+	function syncBuffered() {
+		if (!videoEl || videoEl.buffered.length === 0) {
+			bufferedUntil = 0;
+			return;
+		}
+		bufferedUntil = videoEl.buffered.end(videoEl.buffered.length - 1);
 	}
 
 	function syncSubtitleTracks() {
