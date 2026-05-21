@@ -132,7 +132,7 @@ func main() {
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider, showSerivce)
 	showSubtitleService := service.NewShowSubtitleService(subdlProvider)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
-	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo)
+	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo, seasonRepo)
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
 	movieSubtitleService := service.NewMovieSubtitleService(movieSubtitleRepo, subdlProvider)
 	collectionService := service.NewCollectionService(collectionRepo)

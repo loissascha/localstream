@@ -6,49 +6,61 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/google/uuid"
+	"github.com/loissascha/localstream/internal/encoders"
 )
 
 // TODO: update so that files go to their respective paths
 
-func DownloadImageAndGetStaticPath(url string, filename string) (string, error) {
+func GetShowImagePath(showID uuid.UUID) string {
+	return fmt.Sprintf("images/shows/%s", encoders.EncodeUUID(showID))
+}
+
+func GetMovieImagePath(movieID uuid.UUID) string {
+	return fmt.Sprintf("images/movies/%s", encoders.EncodeUUID(movieID))
+}
+
+func DownloadImageAndGetStaticPath(url string, pathPrefix string, filename string) (string, error) {
 	ext, err := GetExtensionFromUrl(url)
 	if err != nil {
 		return "", err
 	}
 	filename = filename + ext
-	err = downloadImage(url, filename)
+	fp, err := downloadImage(url, pathPrefix, filename)
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("/static/%s", filename), nil
+	return fp, nil
 }
 
-func downloadImage(url string, filename string) error {
-	err := os.MkdirAll("./static", os.ModePerm)
+func downloadImage(url string, pathPrefix string, filename string) (string, error) {
+	basepath := filepath.Join("./static", pathPrefix)
+	err := os.MkdirAll(basepath, os.ModePerm)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download image: status %s", resp.Status)
+		return "", fmt.Errorf("failed to download image: status %s", resp.Status)
 	}
 
-	filePath := filepath.Join("./static", filename)
+	filePath := filepath.Join(basepath, filename)
 
 	file, err := os.Create(filePath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return filePath, nil
 }

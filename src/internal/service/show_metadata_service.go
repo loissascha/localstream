@@ -92,11 +92,19 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, show *enti
 	mediumImage := ""
 	originalImage := ""
 	if metadata.Image != nil {
-		mediumImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_SH_%s", uid.String()))
+		mediumImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Medium,
+			helper.GetShowImagePath(show.ID),
+			fmt.Sprintf("med_SH_%s", uid.String()),
+		)
 		if err != nil {
 			return err
 		}
-		originalImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_SH_%s", uid.String()))
+		originalImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Original,
+			helper.GetShowImagePath(show.ID),
+			fmt.Sprintf("org_SH_%s", uid.String()),
+		)
 		if err != nil {
 			return err
 		}

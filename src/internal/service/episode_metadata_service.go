@@ -14,10 +14,17 @@ import (
 
 type EpisodeMetadataService struct {
 	episodeMetadataRepo repository.EpisodeMetadataRepository
+	seasonRepo          repository.SeasonRepository
 }
 
-func NewEpisodeMetadataService(episodeMetadataRepo repository.EpisodeMetadataRepository) *EpisodeMetadataService {
-	return &EpisodeMetadataService{episodeMetadataRepo: episodeMetadataRepo}
+func NewEpisodeMetadataService(
+	episodeMetadataRepo repository.EpisodeMetadataRepository,
+	seasonRepo repository.SeasonRepository,
+) *EpisodeMetadataService {
+	return &EpisodeMetadataService{
+		episodeMetadataRepo: episodeMetadataRepo,
+		seasonRepo:          seasonRepo,
+	}
 }
 
 func (s *EpisodeMetadataService) Create(ctx context.Context, episodeID string, metadata *entity.EpisodeMetadata) error {
@@ -82,14 +89,28 @@ func (self *EpisodeMetadataService) CreateEpisodeMetadata(ctx context.Context, e
 	if err != nil {
 		return err
 	}
+
+	season, err := self.seasonRepo.GetByID(ctx, episode.SeasonID)
+	if err != nil {
+		return err
+	}
+
 	mediumImage := ""
 	originalImage := ""
 	if metadata.Image != nil {
-		mediumImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_E_%s", mid.String()))
+		mediumImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Medium,
+			helper.GetShowImagePath(season.ShowID),
+			fmt.Sprintf("med_E_%s", mid.String()),
+		)
 		if err != nil {
 			return err
 		}
-		originalImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_E_%s", mid.String()))
+		originalImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Original,
+			helper.GetShowImagePath(season.ShowID),
+			fmt.Sprintf("org_E_%s", mid.String()),
+		)
 		if err != nil {
 			return err
 		}

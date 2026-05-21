@@ -71,11 +71,19 @@ func (self *SeasonMetadataService) CreateSeasonMetadata(ctx context.Context, sea
 	mediumImage := ""
 	originalImage := ""
 	if metadata.Image != nil {
-		mediumImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Medium, fmt.Sprintf("med_SE_%s", mid.String()))
+		mediumImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Medium,
+			helper.GetShowImagePath(season.ShowID),
+			fmt.Sprintf("med_SE_%s", mid.String()),
+		)
 		if err != nil {
 			return err
 		}
-		originalImage, err = helper.DownloadImageAndGetStaticPath(metadata.Image.Original, fmt.Sprintf("org_%s", mid.String()))
+		originalImage, err = helper.DownloadImageAndGetStaticPath(
+			metadata.Image.Original,
+			helper.GetShowImagePath(season.ShowID),
+			fmt.Sprintf("org_%s", mid.String()),
+		)
 		if err != nil {
 			return err
 		}

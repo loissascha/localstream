@@ -120,14 +120,22 @@ func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie
 	posterLink := ""
 	if r.BackdropPath != "" {
 		backdropLink = "https://image.tmdb.org/t/p/w780" + r.BackdropPath
-		backdropLink, err = helper.DownloadImageAndGetStaticPath(backdropLink, fmt.Sprintf("backd_M_%s", uuid.String()))
+		backdropLink, err = helper.DownloadImageAndGetStaticPath(
+			backdropLink,
+			helper.GetMovieImagePath(movie.ID),
+			fmt.Sprintf("backd_M_%s", uuid.String()),
+		)
 		if err != nil {
 			return err
 		}
 	}
 	if r.PosterPath != "" {
 		posterLink = "https://image.tmdb.org/t/p/w500" + r.PosterPath
-		posterLink, err = helper.DownloadImageAndGetStaticPath(posterLink, fmt.Sprintf("poster_M_%s", uuid.String()))
+		posterLink, err = helper.DownloadImageAndGetStaticPath(
+			posterLink,
+			helper.GetMovieImagePath(movie.ID),
+			fmt.Sprintf("poster_M_%s", uuid.String()),
+		)
 		if err != nil {
 			return err
 		}
