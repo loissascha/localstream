@@ -259,7 +259,7 @@ func (l *LibraryCataloguer) findOrCreateShow(ctx context.Context, showInfo *pars
 }
 
 func (l *LibraryCataloguer) RunLibrary(ctx context.Context, library entity.Library) error {
-	results, err := getAllFilesWithPath(library.Path, "mp4")
+	results, err := getAllFilesWithPath(library.Path, []string{"mp4"}) // "mkv" ? 
 	if err != nil {
 		return err
 	}
@@ -380,7 +380,7 @@ type fResult struct {
 	Path string
 }
 
-func getAllFilesWithPath(startPoint string, extension string) ([]fResult, error) {
+func getAllFilesWithPath(startPoint string, extensions []string) ([]fResult, error) {
 	result := []fResult{}
 	err := filepath.WalkDir(startPoint, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -390,11 +390,13 @@ func getAllFilesWithPath(startPoint string, extension string) ([]fResult, error)
 		if d.IsDir() {
 			// logger.Debug(nil, "DIR: {Dir}", path)
 		} else {
-			if strings.HasSuffix(path, extension) {
-				result = append(result, fResult{
-					Path: path,
-					Name: d.Name(),
-				})
+			for _, extension := range extensions {
+				if strings.HasSuffix(path, extension) {
+					result = append(result, fResult{
+						Path: path,
+						Name: d.Name(),
+					})
+				}
 			}
 		}
 		return nil
