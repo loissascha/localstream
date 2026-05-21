@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { downloadMovieSubtitle, searchMovieSubtitles } from '$lib/api/movie_subtitles';
+	import { loadSupportedSubtitleLanguages } from '$lib/api/subtitles';
 	import { auth } from '$lib/auth.svelte';
 	import DownloadIcon from '$lib/icons/DownloadIcon.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
-	import type { SubtitleProviderResult, MovieInfo } from '$lib/types/export_types';
+	import type {
+		SubtitleProviderResult,
+		MovieInfo,
+		SubtitleSupportedLanguage
+	} from '$lib/types/export_types';
 	import Overlay from './Overlay.svelte';
 
 	interface Props {
@@ -18,11 +23,25 @@
 	let searchQuery = $state('');
 	let searchLang = $state(INITIAL_LANGUAGE);
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
+	let supportedLanguages = $state<SubtitleSupportedLanguage[]>([]);
+
+	$effect(() => {
+		if (!auth.token) return;
+		loadSupportedSubtitleLanguages(auth.token)
+			.then((res) => {
+				supportedLanguages = res;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+	});
 
 	$effect(() => {
 		if (!auth.initialized) return;
 		if (!auth.token) return;
 		movie;
+		searchQuery = movie.name;
 		searchMovieSubtitles(auth.token, movie.name, INITIAL_LANGUAGE)
 			.then((result) => {
 				subtitleResult = result;
@@ -86,7 +105,11 @@
 			class="my-4 w-full rounded bg-neutral-700 px-4 py-2"
 			placeholder="Search for new Metadata"
 		/>
-		<input bind:value={searchLang} type="text" class="my-4 w-30 rounded bg-neutral-700 px-4 py-2" />
+		<select bind:value={searchLang}>
+			{#each supportedLanguages as lang}
+				<option value={lang.value}>{lang.name}</option>
+			{/each}
+		</select>
 		<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600">
 			<SearchIcon /> Search
 		</button>

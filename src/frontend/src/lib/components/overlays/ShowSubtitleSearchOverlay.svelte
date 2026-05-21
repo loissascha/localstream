@@ -127,6 +127,11 @@
 			class="my-4 w-full rounded bg-neutral-700 px-4 py-2"
 			placeholder="Episode Number"
 		/>
+		<select bind:value={searchLang}>
+			{#each supportedLanguages as lang}
+				<option value={lang.value}>{lang.name}</option>
+			{/each}
+		</select>
 		<button class="flex cursor-pointer gap-2 rounded bg-neutral-700 px-4 py-2 hover:bg-neutral-600">
 			<SearchIcon /> Search
 		</button>
