@@ -12,16 +12,18 @@
 	}
 	let { close, movie }: Props = $props();
 
+	const INITIAL_LANGUAGE = 'EN';
+
 	let searchingMetadata = $state(false);
 	let searchQuery = $state('');
-	let searchLang = $state('EN');
+	let searchLang = $state(INITIAL_LANGUAGE);
 	let subtitleResult = $state<SubtitleProviderResult[]>([]);
 
 	$effect(() => {
 		if (!auth.initialized) return;
 		if (!auth.token) return;
 		movie;
-		searchMovieSubtitles(auth.token, movie.name, searchLang)
+		searchMovieSubtitles(auth.token, movie.name, INITIAL_LANGUAGE)
 			.then((result) => {
 				subtitleResult = result;
 			})
