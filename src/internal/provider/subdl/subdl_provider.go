@@ -231,6 +231,44 @@ func (self *SubDlProvider) SearchEpisode(ctx context.Context, showName string, s
 	return results, nil
 }
 
+func (self *SubDlProvider) SupportedLanguages(ctx context.Context) ([]provider.SubtitleSupportedLanguage, error) {
+	fullUrl := "https://subdl.com/api-files/language_list.json"
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullUrl, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf("subdl search returned status %d", resp.StatusCode)
+		return nil, err
+	}
+
+	var raw map[string]string
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, fmt.Errorf("decode supported languages: %w", err)
+	}
+
+	languages := make([]provider.SubtitleSupportedLanguage, 0, len(raw))
+
+	for value, name := range raw {
+		languages = append(languages, provider.SubtitleSupportedLanguage{
+			Value: value,
+			Name:  name,
+		})
+	}
+
+	return languages, nil
+}
+
 func (self *SubDlProvider) SearchMovie(ctx context.Context, name string, lang string) ([]provider.SubtitleProviderResult, error) {
 	params := url.Values{}
 	params.Add("api_key", self.apiKey)
