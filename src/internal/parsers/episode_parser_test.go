@@ -61,6 +61,24 @@ func TestParseEpisodeFromFilename(t *testing.T) {
 			input:  "My Show S00 EP00",
 			wantOK: false,
 		},
+		{
+			name:        "Episode x should work",
+			input:       "Episode 3 Some Episode Name",
+			wantOK:      true,
+			wantEpisode: 3,
+		},
+		{
+			name:        "Episode x with title should work",
+			input:       "Episode 12 This is the End",
+			wantOK:      true,
+			wantEpisode: 12,
+		},
+		{
+			name:        "Episode x with colon title should work",
+			input:       "Episode 5: A Final Zone",
+			wantOK:      true,
+			wantEpisode: 5,
+		},
 	}
 
 	for _, tt := range tests {

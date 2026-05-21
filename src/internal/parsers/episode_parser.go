@@ -19,6 +19,8 @@ var (
 	reSxxEyy = regexp.MustCompile(`(?i)\bS(\d{1,2})\s*(?:E|EP)\s*(\d{1,3})\b`)
 	// 3x03
 	reX = regexp.MustCompile(`(?i)\b(\d{1,2})\s*x\s*(\d{1,3})\b`)
+	// Episode 12 / Episode 5: A Final Zone
+	reEpisodeOnly = regexp.MustCompile(`(?i)^Episode\s+(\d{1,3})\b\s*:?.*`)
 
 	// junk tokens that often appear AFTER the episode marker; we mainly cut before marker,
 	// but this helps if someone gives you "Show Name S01E01 1080p" and you parse title wrong.
@@ -44,9 +46,10 @@ func ParseEpisodeFromFilename(name string) (*EpisodeInfo, bool) {
 
 	// Find episode marker
 	var (
-		loc    []int
-		season int
-		ep     int
+		loc         []int
+		season      int
+		ep          int
+		episodeOnly bool
 	)
 
 	if m := reSxxEyy.FindStringSubmatchIndex(base); m != nil {
@@ -60,17 +63,24 @@ func ParseEpisodeFromFilename(name string) (*EpisodeInfo, bool) {
 		s, _ := strconv.Atoi(base[m[2]:m[3]])
 		e, _ := strconv.Atoi(base[m[4]:m[5]])
 		season, ep = s, e
+	} else if m := reEpisodeOnly.FindStringSubmatchIndex(base); m != nil {
+		e, _ := strconv.Atoi(base[m[2]:m[3]])
+		ep = e
+		episodeOnly = true
 	} else {
 		return nil, false
 	}
 
-	titlePart := strings.TrimSpace(base[:loc[0]])
-	titlePart = strings.Trim(titlePart, " -")
+	titlePart := ""
+	if !episodeOnly {
+		titlePart = strings.TrimSpace(base[:loc[0]])
+		titlePart = strings.Trim(titlePart, " -")
+	}
 
 	// Very light cleanup
 	titlePart = strings.Join(strings.Fields(titlePart), " ")
 
-	if titlePart == "" || season <= 0 || ep <= 0 {
+	if ep <= 0 || (!episodeOnly && (titlePart == "" || season <= 0)) {
 		return nil, false
 	}
 
