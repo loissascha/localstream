@@ -136,6 +136,7 @@ func main() {
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
 	movieSubtitleService := service.NewMovieSubtitleService(movieSubtitleRepo, subdlProvider)
 	collectionService := service.NewCollectionService(collectionRepo)
+	subtitleService := service.NewSubtitleService(subdlProvider)
 
 	// middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
@@ -157,6 +158,7 @@ func main() {
 	movieSubH := handler.NewMovieSubtitleHandler(s, authMiddleware, movieSubtitleService)
 	searchH := handler.NewSearchHandler(s, authMiddleware, showSerivce, movieService)
 	collectionH := handler.NewCollectionHandler(s, authMiddleware, collectionService)
+	subtitleH := handler.NewSubtitleHandler(s, authMiddleware, subtitleService)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -175,6 +177,7 @@ func main() {
 	movieSubH.RegisterRoutes()
 	searchH.RegisterRoutes()
 	collectionH.RegisterRoutes()
+	subtitleH.RegisterRoutes()
 
 	fs := http.FileServer(http.Dir("./static"))
 	s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
