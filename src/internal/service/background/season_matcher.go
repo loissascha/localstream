@@ -120,11 +120,21 @@ func (self *SeasonMatcher) RunBackground() {
 			}
 
 			if !hasError {
-				season.FetchSource = entity.FetchSourceTVMaze
-				err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
-				if err != nil {
-					logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
-					continue
+				if len(seasonMetadataResult) == 1 {
+					season.FetchSource = entity.FetchSourceTVMaze
+					err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
+					if err != nil {
+						logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
+						continue
+					}
+				} else if len(seasonMetadataResult) > 1 {
+					logger.Error(nil, "[SeasonMatcher] Created more than one season metadatas.")
+					season.FetchSource = entity.FetchSourceMultiple
+					err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
+					if err != nil {
+						logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
+						continue
+					}
 				}
 			}
 		}
