@@ -74,8 +74,19 @@ func (s *AuthService) Register(ctx context.Context, username string) (*AuthResul
 	// 	return nil, fmt.Errorf("hash password: %w", err)
 	// }
 
+	// if it's the first/only user -> make it an admin by default
+	isAdmin := false
+	users, err := s.userRepo.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		isAdmin = true
+	}
+
 	user := &entity.User{
 		Username: username,
+		IsAdmin:  isAdmin,
 	}
 	if err := s.userRepo.Create(ctx, user); err != nil {
 		if isUniqueViolation(err) {
