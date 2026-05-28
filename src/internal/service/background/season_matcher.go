@@ -107,35 +107,31 @@ func (self *SeasonMatcher) RunBackground() {
 				continue
 			}
 
-			hasError := false
+			matchCount := 0
 			for _, smr := range seasonMetadataResult {
 				if smr.Number == season.Number {
+					matchCount++
 					err := self.seasonMetadataService.CreateSeasonMetadata(ctx, season, &smr)
 					if err != nil {
 						logger.Error(err, "[SeasonMatcher] Error creating metadata for season")
-						hasError = true
 					}
 					break
 				}
 			}
 
-			if !hasError {
-				if len(seasonMetadataResult) == 1 {
-					season.FetchSource = entity.FetchSourceTVMaze
-					err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
-					if err != nil {
-						logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
-						continue
-					}
-				} else if len(seasonMetadataResult) > 1 {
-					logger.Error(nil, "[SeasonMatcher] Created more than one season metadatas.")
-					season.FetchSource = entity.FetchSourceMultiple
-					err := self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
-					if err != nil {
-						logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
-						continue
-					}
-				}
+			switch matchCount {
+			case 0:
+				season.FetchSource = entity.FetchSourceEmpty
+			case 1:
+				season.FetchSource = entity.FetchSourceTVMaze
+			case 2:
+				season.FetchSource = entity.FetchSourceMultiple
+			}
+
+			err = self.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)
+			if err != nil {
+				logger.Error(err, "[SeasonMatcher] Error updating fetch source of season")
+				continue
 			}
 		}
 	}()
