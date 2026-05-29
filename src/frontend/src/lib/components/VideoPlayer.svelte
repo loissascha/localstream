@@ -1,10 +1,5 @@
 <script lang="ts">
-	import {
-		computePosition,
-		flip,
-		offset as floatingOffset,
-		shift
-	} from '@floating-ui/dom';
+	import { computePosition, flip, offset as floatingOffset, shift } from '@floating-ui/dom';
 	import type { Strategy, VirtualElement } from '@floating-ui/dom';
 	import { onDestroy, type Snippet } from 'svelte';
 	import FullscreenIcon from '$lib/icons/FullscreenIcon.svelte';
@@ -352,7 +347,9 @@
 	}
 
 	function isInteractiveTarget(target: EventTarget | null) {
-		return target instanceof HTMLElement && target.closest('button, input, a, [role="slider"]') !== null;
+		return (
+			target instanceof HTMLElement && target.closest('button, input, a, [role="slider"]') !== null
+		);
 	}
 
 	function focusContainer() {
@@ -530,7 +527,7 @@
 		{#if showSeekTooltip}
 			<div
 				bind:this={seekTooltipEl}
-				class="pointer-events-none z-20 rounded-md bg-neutral-700/85 px-2 py-1 text-xs font-medium text-white shadow-lg ring-1 ring-white/10 backdrop-blur-sm tabular-nums"
+				class="pointer-events-none z-20 rounded-md bg-neutral-700/85 px-2 py-1 text-xs font-medium text-white tabular-nums shadow-lg ring-1 ring-white/10 backdrop-blur-sm"
 				style={`position: ${seekTooltipStrategy}; left: ${seekTooltipX}px; top: ${seekTooltipY}px;`}
 			>
 				{formatTime(hoverSeekTime)}
@@ -567,7 +564,7 @@
 				></div>
 				<div
 					class="absolute top-1 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-brand bg-neutral-500"
-					style={`left: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
+					style={`left: calc(${getPercentageBetween(0, seekMax, seekValue)}% - 10px);`}
 				></div>
 			</div>
 			<span class="w-12 tabular-nums">{formatTime(duration)}</span>
