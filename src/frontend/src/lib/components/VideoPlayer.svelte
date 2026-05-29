@@ -303,6 +303,7 @@
 	});
 
 	function getPercentageBetween(start: number, end: number, value: number): number {
+		if (end <= start) return 0;
 		return ((value - start) / (end - start)) * 100;
 	}
 </script>
