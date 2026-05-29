@@ -1,4 +1,11 @@
 <script lang="ts">
+	import {
+		computePosition,
+		flip,
+		offset as floatingOffset,
+		shift
+	} from '@floating-ui/dom';
+	import type { Strategy, VirtualElement } from '@floating-ui/dom';
 	import { onDestroy, type Snippet } from 'svelte';
 	import FullscreenIcon from '$lib/icons/FullscreenIcon.svelte';
 	import MuteIcon from '$lib/icons/MuteIcon.svelte';
@@ -55,6 +62,16 @@
 	let selectedSubtitle = $state('off');
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
 	let bufferedUntil = $state(0);
+	let seekBarEl = $state<HTMLDivElement | null>(null);
+	let seekTooltipEl = $state<HTMLDivElement | null>(null);
+	let showSeekTooltip = $state(false);
+	let hoverSeekTime = $state(0);
+	let hoverSeekX = $state(0);
+	let hoverSeekY = $state(0);
+	let seekTooltipX = $state(0);
+	let seekTooltipY = $state(0);
+	let seekTooltipStrategy = $state<Strategy>('fixed');
+	let isPointerSeeking = false;
 
 	const subtitleOptions = $derived(subtitles ?? []);
 
@@ -148,6 +165,129 @@
 		seekTo(currentTime + seconds);
 	}
 
+	function createSeekVirtualReference(): VirtualElement {
+		return {
+			getBoundingClientRect() {
+				return {
+					width: 0,
+					height: 0,
+					x: hoverSeekX,
+					y: hoverSeekY,
+					top: hoverSeekY,
+					right: hoverSeekX,
+					bottom: hoverSeekY,
+					left: hoverSeekX
+				};
+			}
+		};
+	}
+
+	function getSeekTimeFromPointer(event: PointerEvent) {
+		if (!seekBarEl || seekMax <= 0) return 0;
+
+		const rect = seekBarEl.getBoundingClientRect();
+		if (rect.width <= 0) return 0;
+
+		const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+		hoverSeekX = Math.min(Math.max(event.clientX, rect.left), rect.right);
+		hoverSeekY = rect.top;
+
+		return ratio * seekMax;
+	}
+
+	function isPointerOverSeekBar(event: PointerEvent) {
+		if (!seekBarEl) return false;
+
+		const rect = seekBarEl.getBoundingClientRect();
+		return (
+			event.clientX >= rect.left &&
+			event.clientX <= rect.right &&
+			event.clientY >= rect.top &&
+			event.clientY <= rect.bottom
+		);
+	}
+
+	async function updateSeekTooltipPosition() {
+		if (!seekTooltipEl || !showSeekTooltip) return;
+
+		const { x, y, strategy } = await computePosition(createSeekVirtualReference(), seekTooltipEl, {
+			placement: 'top',
+			strategy: 'fixed',
+			middleware: [floatingOffset(10), flip(), shift({ padding: 8 })]
+		});
+
+		seekTooltipX = x;
+		seekTooltipY = y;
+		seekTooltipStrategy = strategy;
+	}
+
+	function updateSeekHover(event: PointerEvent) {
+		hoverSeekTime = getSeekTimeFromPointer(event);
+		void updateSeekTooltipPosition();
+	}
+
+	function handleSeekPointerEnter(event: PointerEvent) {
+		showSeekTooltip = true;
+		updateSeekHover(event);
+	}
+
+	function handleSeekPointerMove(event: PointerEvent) {
+		if (!showSeekTooltip && !isPointerSeeking) return;
+
+		updateSeekHover(event);
+		if (isPointerSeeking) {
+			seekTo(hoverSeekTime);
+		}
+	}
+
+	function handleSeekPointerLeave() {
+		if (isPointerSeeking) return;
+
+		showSeekTooltip = false;
+	}
+
+	function handleSeekPointerDown(event: PointerEvent) {
+		event.preventDefault();
+		showSeekTooltip = true;
+		isPointerSeeking = true;
+		seekBarEl?.setPointerCapture(event.pointerId);
+		updateSeekHover(event);
+		seekTo(hoverSeekTime);
+	}
+
+	function handleSeekPointerUp(event: PointerEvent) {
+		if (!isPointerSeeking) return;
+
+		updateSeekHover(event);
+		seekTo(hoverSeekTime);
+		isPointerSeeking = false;
+		if (seekBarEl?.hasPointerCapture(event.pointerId)) {
+			seekBarEl.releasePointerCapture(event.pointerId);
+		}
+		showSeekTooltip = isPointerOverSeekBar(event);
+	}
+
+	function handleSeekKeydown(event: KeyboardEvent) {
+		switch (event.key) {
+			case 'ArrowLeft':
+				event.preventDefault();
+				seekBy(-10);
+				break;
+			case 'ArrowRight':
+				event.preventDefault();
+				seekBy(10);
+				break;
+			case 'Home':
+				event.preventDefault();
+				seekTo(0);
+				break;
+			case 'End':
+				event.preventDefault();
+				seekTo(seekMax);
+				break;
+		}
+	}
+
 	function setVolume(value: number) {
 		revealControls();
 		if (!videoEl) return;
@@ -212,7 +352,7 @@
 	}
 
 	function isInteractiveTarget(target: EventTarget | null) {
-		return target instanceof HTMLElement && target.closest('button, input, a') !== null;
+		return target instanceof HTMLElement && target.closest('button, input, a, [role="slider"]') !== null;
 	}
 
 	function focusContainer() {
@@ -293,6 +433,12 @@
 
 	$effect(() => {
 		syncSubtitleTracks();
+	});
+
+	$effect(() => {
+		if (showSeekTooltip && seekTooltipEl) {
+			void updateSeekTooltipPosition();
+		}
 	});
 
 	onDestroy(() => {
@@ -381,10 +527,35 @@
 	<div
 		class={`absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
+		{#if showSeekTooltip}
+			<div
+				bind:this={seekTooltipEl}
+				class="pointer-events-none z-20 rounded-md bg-neutral-700/85 px-2 py-1 text-xs font-medium text-white shadow-lg ring-1 ring-white/10 backdrop-blur-sm tabular-nums"
+				style={`position: ${seekTooltipStrategy}; left: ${seekTooltipX}px; top: ${seekTooltipY}px;`}
+			>
+				{formatTime(hoverSeekTime)}
+			</div>
+		{/if}
+
 		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
 			<div
-				class="relative h-2 grow cursor-pointer rounded-full bg-neutral-500/80 transition-all duration-300"
+				bind:this={seekBarEl}
+				class="relative h-2 grow cursor-pointer touch-none rounded-full bg-neutral-500/80 transition-all duration-300 hover:h-3"
+				role="slider"
+				tabindex="0"
+				aria-label="Seek"
+				aria-valuemin="0"
+				aria-valuemax={seekMax}
+				aria-valuenow={seekValue}
+				aria-valuetext={formatTime(seekValue)}
+				onpointerenter={handleSeekPointerEnter}
+				onpointermove={handleSeekPointerMove}
+				onpointerleave={handleSeekPointerLeave}
+				onpointerdown={handleSeekPointerDown}
+				onpointerup={handleSeekPointerUp}
+				onpointercancel={handleSeekPointerUp}
+				onkeydown={handleSeekKeydown}
 			>
 				<div
 					class={`absolute h-full rounded-full bg-neutral-500`}
@@ -399,20 +570,6 @@
 					style={`left: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
 				></div>
 			</div>
-			<span class="w-12 tabular-nums">{formatTime(duration)}</span>
-		</div>
-		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
-			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
-			<input
-				type="range"
-				min="0"
-				max={seekMax}
-				step="0.1"
-				bind:value={seekValue}
-				oninput={(event) => seekTo(Number((event.currentTarget as HTMLInputElement).value))}
-				class="h-1 w-full cursor-pointer accent-white"
-				aria-label="Seek"
-			/>
 			<span class="w-12 tabular-nums">{formatTime(duration)}</span>
 		</div>
 
