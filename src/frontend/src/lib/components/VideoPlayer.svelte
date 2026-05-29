@@ -538,7 +538,7 @@
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
 			<div
 				bind:this={seekBarEl}
-				class="relative h-2 grow cursor-pointer touch-none rounded-full bg-neutral-500/80 transition-all duration-300"
+				class="relative group h-2 grow cursor-pointer touch-none rounded-full bg-neutral-500/80 transition-all duration-300"
 				role="slider"
 				tabindex="0"
 				aria-label="Seek"
@@ -563,7 +563,7 @@
 					style={`width: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
 				></div>
 				<div
-					class="absolute top-1 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-brand bg-neutral-500"
+					class="absolute top-1 h-5 w-5 group-hover:h-6 group-hover:w-6 transition-all duration-300 -translate-y-1/2 rounded-full border-2 border-brand bg-neutral-500"
 					style={`left: calc(${getPercentageBetween(0, seekMax, seekValue)}% - 10px);`}
 				></div>
 			</div>
