@@ -301,6 +301,10 @@
 			document.exitFullscreen().catch(() => {});
 		}
 	});
+
+	function getPercentageBetween(start: number, end: number, value: number): number {
+		return ((value - start) / (end - start)) * 100;
+	}
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -376,6 +380,26 @@
 	<div
 		class={`absolute inset-x-0 bottom-0 bg-linear-to-t from-black/90 via-black/55 to-transparent px-4 pt-10 pb-4 text-white transition-opacity duration-200 ${showControls || paused ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
+		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
+			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
+			<div
+				class="relative h-2 grow cursor-pointer rounded-full bg-neutral-500/80 transition-all duration-300"
+			>
+				<div
+					class={`absolute h-full rounded-full bg-neutral-500`}
+					style={`width: ${getPercentageBetween(0, seekMax, bufferedUntil)}%;`}
+				></div>
+				<div
+					class={`absolute h-full rounded-full bg-brand`}
+					style={`width: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
+				></div>
+				<div
+					class="absolute top-1 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-brand bg-neutral-500"
+					style={`left: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
+				></div>
+			</div>
+			<span class="w-12 tabular-nums">{formatTime(duration)}</span>
+		</div>
 		<div class="mb-3 flex items-center gap-3 text-xs text-white/80">
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
 			<input
