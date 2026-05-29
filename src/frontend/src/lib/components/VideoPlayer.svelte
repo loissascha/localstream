@@ -538,7 +538,7 @@
 			<span class="w-12 text-right tabular-nums">{formatTime(currentTime)}</span>
 			<div
 				bind:this={seekBarEl}
-				class="relative h-2 grow cursor-pointer touch-none rounded-full bg-neutral-500/80 transition-all duration-300 hover:h-3"
+				class="relative h-2 grow cursor-pointer touch-none rounded-full bg-neutral-500/80 transition-all duration-300"
 				role="slider"
 				tabindex="0"
 				aria-label="Seek"
