@@ -35,6 +35,16 @@ type EpisodeListResponse struct {
 	Episodes []EpisodeInfo `json:"episodes"`
 }
 
+func toSubtitleInfoEpisode(m *entity.EpisodeSubtitle) SubtitleInfo {
+	return SubtitleInfo{
+		ID:        encoders.EncodeUUID(m.ID),
+		Name:      m.Name,
+		Path:      m.Path,
+		LangShort: m.LangShort,
+		Lang:      m.Lang,
+	}
+}
+
 func toEpisodeMetadataInfo(m *entity.EpisodeMetadata) EpisodeMetadataInfo {
 	return EpisodeMetadataInfo{
 		ID:               encoders.EncodeUUID(m.ID),

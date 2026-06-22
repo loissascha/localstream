@@ -31,6 +31,12 @@ func NewShowSubtitleHandler(
 }
 
 func (h *ShowSubtitleHandler) RegisterRoutes() {
+	h.s.GETI("/api/v1/show/subtitles/{episodeID}",
+		h.listByEpisode,
+		server.WithExportType[SubtitleInfo](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
 	h.s.POSTI("/api/v1/show/subtitles/search",
 		h.searchByTerm,
 		server.WithExportType[provider.SubtitleProviderResult](),
@@ -42,6 +48,22 @@ func (h *ShowSubtitleHandler) RegisterRoutes() {
 		server.WithExportType[provider.SubtitleProviderResult](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+}
+
+func (h *ShowSubtitleHandler) listByEpisode(w http.ResponseWriter, r *http.Request) {
+	episodeId := r.PathValue("episodeID")
+	subtitles, err := h.subtitleService.ListByEpisodeID(r.Context(), episodeId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	result := []SubtitleInfo{}
+	for _, ms := range subtitles {
+		result = append(result, toSubtitleInfoEpisode(&ms))
+	}
+
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *ShowSubtitleHandler) createShowSubtitle(w http.ResponseWriter, r *http.Request) {

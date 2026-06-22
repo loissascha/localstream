@@ -6,34 +6,42 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
 type ShowSubtitleService struct {
-	subtitleProvider provider.SubtitleProvider
-	episodeRepo      repository.EpisodeRepository
-	seasonRepo       repository.SeasonRepository
+	subtitleProvider    provider.SubtitleProvider
+	episodeRepo         repository.EpisodeRepository
+	seasonRepo          repository.SeasonRepository
+	episodeSubtitleRepo repository.EpisodeSubtitleRepository
 }
 
 func NewShowSubtitleService(
 	subtitleProvider provider.SubtitleProvider,
 	episodeRepo repository.EpisodeRepository,
 	seasonRepo repository.SeasonRepository,
+	episodeSubtitleRepo repository.EpisodeSubtitleRepository,
 ) *ShowSubtitleService {
 	return &ShowSubtitleService{
-		subtitleProvider: subtitleProvider,
-		episodeRepo:      episodeRepo,
-		seasonRepo:       seasonRepo,
+		subtitleProvider:    subtitleProvider,
+		episodeRepo:         episodeRepo,
+		seasonRepo:          seasonRepo,
+		episodeSubtitleRepo: episodeSubtitleRepo,
 	}
 }
 
-func (s *ShowSubtitleService) CreateFromSubtitleResult(ctx context.Context, episodeID string, subtitle provider.SubtitleProviderResult) error {
-	// showUUID, err := encoders.DecodeUUID(showID)
-	// if err != nil {
-	// 	return err
-	// }
+func (s *ShowSubtitleService) ListByEpisodeID(ctx context.Context, episodeID string) ([]entity.EpisodeSubtitle, error) {
+	episodeUUID, err := encoders.DecodeUUID(episodeID)
+	if err != nil {
+		return nil, err
+	}
 
+	return s.episodeSubtitleRepo.ListByEpisodeID(ctx, episodeUUID)
+}
+
+func (s *ShowSubtitleService) CreateFromSubtitleResult(ctx context.Context, episodeID string, subtitle provider.SubtitleProviderResult) error {
 	episodeUUID, err := encoders.DecodeUUID(episodeID)
 	if err != nil {
 		return err
