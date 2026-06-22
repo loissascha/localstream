@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { getEpisodeDetails, getEpisodeMetadata, getNextEpisode } from '$lib/api/episode';
+	import { loadEpisodeSubtitles } from '$lib/api/episode_subtitles';
 	import { getSeasonDetails } from '$lib/api/seasons';
 	import { getWatchstateForEpisode } from '$lib/api/watchstate';
 	import { auth } from '$lib/auth.svelte';
@@ -15,7 +16,8 @@
 		type SeasonInfo,
 		type EpisodeInfo,
 		type EpisodeMetadataInfo,
-		type ShowInfo
+		type ShowInfo,
+		type SubtitleInfo
 	} from '$lib/types/export_types';
 	import { onDestroy } from 'svelte';
 
@@ -34,6 +36,8 @@
 	var seasonDetails = $state<SeasonInfo | null>(null);
 	var nextEpisode = $state<EpisodeInfo | null>(null);
 	let subtitleoverlayopen = $state(false);
+
+	let subtitles = $state<SubtitleInfo[]>([]);
 
 	const streamUrl = $derived(
 		`/api/episodes/stream?id=${encodeURIComponent(episodeId)}&token=${encodeURIComponent(auth.token ? auth.token : '')}`
@@ -164,6 +168,7 @@
 				const m = (e as Error).message;
 				alert(m);
 			});
+		reloadSubtitles();
 	});
 
 	$effect(() => {
@@ -185,6 +190,18 @@
 				alert(m);
 			});
 	});
+
+	function reloadSubtitles() {
+		if (!auth.token) return;
+		loadEpisodeSubtitles(auth.token, episodeId)
+			.then((r) => {
+				subtitles = r;
+			})
+			.catch((e) => {
+				const m = (e as Error).message;
+				alert(m);
+			});
+	}
 </script>
 
 <main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
@@ -194,6 +211,7 @@
 			onplay={startPlaybackLogging}
 			onpause={stopPlaybackLogging}
 			onended={stopPlaybackLogging}
+			{subtitles}
 			bind:currentTime
 			bind:duration
 		>
