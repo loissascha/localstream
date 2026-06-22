@@ -620,7 +620,7 @@
 						>
 							<option value="off">Off</option>
 							{#each subtitleOptions as subtitle}
-								<option value={subtitle.id}>{subtitle.name} ({subtitle.lang_short})</option>
+								<option value={subtitle.id}>{subtitle.name} ({subtitle.lang_short}) ({subtitle.path})</option>
 							{/each}
 						</select>
 					</div>
