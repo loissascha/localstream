@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { downloadEpisodeSubtitle } from '$lib/api/episode_subtitles';
 	import { searchEpisodeSubtitles } from '$lib/api/show_subtitles';
 	import { loadSupportedSubtitleLanguages } from '$lib/api/subtitles';
 	import { auth } from '$lib/auth.svelte';
@@ -88,16 +89,16 @@
 		}
 	}
 
-	// async function downloadSubtitle(item: SubtitleProviderResult) {
-	// 	try {
-	// 		if (!auth.token) return;
-	// 		await downloadMovieSubtitle(auth.token, movie.id, item);
-	// 		close();
-	// 	} catch (e) {
-	// 		const m = (e as Error).message;
-	// 		alert(m);
-	// 	}
-	// }
+	async function downloadSubtitle(item: SubtitleProviderResult) {
+		try {
+			if (!auth.token) return;
+			await downloadEpisodeSubtitle(auth.token, episode.id, item);
+			close();
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
 </script>
 
 <Overlay {close}>
@@ -149,7 +150,7 @@
 				<button
 					class="cursor-pointer"
 					onclick={() => {
-						// downloadSubtitle(subtitle);
+						downloadSubtitle(subtitle);
 					}}
 				>
 					<DownloadIcon />

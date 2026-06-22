@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -35,6 +36,30 @@ func (h *ShowSubtitleHandler) RegisterRoutes() {
 		server.WithExportType[provider.SubtitleProviderResult](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
+
+	h.s.POSTI("/api/v1/show/subtitles/{episodeID}/create",
+		h.createShowSubtitle,
+		server.WithExportType[provider.SubtitleProviderResult](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+}
+
+func (h *ShowSubtitleHandler) createShowSubtitle(w http.ResponseWriter, r *http.Request) {
+	episodeId := r.PathValue("episodeID")
+
+	defer r.Body.Close()
+	var result provider.SubtitleProviderResult
+	if err := json.NewDecoder(r.Body).Decode(&result); err != nil {
+		respond.JSON(w, http.StatusBadRequest, map[string]string{"json parsing error: ": err.Error()})
+		return
+	}
+
+	if err := h.subtitleService.CreateFromSubtitleResult(r.Context(), episodeId, result); err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error: ": err.Error()})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, true)
 }
 
 func (h *ShowSubtitleHandler) searchByTerm(w http.ResponseWriter, r *http.Request) {

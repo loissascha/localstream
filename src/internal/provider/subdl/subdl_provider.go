@@ -20,8 +20,9 @@ import (
 )
 
 type SubDlProvider struct {
-	apiKey            string
-	movieSubtitleRepo repository.MovieSubtitleRepository
+	apiKey              string
+	movieSubtitleRepo   repository.MovieSubtitleRepository
+	episodeSubtitleRepo repository.EpisodeSubtitleRepository
 }
 
 type ApiSearchResult struct {
@@ -42,11 +43,52 @@ type ApiSubtitleResult struct {
 func NewSubDlProvider(
 	apiKey string,
 	movieSubtitleRepo repository.MovieSubtitleRepository,
+	episodeSubtitleRepo repository.EpisodeSubtitleRepository,
 ) *SubDlProvider {
 	return &SubDlProvider{
-		apiKey:            apiKey,
-		movieSubtitleRepo: movieSubtitleRepo,
+		apiKey:              apiKey,
+		movieSubtitleRepo:   movieSubtitleRepo,
+		episodeSubtitleRepo: episodeSubtitleRepo,
 	}
+}
+
+func (self *SubDlProvider) DownloadShowSubtitle(ctx context.Context, showId uuid.UUID, season *entity.Season, episode *repository.EpisodeWithMetadata, providerResult provider.SubtitleProviderResult) error {
+	fullUrl := "https://dl.subdl.com" + providerResult.Url
+	showIdStr := encoders.EncodeUUID(showId)
+
+	seasonNumberStr := fmt.Sprintf("%d", season.Number)
+	episodeNumberStr := fmt.Sprintf("%d", episode.Number)
+
+	downloadedPath, err := helper.DownloadSubtitleForEpisode(fullUrl, showIdStr, seasonNumberStr, episodeNumberStr)
+	if err != nil {
+		return err
+	}
+	logger.Info(nil, "Downloaded to {DownloadedPath}", downloadedPath)
+
+	ext, err := helper.GetExtensionFromUrl(downloadedPath)
+	if err != nil {
+		return err
+	}
+	ext = strings.TrimLeft(ext, ".")
+
+	if ext == "zip" {
+		err := self.processZipEpisode(ctx, downloadedPath, episode, providerResult)
+		if err != nil {
+			return err
+		}
+	} else if ext == "srt" {
+		err := self.processSrtEpisode(ctx, downloadedPath, episode, providerResult)
+		if err != nil {
+			return err
+		}
+	} else if ext == "vtt" {
+		err := self.processVttEpisode(ctx, downloadedPath, episode, providerResult)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
@@ -66,17 +108,17 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 	ext = strings.TrimLeft(ext, ".")
 
 	if ext == "zip" {
-		err := self.processZip(ctx, downloadedPath, movieId, providerResult)
+		err := self.processZipMovie(ctx, downloadedPath, movieId, providerResult)
 		if err != nil {
 			return err
 		}
 	} else if ext == "srt" {
-		err := self.processSrt(ctx, downloadedPath, movieId, providerResult)
+		err := self.processSrtMovie(ctx, downloadedPath, movieId, providerResult)
 		if err != nil {
 			return err
 		}
 	} else if ext == "vtt" {
-		err := self.processVtt(ctx, downloadedPath, movieId, providerResult)
+		err := self.processVttMovie(ctx, downloadedPath, movieId, providerResult)
 		if err != nil {
 			return err
 		}
@@ -85,7 +127,39 @@ func (self *SubDlProvider) DownloadMovieSubtitle(ctx context.Context, movieId uu
 	return nil
 }
 
-func (self *SubDlProvider) processVtt(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+func (self *SubDlProvider) processVttEpisode(ctx context.Context, downloadedPath string, episode *repository.EpisodeWithMetadata, providerResult provider.SubtitleProviderResult) error {
+	id, err := uuid.NewV7()
+	if err != nil {
+		return err
+	}
+	downloadedPath = strings.TrimLeft(downloadedPath, "/")
+	downloadedPath = "/" + downloadedPath
+
+	sub, err := self.movieSubtitleRepo.GetByPath(ctx, downloadedPath)
+	if err != nil {
+		return err
+	}
+	if sub != nil {
+		return nil
+	}
+
+	subt := entity.EpisodeSubtitle{
+		ID:        id,
+		EpisodeID: episode.ID,
+		Path:      downloadedPath,
+		Name:      providerResult.Name,
+		Lang:      providerResult.Lang,
+		LangShort: providerResult.LangShort,
+	}
+	err = self.episodeSubtitleRepo.Create(ctx, &subt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (self *SubDlProvider) processVttMovie(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
 	id, err := uuid.NewV7()
 	if err != nil {
 		return err
@@ -117,7 +191,7 @@ func (self *SubDlProvider) processVtt(ctx context.Context, downloadedPath string
 	return nil
 }
 
-func (self *SubDlProvider) processSrt(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+func (self *SubDlProvider) processSrtEpisode(ctx context.Context, downloadedPath string, episode *repository.EpisodeWithMetadata, providerResult provider.SubtitleProviderResult) error {
 	newPath, err := self.convertSubtitleSrt(downloadedPath)
 	if err != nil {
 		return err
@@ -129,14 +203,33 @@ func (self *SubDlProvider) processSrt(ctx context.Context, downloadedPath string
 	}
 	ext = strings.TrimLeft(ext, ".")
 	if ext == "vtt" {
-		self.processVtt(ctx, newPath, movieId, providerResult)
+		self.processVttEpisode(ctx, newPath, episode, providerResult)
 	} else {
 		logger.Error(nil, "Resulting filea fter srt to vtt convert is not vtt...")
 	}
 	return nil
 }
 
-func (self *SubDlProvider) processZip(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+func (self *SubDlProvider) processSrtMovie(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
+	newPath, err := self.convertSubtitleSrt(downloadedPath)
+	if err != nil {
+		return err
+	}
+	logger.Info(nil, "New Path after srt convert: {NewPath}", newPath)
+	ext, err := helper.GetExtensionFromUrl(newPath)
+	if err != nil {
+		return err
+	}
+	ext = strings.TrimLeft(ext, ".")
+	if ext == "vtt" {
+		self.processVttMovie(ctx, newPath, movieId, providerResult)
+	} else {
+		logger.Error(nil, "Resulting filea fter srt to vtt convert is not vtt...")
+	}
+	return nil
+}
+
+func (self *SubDlProvider) processZipMovie(ctx context.Context, downloadedPath string, movieId uuid.UUID, providerResult provider.SubtitleProviderResult) error {
 	paths, err := self.unpackSubtitleZip(downloadedPath)
 	if err != nil {
 		return err
@@ -148,9 +241,31 @@ func (self *SubDlProvider) processZip(ctx context.Context, downloadedPath string
 		}
 		ext = strings.TrimLeft(ext, ".")
 		if ext == "srt" {
-			self.processSrt(ctx, p, movieId, providerResult)
+			self.processSrtMovie(ctx, p, movieId, providerResult)
 		} else if ext == "vtt" {
-			self.processVtt(ctx, p, movieId, providerResult)
+			self.processVttMovie(ctx, p, movieId, providerResult)
+		} else {
+			logger.Error(nil, "Resulting file after unzip is neither srt nor vtt but {ext}", ext)
+		}
+	}
+	return nil
+}
+
+func (self *SubDlProvider) processZipEpisode(ctx context.Context, downloadedPath string, episode *repository.EpisodeWithMetadata, providerResult provider.SubtitleProviderResult) error {
+	paths, err := self.unpackSubtitleZip(downloadedPath)
+	if err != nil {
+		return err
+	}
+	for _, p := range paths {
+		ext, err := helper.GetExtensionFromUrl(p)
+		if err != nil {
+			return err
+		}
+		ext = strings.TrimLeft(ext, ".")
+		if ext == "srt" {
+			self.processSrtEpisode(ctx, p, episode, providerResult)
+		} else if ext == "vtt" {
+			self.processVttEpisode(ctx, p, episode, providerResult)
 		} else {
 			logger.Error(nil, "Resulting file after unzip is neither srt nor vtt but {ext}", ext)
 		}

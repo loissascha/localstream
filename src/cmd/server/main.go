@@ -106,6 +106,7 @@ func main() {
 	showMetaRepo := repopostgres.NewShowMetadataRepository(db)
 	seasonMetaRepo := repopostgres.NewSeasonMetadataRepository(db)
 	episodeMetaRepo := repopostgres.NewEpisodeMetadataRepository(db)
+	episodeSubtitleRepo := repopostgres.NewEpisodeSubtitleRepository(db)
 	seasonRepo := repopostgres.NewSeasonRepository(db)
 	episodeRepo := repopostgres.NewEpisodeRepository(db)
 	userWatchstateRepo := repopostgres.NewUserWatchstateRepository(db)
@@ -118,7 +119,7 @@ func main() {
 	// providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
-	subdlProvider := subdl.NewSubDlProvider(subDlApiKey, movieSubtitleRepo)
+	subdlProvider := subdl.NewSubDlProvider(subDlApiKey, movieSubtitleRepo, episodeSubtitleRepo)
 
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
@@ -130,7 +131,7 @@ func main() {
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
 	movieService := service.NewMovieService(movieRepo)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider, showSerivce)
-	showSubtitleService := service.NewShowSubtitleService(subdlProvider)
+	showSubtitleService := service.NewShowSubtitleService(subdlProvider, episodeRepo, seasonRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
 	episodeMetaService := service.NewEpisodeMetadataService(episodeMetaRepo, seasonRepo)
 	movieMetaService := service.NewMovieMetadataService(movieService, movieMetaRepo, movieRepo, tmdbProvider)
