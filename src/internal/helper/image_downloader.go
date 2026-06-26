@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
 )
 
@@ -32,6 +33,7 @@ func DownloadImageAndGetStaticPath(url string, pathPrefix string, filename strin
 	if err != nil {
 		return "", err
 	}
+	logger.Debug(nil, "Downloaded static image path: ", fp)
 	return fp, nil
 }
 
