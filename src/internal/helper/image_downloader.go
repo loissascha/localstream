@@ -60,14 +60,15 @@ func downloadImage(url string, pathPrefix string, filename string) (string, erro
 	if err != nil {
 		return "", err
 	}
+	defer file.Close()
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	if !strings.HasPrefix(basepath, "/") {
-		basepath = "/" + basepath
+	if !strings.HasPrefix(filePath, "/") {
+		filePath = "/" + filePath
 	}
 	return filePath, nil
 }
