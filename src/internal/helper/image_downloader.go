@@ -33,7 +33,7 @@ func DownloadImageAndGetStaticPath(url string, pathPrefix string, filename strin
 	if err != nil {
 		return "", err
 	}
-	logger.Debug(nil, "Downloaded static image path: ", fp)
+	logger.Debug(nil, "Downloaded static image path: {FP}", fp)
 	return fp, nil
 }
 
