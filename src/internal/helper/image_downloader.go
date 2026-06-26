@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
@@ -61,6 +62,10 @@ func downloadImage(url string, pathPrefix string, filename string) (string, erro
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if !strings.HasPrefix(basepath, "/") {
+		basepath = "/" + basepath
 	}
 	return filePath, nil
 }
