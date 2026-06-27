@@ -7,9 +7,14 @@
 	const VISIBLE_PER_PAGE = 50;
 
 	let showAddToCollection = $state(false);
+	let filterByName = $state('');
 
 	let visibleCount = $state(VISIBLE_PER_PAGE);
-	let visibleShows = $derived(shows.shows.slice(0, visibleCount));
+	let visibleShows = $derived(
+		shows.shows
+			.filter((v) => v.name.toLowerCase().includes(filterByName.toLowerCase()))
+			.slice(0, visibleCount)
+	);
 	let sentinel = $state<HTMLDivElement | null>(null);
 
 	function loadMore() {
@@ -43,25 +48,35 @@
 </script>
 
 <main>
-	{#if selectedShowsCount > 0}
-		<section
-			class="sticky top-0 right-0 left-0 z-50 flex items-center justify-end gap-4 bg-neutral-900 p-4"
-		>
-			<button
-				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
-				onclick={() => {
-					showAddToCollection = true;
-				}}>Add to Collection</button
-			>
-			<button
-				class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
-				onclick={() => {
-					clearShowsSelection();
-				}}>Clear selection</button
-			>
-			<div>{selectedShowsCount} selected</div>
-		</section>
-	{/if}
+	<section
+		class="sticky top-0 right-0 left-0 z-50 flex items-center justify-between gap-4 bg-neutral-900 p-4"
+	>
+		<div>
+			<input
+				bind:value={filterByName}
+				type="text"
+				placeholder="Filter by name"
+				class="rounded-full border border-transparent bg-neutral-800 px-4 py-2 transition outline-none focus:border-neutral-600"
+			/>
+		</div>
+		{#if selectedShowsCount > 0}
+			<div class="flex flex-wrap items-center justify-end gap-4">
+				<button
+					class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+					onclick={() => {
+						showAddToCollection = true;
+					}}>Add to Collection</button
+				>
+				<button
+					class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
+					onclick={() => {
+						clearShowsSelection();
+					}}>Clear selection</button
+				>
+				<div>{selectedShowsCount} selected</div>
+			</div>
+		{/if}
+	</section>
 	<section class="my-8">
 		<ItemGrid>
 			{#each visibleShows as show (show.id)}
