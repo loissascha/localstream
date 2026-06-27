@@ -25,7 +25,11 @@ export async function loadShowsDatabase() {
 	}
 
 	const response = await loadShows(auth.token);
-	shows.shows = response.shows;
+	shows.shows = response.shows.sort((a, b) => {
+		if (a.name < b.name) return -1;
+		if (a.name > b.name) return 1;
+		return 0;
+	});
 	shows.selectedShows = Object.fromEntries(
 		shows.shows.map((show) => [show.id, shows.selectedShows[show.id] ?? false])
 	);

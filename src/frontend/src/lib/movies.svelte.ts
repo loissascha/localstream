@@ -29,7 +29,11 @@ export async function loadMoviesDatabase() {
 	}
 
 	const response = await listMovies(auth.token);
-	movies.movies = response.movies;
+	movies.movies = response.movies.sort((a, b) => {
+		if (a.name < b.name) return -1;
+		if (a.name > b.name) return 1;
+		return 0;
+	});
 	movies.selectedMovies = Object.fromEntries(
 		movies.movies.map((movie) => [movie.id, movies.selectedMovies[movie.id] ?? false])
 	);
