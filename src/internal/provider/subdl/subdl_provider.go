@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 
@@ -275,11 +276,22 @@ func (self *SubDlProvider) processZipEpisode(ctx context.Context, downloadedPath
 
 func (self *SubDlProvider) unpackSubtitleZip(localPath string) ([]string, error) {
 	p, err := helper.UnzipMultiFiles(localPath)
-	return p, err
+	if err != nil {
+		return nil, err
+	}
+	err = os.Remove(localPath)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 func (self *SubDlProvider) convertSubtitleSrt(localPath string) (string, error) {
 	p, err := helper.ConvertToVTT(localPath)
+	if err != nil {
+		return "", err
+	}
+	err = os.Remove(localPath)
 	if err != nil {
 		return "", err
 	}
