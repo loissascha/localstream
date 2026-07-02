@@ -2,7 +2,6 @@
 	import LastWatched from '$lib/components/LastWatched.svelte';
 	import LastWatchedMovies from '$lib/components/LastWatchedMovies.svelte';
 	import ShowListItem from '$lib/components/ShowListItem.svelte';
-	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 	import ShowIcon from '$lib/icons/ShowIcon.svelte';
 	import MovieIcon from '$lib/icons/MovieIcon.svelte';
@@ -37,6 +36,7 @@
 
 	$effect(() => {
 		if (!auth.initialized) return;
+		if (!auth.loggedIn) return;
 		loadShowsDatabase().catch((e) => {
 			const m = (e as Error).message;
 			alert(m);
