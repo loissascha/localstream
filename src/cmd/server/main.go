@@ -23,19 +23,29 @@ import (
 )
 
 func setupFileDirs() error {
-	err := os.MkdirAll("./static/images/movies", os.ModePerm)
+	baseDir := os.Getenv("STATIC_FILES_DIR")
+	if baseDir == "" {
+		return fmt.Errorf("STATIC_FILES_DIR not defined. Make sure there is a .env file or an environment variable set!")
+	}
+
+	imageMoviesPath := filepath.Join(baseDir, "images/movies")
+	imageShowsPath := filepath.Join(baseDir, "images/shows")
+	subtitelMoviesPath := filepath.Join(baseDir, "subtitles/movies")
+	subtitleShowsPath := filepath.Join(baseDir, "subtitles/shows")
+
+	err := os.MkdirAll(imageMoviesPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll("./static/images/shows", os.ModePerm)
+	err = os.MkdirAll(imageShowsPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll("./static/subtitles/movies", os.ModePerm)
+	err = os.MkdirAll(subtitelMoviesPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
-	err = os.MkdirAll("./static/subtitles/shows", os.ModePerm)
+	err = os.MkdirAll(subtitleShowsPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -49,7 +59,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		panic("PORT not defined. Make sure there is a .env file or a environment variable set!")
+		panic("PORT not defined. Make sure there is an .env file or a environment variable set!")
 	}
 
 	env := os.Getenv("APP_ENV")
