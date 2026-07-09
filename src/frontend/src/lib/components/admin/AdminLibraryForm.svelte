@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { createLibrary } from '$lib/api/admin/libraries';
+	import { createLibrary, deleteLibrary, updateLibrary } from '$lib/api/admin/libraries';
 	import { auth } from '$lib/auth.svelte';
 	import { resolve } from '$app/paths';
 	import { LibraryType } from '$lib/types/enums';
@@ -40,7 +40,26 @@
 		}
 	}
 
-	async function handleSubmitUpdateLibrary() {}
+	async function handleSubmitUpdateLibrary() {
+		try {
+			if (!auth.token) {
+				throw new Error('Auth token not set');
+			}
+			if (library == null) {
+				throw new Error('Library not set.');
+			}
+			await updateLibrary(auth.token, {
+				id: library.id,
+				name: form.name,
+				type: form.type,
+				path: form.path
+			});
+			goto(resolve('/(protected)/(admin)/admin/libraries'));
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
 
 	async function handleSubmitNewLibrary() {
 		try {
@@ -53,6 +72,24 @@
 				path: form.path
 			});
 			goto(resolve('/(protected)/(admin)/admin/libraries'));
+		} catch (e) {
+			const m = (e as Error).message;
+			alert(m);
+		}
+	}
+
+	async function deleteLibraryButton() {
+		try {
+			if (!auth.token) {
+				throw new Error('Auth token not set');
+			}
+			if (library == null) {
+				throw new Error('Library not set.');
+			}
+			if (confirm('Are you sure you would like to delete this library?')) {
+				await deleteLibrary(auth.token, library.id);
+				goto(resolve('/(protected)/(admin)/admin/libraries'));
+			}
 		} catch (e) {
 			const m = (e as Error).message;
 			alert(m);
@@ -126,9 +163,17 @@
 			bind:value={form.path}
 		/>
 	</div>
-	<div>
-		<button class="cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
-			>Submit</button
+	<div class="flex gap-2">
+		<button
+			type="submit"
+			class="cursor-pointer rounded bg-neutral-800 px-4 py-2 hover:bg-neutral-700">Submit</button
 		>
+		{#if library != null}
+			<button
+				onclick={deleteLibraryButton}
+				type="button"
+				class="cursor-pointer rounded bg-red-800 px-4 py-2 hover:bg-red-700">Delete Library</button
+			>
+		{/if}
 	</div>
 </form>
