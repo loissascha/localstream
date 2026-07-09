@@ -48,6 +48,15 @@ func (r *LibraryRepository) Update(ctx context.Context, library *entity.Library)
 	return nil
 }
 
+func (r *LibraryRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	const query = `
+		DELETE FROM libraries WHERE id=$1
+		`
+
+	_, err := r.db.ExecContext(ctx, query, id)
+	return err
+}
+
 func (r *LibraryRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Library, error) {
 	const query = `
 		SELECT id, name, path, library_type, created_at

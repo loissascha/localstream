@@ -21,6 +21,15 @@ func NewLibraryService(libraryRepo repository.LibraryRepository) *LibraryService
 	return &LibraryService{libraryRepo: libraryRepo}
 }
 
+func (s *LibraryService) Delete(ctx context.Context, id string) error {
+	libID, err := encoders.DecodeUUID(id)
+	if err != nil {
+		return err
+	}
+	err = s.libraryRepo.Delete(ctx, libID)
+	return err
+}
+
 func (s *LibraryService) Update(ctx context.Context, id, name, path string, libraryType entity.LibraryType) (*entity.Library, error) {
 	trimmedName := strings.TrimSpace(name)
 	trimmedPath := strings.TrimSpace(path)

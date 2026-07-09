@@ -46,6 +46,20 @@ func (h *LibraryHandler) RegisterHandlers() {
 		server.WithExportType[UpdateLibraryResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
+	h.s.DELETEI("/api/admin/libraries/{id}",
+		h.deleteLibrary,
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
+	)
+}
+
+func (h *LibraryHandler) deleteLibrary(w http.ResponseWriter, r *http.Request) {
+	libraryId := r.PathValue("id")
+	err := h.libraryService.Delete(r.Context(), libraryId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 type UpdateLibraryRequest struct {
