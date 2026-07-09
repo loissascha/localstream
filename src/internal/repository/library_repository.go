@@ -14,4 +14,5 @@ type LibraryRepository interface {
 	Create(ctx context.Context, library *entity.Library) error
 	GetByID(ctx context.Context, id uuid.UUID) (*entity.Library, error)
 	List(ctx context.Context) ([]entity.Library, error)
+	Update(ctx context.Context, library *entity.Library) error
 }

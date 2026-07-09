@@ -40,6 +40,43 @@ func (h *LibraryHandler) RegisterHandlers() {
 		server.WithExportType[CreateLibraryResponse](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
 	)
+	h.s.POSTI("/api/admin/libraries/update",
+		h.updateLibrary,
+		server.WithExportType[UpdateLibraryRequest](),
+		server.WithExportType[UpdateLibraryResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuthAdmin),
+	)
+}
+
+type UpdateLibraryRequest struct {
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	LibraryType entity.LibraryType `json:"type"`
+	Path        string             `json:"path"`
+}
+
+type UpdateLibraryResponse struct {
+	Library LibraryListItem `json:"library"`
+}
+
+func (h *LibraryHandler) updateLibrary(w http.ResponseWriter, r *http.Request) {
+	requestBody, err := decodeUpdateLibraryRequest(r)
+	if err != nil {
+		respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid request body"})
+		return
+	}
+
+	lib, err := h.libraryService.Update(r.Context(), requestBody.ID, requestBody.Name, requestBody.Path, requestBody.LibraryType)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	response := UpdateLibraryResponse{
+		Library: toLibraryListItem(lib),
+	}
+
+	respond.JSON(w, http.StatusOK, response)
 }
 
 type CreateLibraryRequest struct {
@@ -89,6 +126,17 @@ func (h *LibraryHandler) listLibraries(w http.ResponseWriter, r *http.Request) {
 	})
 
 	respond.JSON(w, http.StatusOK, LibraryListResponse{Libraries: result})
+}
+
+func decodeUpdateLibraryRequest(r *http.Request) (*UpdateLibraryRequest, error) {
+	defer r.Body.Close()
+
+	var requestBody UpdateLibraryRequest
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		return nil, err
+	}
+
+	return &requestBody, nil
 }
 
 func decodeCreateLibraryRequest(r *http.Request) (*CreateLibraryRequest, error) {

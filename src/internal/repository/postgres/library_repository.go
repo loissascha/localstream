@@ -35,6 +35,19 @@ func (r *LibraryRepository) Create(ctx context.Context, library *entity.Library)
 	return nil
 }
 
+func (r *LibraryRepository) Update(ctx context.Context, library *entity.Library) error {
+	const query = `
+		UPDATE libraries SET name=$2, path=$3, library_type=$4
+		WHERE id=$1
+		`
+
+	err := r.db.QueryRowContext(ctx, query, library.ID, library.Name, library.Path, library.LibraryType).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *LibraryRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.Library, error) {
 	const query = `
 		SELECT id, name, path, library_type, created_at

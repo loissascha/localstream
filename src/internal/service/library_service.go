@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -18,6 +19,35 @@ type LibraryService struct {
 
 func NewLibraryService(libraryRepo repository.LibraryRepository) *LibraryService {
 	return &LibraryService{libraryRepo: libraryRepo}
+}
+
+func (s *LibraryService) Update(ctx context.Context, id, name, path string, libraryType entity.LibraryType) (*entity.Library, error) {
+	trimmedName := strings.TrimSpace(name)
+	trimmedPath := strings.TrimSpace(path)
+	if trimmedName == "" || trimmedPath == "" {
+		return nil, ErrInvalidLibraryInput
+	}
+
+	libraryUUID, err := encoders.DecodeUUID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	library, err := s.libraryRepo.GetByID(ctx, libraryUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	library.Name = trimmedName
+	library.Path = trimmedPath
+	library.LibraryType = libraryType
+
+	err = s.libraryRepo.Update(ctx, library)
+	if err != nil {
+		return nil, err
+	}
+
+	return library, nil
 }
 
 func (s *LibraryService) Create(ctx context.Context, name, path, libraryType string) (*entity.Library, error) {
