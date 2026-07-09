@@ -67,10 +67,10 @@ type SeasonListResponse struct {
 }
 
 type LibraryListItem struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	LibraryType string `json:"library_type"`
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	Path        string             `json:"path"`
+	LibraryType entity.LibraryType `json:"library_type"`
 }
 
 type LibraryListResponse struct {
@@ -110,7 +110,7 @@ func toLibraryListItem(l *entity.Library) LibraryListItem {
 		ID:          encoders.EncodeUUID(l.ID),
 		Name:        l.Name,
 		Path:        l.Path,
-		LibraryType: string(l.LibraryType),
+		LibraryType: l.LibraryType,
 	}
 }
 

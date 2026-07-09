@@ -206,6 +206,15 @@ export interface SubtitleSupportedLanguage {
 export interface UpdateCollectionRequest {
   name: string;
 }
+export interface UpdateLibraryRequest {
+  id: string;
+  name: string;
+  type: string;
+  path: string;
+}
+export interface UpdateLibraryResponse {
+  library: LibraryListItem;
+}
 export interface WatchstateInfo {
   position: number;
   duration: number;

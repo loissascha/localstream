@@ -20,11 +20,11 @@
 	});
 </script>
 
-<section id="stats_and_actions" class="mb-4 flex justify-center items-center gap-4">
+<section id="stats_and_actions" class="mb-4 flex items-center justify-center gap-4">
 	<span>{libraries.length} Libraries</span>
 	<a
 		href={resolve('/(protected)/(admin)/admin/libraries/new')}
-		class="rounded-full bg-neutral-800 hover:bg-neutral-700 px-4 py-2">+ New Library</a
+		class="rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700">+ New Library</a
 	>
 </section>
 
@@ -33,7 +33,13 @@
 		<div
 			class="flex h-40 w-80 flex-col items-end justify-between rounded border border-neutral-500 p-4"
 		>
-			<div class="grow">Settings</div>
+			<div class="grow">
+				<a
+					href={resolve('/(protected)/(admin)/admin/libraries/edit/[libraryID]', {
+						libraryID: library.id
+					})}>Edit</a
+				>
+			</div>
 			<div class="flex w-full flex-col items-center">
 				<span class="font-bold">
 					{library.name}
