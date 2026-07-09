@@ -187,7 +187,7 @@
 			})
 			.catch((e) => {
 				const m = (e as Error).message;
-				alert(m);
+				console.log(m);
 			});
 	});
 
