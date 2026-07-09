@@ -163,7 +163,7 @@
 
 <section
 	id="header"
-	class="sticky top-0 z-40 flex items-center justify-between bg-neutral-900/90 px-4 py-4 backdrop-blur md:grid md:grid-cols-[1fr_auto_1fr]"
+	class="sticky top-0 z-40 flex items-center justify-between bg-neutral-900 px-4 py-4 md:grid md:grid-cols-[1fr_auto_1fr]"
 >
 	<div class="flex grow items-center gap-2">
 		<a

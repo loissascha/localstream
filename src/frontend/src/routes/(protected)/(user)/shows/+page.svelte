@@ -49,7 +49,7 @@
 
 <main>
 	<section
-		class="sticky top-0 right-0 left-0 z-50 flex items-center justify-between gap-4 bg-neutral-900 p-4"
+		class={`sticky top-0 right-0 left-0 z-50 flex items-center justify-between gap-4 py-4 ${selectedShowsCount > 0 ? "bg-neutral-900" : ""}`}
 	>
 		<div>
 			<input
