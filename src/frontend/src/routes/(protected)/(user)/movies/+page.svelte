@@ -56,18 +56,18 @@
 
 <main>
 	<section
-		class={`sticky top-0 right-0 left-0 z-50 flex items-center justify-between gap-4 py-4 ${selectedMoviesCount > 0 ? "bg-neutral-900" : ""}`}
+		class={`pointer-events-none sticky top-0 right-0 left-0 z-50 flex items-center justify-between gap-4 py-4 ${selectedMoviesCount > 0 ? 'bg-neutral-900' : ''}`}
 	>
 		<div>
 			<input
 				bind:value={filterByName}
 				type="text"
 				placeholder="Filter by name"
-				class="rounded-full border border-transparent bg-neutral-800 px-4 py-2 transition outline-none focus:border-neutral-600"
+				class="pointer-events-auto rounded-full border border-transparent bg-neutral-800 px-4 py-2 transition outline-none focus:border-neutral-600"
 			/>
 		</div>
 		{#if selectedMoviesCount > 0}
-			<div class="flex flex-wrap items-center justify-end gap-4">
+			<div class="pointer-events-auto flex flex-wrap items-center justify-end gap-4">
 				<button
 					class="cursor-pointer rounded-full bg-neutral-800 px-4 py-2 hover:bg-neutral-700"
 					onclick={() => {
