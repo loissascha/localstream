@@ -209,6 +209,10 @@
 				<div class="pointer-events-auto">Center</div>
 				<div class="pointer-events-auto">Right</div>
 			</div>
+			<div class="flex items-center justify-between">
+				<div class="pointer-events-auto">Left</div>
+				<div class="pointer-events-auto">Right</div>
+			</div>
 		</div>
 	</div>
 </div>
