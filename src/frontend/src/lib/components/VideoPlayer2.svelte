@@ -13,6 +13,8 @@
 	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { SubtitleInfo } from '$lib/types/export_types';
 	import { onDestroy, type Snippet } from 'svelte';
+	import FullscreenIcon from '$lib/icons/FullscreenIcon.svelte';
+	import FullscreenExitIcon from '$lib/icons/FullscreenExitIcon.svelte';
 
 	interface OverlayState {
 		currentTime: number;
@@ -51,6 +53,8 @@
 
 	let showControls = $state(true);
 	let paused = $state(true);
+	let fullscreened = $state(false);
+	let containerEl = $state<HTMLElement | null>(null);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
 	let muted = $state(false);
@@ -113,6 +117,30 @@
 		revealControls();
 		syncState();
 		console.log('pause');
+	}
+
+	async function startFullscreen() {
+		if (!containerEl) return;
+		await containerEl.requestFullscreen();
+	}
+
+	async function exitFullscreen() {
+		if (!containerEl) return;
+		if (document.fullscreenElement === containerEl) {
+			await document.exitFullscreen();
+		}
+	}
+
+	$effect(() => {
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+		return () => {
+			document.removeEventListener('fullscreenchange', handleFullscreenChange);
+		};
+	});
+
+	function handleFullscreenChange() {
+		fullscreened = document.fullscreenElement === containerEl;
 	}
 
 	function revealControls() {
@@ -257,6 +285,7 @@
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
+	bind:this={containerEl}
 	tabindex="0"
 	role="application"
 	aria-label="Video player"
@@ -389,7 +418,7 @@
 				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(duration)}</div>
 			</div>
 			<!-- second bottom bar -->
-			<div class="flex items-center justify-between">
+			<div class="mt-2 flex items-center justify-between">
 				<div class="pointer-events-auto">
 					<button
 						onpointerdown={preventClick}
@@ -409,7 +438,25 @@
 						{/if}
 					</button>
 				</div>
-				<div class="pointer-events-auto">Right</div>
+				<div class="pointer-events-auto">
+					<button
+						class="cursor-pointer"
+						onpointerdown={preventClick}
+						onclick={() => {
+							if (fullscreened) {
+								exitFullscreen();
+							} else {
+								startFullscreen();
+							}
+						}}
+					>
+						{#if fullscreened}
+							<FullscreenExitIcon size={20} />
+						{:else}
+							<FullscreenIcon size={20} />
+						{/if}
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
