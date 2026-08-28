@@ -4,7 +4,7 @@
 	import PauseIcon from '$lib/icons/PauseIcon.svelte';
 	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { SubtitleInfo } from '$lib/types/export_types';
-	import type { Snippet } from 'svelte';
+	import { onDestroy, type Snippet } from 'svelte';
 
 	interface OverlayState {
 		currentTime: number;
@@ -120,6 +120,10 @@
 		}
 		bufferedUntil = videoEl.buffered.end(videoEl.buffered.length - 1);
 	}
+
+	onDestroy(() => {
+		clearHideControlsTimer();
+	});
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
