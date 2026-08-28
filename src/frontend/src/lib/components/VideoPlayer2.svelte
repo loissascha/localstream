@@ -1,4 +1,11 @@
 <script lang="ts">
+	import {
+		computePosition,
+		flip,
+		offset as floatingOffset,
+		shift,
+		type VirtualElement
+	} from '@floating-ui/dom';
 	import { formatTime } from '$lib/format';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
@@ -49,6 +56,16 @@
 	let seekValue = $state(0);
 	let bufferedUntil = $state(0);
 
+	// seek bar
+	let seekBarEl = $state<HTMLDivElement | null>(null);
+	let seekTooltipEl = $state<HTMLDivElement | null>(null);
+	let showSeekTooltip = $state(false);
+	let hoverSeekTime = $state(0);
+	let hoverSeekX = $state(0);
+	let hoverSeekY = $state(0);
+	let seekTooltipX = $state(0);
+	let seekTooltipY = $state(0);
+
 	const seekMax = $derived(Math.max(duration, currentTime, seekValue, 0));
 
 	function mouseMoved() {
@@ -59,11 +76,11 @@
 	function mouseClicked() {
 		console.log('mouse clicked');
 		if (showControls) {
-			// if (paused) {
-			// 	play();
-			// } else {
-			// 	pause();
-			// }
+			if (paused) {
+				play();
+			} else {
+				pause();
+			}
 		} else {
 			revealControls();
 		}
@@ -76,6 +93,7 @@
 		paused = false;
 		scheduleHideControls();
 		syncState();
+		console.log('play');
 	}
 
 	async function pause() {
@@ -85,6 +103,7 @@
 		paused = true;
 		revealControls();
 		syncState();
+		console.log('pause');
 	}
 
 	function revealControls() {
@@ -105,7 +124,7 @@
 		hideControlsTimer = setTimeout(() => {
 			showControls = false;
 			hideControlsTimer = null;
-		}, 2000);
+		}, 4000);
 	}
 
 	function syncState() {
@@ -131,6 +150,97 @@
 	function getPercentageBetween(start: number, end: number, value: number): number {
 		if (end <= start) return 0;
 		return ((value - start) / (end - start)) * 100;
+	}
+
+	function handleSeekPointerEnter(event: PointerEvent) {
+		showSeekTooltip = true;
+		updateSeekHover(event);
+	}
+
+	function handleSeekPointerMove(event: PointerEvent) {
+		if (!showSeekTooltip) return;
+
+		updateSeekHover(event);
+	}
+
+	function handleSeekPointerLeave() {
+		showSeekTooltip = false;
+	}
+
+	function getSeekTimeFromPointer(event: PointerEvent) {
+		if (!seekBarEl || seekMax <= 0) return 0;
+
+		const rect = seekBarEl.getBoundingClientRect();
+		if (rect.width <= 0) return 0;
+
+		const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+		hoverSeekX = Math.min(Math.max(event.clientX, rect.left), rect.right);
+		hoverSeekY = rect.top;
+
+		return ratio * seekMax;
+	}
+
+	function updateSeekHover(event: PointerEvent) {
+		hoverSeekTime = getSeekTimeFromPointer(event);
+		void updateSeekTooltipPosition();
+	}
+
+	async function updateSeekTooltipPosition() {
+		if (!seekTooltipEl || !showSeekTooltip) return;
+
+		const { x, y, strategy } = await computePosition(createSeekVirtualReference(), seekTooltipEl, {
+			placement: 'top',
+			strategy: 'fixed',
+			middleware: [floatingOffset(10), flip(), shift({ padding: 8 })]
+		});
+
+		seekTooltipX = x;
+		seekTooltipY = y;
+	}
+
+	function createSeekVirtualReference(): VirtualElement {
+		return {
+			getBoundingClientRect() {
+				return {
+					width: 0,
+					height: 0,
+					x: hoverSeekX,
+					y: hoverSeekY,
+					top: hoverSeekY,
+					right: hoverSeekX,
+					bottom: hoverSeekY,
+					left: hoverSeekX
+				};
+			}
+		};
+	}
+
+	function handleSeekPointerDown(event: PointerEvent) {
+		preventClick(event);
+		pause();
+		seekTo(hoverSeekTime);
+	}
+
+	function seekTo(value: number) {
+		if (!videoEl) return;
+		const boundedValue = Math.min(Math.max(value, 0), duration || 0);
+		videoEl.currentTime = boundedValue;
+		currentTime = boundedValue;
+		seekValue = boundedValue;
+		syncState();
+	}
+
+	function forward10Seconds() {
+		seekTo(currentTime + 10);
+	}
+
+	function backdward10Seconds() {
+		seekTo(currentTime - 10);
+	}
+
+	function preventClick(e: PointerEvent) {
+		e.preventDefault();
+		e.stopPropagation();
 	}
 </script>
 
@@ -177,10 +287,17 @@
 		<!-- Display Center Buttons -->
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
 			<div class="flex items-center gap-1">
-				<button>
+				<button
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
+					onpointerdown={preventClick}
+					onclick={() => {
+						backdward10Seconds();
+					}}
+				>
 					<ChevronLeftIcon size={50} />
 				</button>
 				<button
+					onpointerdown={preventClick}
 					onclick={() => {
 						if (paused) {
 							play();
@@ -188,7 +305,7 @@
 							pause();
 						}
 					}}
-					class="pointer-events-auto cursor-pointer"
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
 				>
 					{#if paused}
 						<PlayIcon size={120} />
@@ -196,7 +313,13 @@
 						<PauseIcon size={120} />
 					{/if}
 				</button>
-				<button>
+				<button
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
+					onpointerdown={preventClick}
+					onclick={() => {
+						forward10Seconds();
+					}}
+				>
 					<ChevronRightIcon size={50} />
 				</button>
 			</div>
@@ -215,7 +338,25 @@
 			<div class="flex items-center justify-between gap-4">
 				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(currentTime)}</div>
 				<div class="pointer-events-auto grow">
-					<div class="group relative h-2 w-full cursor-pointer rounded-full bg-neutral-600">
+					{#if showSeekTooltip}
+						<div
+							bind:this={seekTooltipEl}
+							class="pointer-events-none z-20 rounded-md bg-neutral-700/85 px-2 py-1 text-xs font-medium text-white tabular-nums shadow-lg ring-1 ring-white/10 backdrop-blur-sm"
+							style={`position: fixed; left: ${seekTooltipX}px; top: ${seekTooltipY}px;`}
+						>
+							{formatTime(hoverSeekTime)}
+						</div>
+					{/if}
+
+					<!-- Seek Bar -->
+					<div
+						bind:this={seekBarEl}
+						onpointerenter={handleSeekPointerEnter}
+						onpointermove={handleSeekPointerMove}
+						onpointerleave={handleSeekPointerLeave}
+						onpointerdown={handleSeekPointerDown}
+						class="group relative h-2 w-full cursor-pointer rounded-full bg-neutral-600"
+					>
 						<div
 							class="absolute h-2 rounded-full bg-neutral-500"
 							style={`width: ${getPercentageBetween(0, seekMax, bufferedUntil)}%;`}
@@ -235,6 +376,7 @@
 			<div class="flex items-center justify-between">
 				<div class="pointer-events-auto">
 					<button
+						onpointerdown={preventClick}
 						onclick={() => {
 							if (paused) {
 								play();
