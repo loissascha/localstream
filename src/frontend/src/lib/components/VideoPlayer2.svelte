@@ -56,11 +56,11 @@
 	function mouseClicked() {
 		console.log('mouse clicked');
 		if (showControls) {
-			if (paused) {
-				play();
-			} else {
-				pause();
-			}
+			// if (paused) {
+			// 	play();
+			// } else {
+			// 	pause();
+			// }
 		} else {
 			revealControls();
 		}
