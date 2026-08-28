@@ -23,6 +23,7 @@
 
 	interface Props {
 		href: string;
+		backlink?: string;
 		duration?: number;
 		currentTime?: number;
 		onplay?: () => void;
@@ -36,6 +37,7 @@
 
 	let {
 		href,
+		backlink,
 		onplay,
 		onpause,
 		onended,
