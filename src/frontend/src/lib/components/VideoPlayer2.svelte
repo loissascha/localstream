@@ -70,6 +70,13 @@
 
 	const seekMax = $derived(Math.max(duration, currentTime, seekValue, 0));
 
+	$effect(() => {
+		if (videoEl && Math.abs(videoEl.currentTime - currentTime) > 0.25) {
+			videoEl.currentTime = currentTime;
+		}
+		seekValue = currentTime;
+	});
+
 	function mouseMoved() {
 		console.log('mouse moved');
 		revealControls();
@@ -330,7 +337,11 @@
 		<!-- Top Bar -->
 		<div class="pointer-events-none absolute top-0 right-0 left-0">
 			<div class="flex items-center justify-between">
-				<div class="pointer-events-auto">Left</div>
+				<div class="pointer-events-auto">
+					{#if backlink}
+						<a href={backlink}><ChevronLeftIcon /></a>
+					{/if}
+				</div>
 				<div class="pointer-events-auto">Right</div>
 			</div>
 		</div>
