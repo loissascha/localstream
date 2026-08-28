@@ -54,6 +54,8 @@
 		currentTime = $bindable(0)
 	}: Props = $props();
 
+	const subtitleOptions = $derived(subtitles ?? []);
+
 	let showControls = $state(true);
 	let paused = $state(true);
 	let fullscreened = $state(false);
@@ -64,6 +66,7 @@
 	let volume = $state(1);
 	let seekValue = $state(0);
 	let bufferedUntil = $state(0);
+	let selectedSubtitle = $state('off');
 
 	// seek bar
 	let seekBarEl = $state<HTMLDivElement | null>(null);
@@ -77,12 +80,36 @@
 
 	const seekMax = $derived(Math.max(duration, currentTime, seekValue, 0));
 
+	// watchstate
 	$effect(() => {
 		if (videoEl && Math.abs(videoEl.currentTime - currentTime) > 0.25) {
 			videoEl.currentTime = currentTime;
 		}
 		seekValue = currentTime;
 	});
+	//////
+
+	// subtitles
+	function setSubtitle(id: string) {
+		revealControls();
+		selectedSubtitle = id;
+		syncSubtitleTracks();
+	}
+
+	$effect(() => {
+		syncSubtitleTracks();
+	});
+
+	function syncSubtitleTracks() {
+		if (!videoEl) return;
+
+		const tracks = Array.from(videoEl.textTracks);
+		for (const [index, track] of tracks.entries()) {
+			const subtitle = subtitleOptions[index];
+			track.mode = subtitle && subtitle.id === selectedSubtitle ? 'showing' : 'disabled';
+		}
+	}
+	//////
 
 	function mouseMoved() {
 		console.log('mouse moved');
@@ -102,6 +129,7 @@
 		}
 	}
 
+	// basic controls
 	async function play() {
 		if (!videoEl) return;
 		await videoEl.play();
@@ -171,7 +199,9 @@
 	function handleFullscreenChange() {
 		fullscreened = document.fullscreenElement === containerEl;
 	}
+	////////
 
+	// controls
 	function revealControls() {
 		showControls = true;
 		scheduleHideControls();
@@ -192,6 +222,7 @@
 			hideControlsTimer = null;
 		}, 4000);
 	}
+	///////
 
 	function syncState() {
 		if (!videoEl) return;
@@ -468,6 +499,25 @@
 					</button>
 				</div>
 				<div class="pointer-events-auto flex items-center gap-4">
+					{#if subtitleOptions.length > 0}
+						<div class="flex items-center gap-2">
+							<label class="sr-only" for="subtitle-selector">Subtitle</label>
+							<select
+								id="subtitle-selector"
+								value={selectedSubtitle}
+								onchange={(event) => setSubtitle((event.currentTarget as HTMLSelectElement).value)}
+								class="max-w-40 cursor-pointer rounded-md border border-white/15 bg-black/50 px-2 py-1 text-sm text-white transition outline-none hover:bg-black/65"
+								aria-label="Subtitle track"
+							>
+								<option value="off">Off</option>
+								{#each subtitleOptions as subtitle}
+									<option value={subtitle.id}
+										>{subtitle.name} ({subtitle.lang_short}) ({subtitle.path})</option
+									>
+								{/each}
+							</select>
+						</div>
+					{/if}
 					<button
 						onpointerdown={preventClick}
 						onclick={() => {
