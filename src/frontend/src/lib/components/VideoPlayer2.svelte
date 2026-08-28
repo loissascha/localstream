@@ -15,6 +15,9 @@
 	import { onDestroy, type Snippet } from 'svelte';
 	import FullscreenIcon from '$lib/icons/FullscreenIcon.svelte';
 	import FullscreenExitIcon from '$lib/icons/FullscreenExitIcon.svelte';
+	import MuteIcon from '$lib/icons/MuteIcon.svelte';
+	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
+	import { setCookie } from '$lib/cookies';
 
 	interface OverlayState {
 		currentTime: number;
@@ -117,6 +120,32 @@
 		revealControls();
 		syncState();
 		console.log('pause');
+	}
+
+	function setVolume(value: number) {
+		if (!videoEl) return;
+		const boundedValue = Math.min(Math.max(value, 0), 1);
+		videoEl.volume = boundedValue;
+		videoEl.muted = boundedValue === 0;
+		volume = boundedValue;
+		muted = videoEl.muted;
+		setCookie('videoplayer_volume', boundedValue.toString(), 300);
+	}
+
+	function mute() {
+		if (!videoEl) return;
+		videoEl.muted = true;
+		muted = true;
+	}
+
+	function unmute() {
+		if (!videoEl) return;
+		videoEl.muted = false;
+		muted = false;
+		if (volume == 0) {
+			volume = 0.15;
+			videoEl.volume = 0.15;
+		}
 	}
 
 	async function startFullscreen() {
@@ -438,7 +467,34 @@
 						{/if}
 					</button>
 				</div>
-				<div class="pointer-events-auto">
+				<div class="pointer-events-auto flex items-center gap-4">
+					<button
+						onpointerdown={preventClick}
+						onclick={() => {
+							if (muted) {
+								unmute();
+							} else {
+								mute();
+							}
+						}}
+					>
+						{#if muted}
+							<MuteIcon />
+						{:else}
+							<VolumeIcon />
+						{/if}
+					</button>
+					<input
+						onpointerdown={(e) => e.stopPropagation()}
+						type="range"
+						min="0"
+						max="1"
+						step="0.05"
+						value={muted ? 0 : volume}
+						oninput={(event) => setVolume(Number((event.currentTarget as HTMLInputElement).value))}
+						class="h-1 w-24 cursor-pointer accent-white"
+						aria-label="Volume"
+					/>
 					<button
 						class="cursor-pointer"
 						onpointerdown={preventClick}
