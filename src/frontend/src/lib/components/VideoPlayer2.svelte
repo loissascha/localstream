@@ -54,6 +54,15 @@
 		currentTime = $bindable(0)
 	}: Props = $props();
 
+	$effect(() => {
+		console.log('subtitles:', subtitles);
+		if (subtitles) {
+			for (const a of subtitles) {
+				console.log(a);
+			}
+		}
+	});
+
 	const subtitleOptions = $derived(subtitles ?? []);
 
 	let showControls = $state(true);
@@ -431,7 +440,7 @@
 						<a href={backlink}><ChevronLeftIcon size={40} /></a>
 					{/if}
 				</div>
-				<div class="pointer-events-auto">Right</div>
+				<div class="pointer-events-auto"></div>
 			</div>
 		</div>
 
