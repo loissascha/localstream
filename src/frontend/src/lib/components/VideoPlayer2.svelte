@@ -295,7 +295,7 @@
 	>
 		<!-- Display Center Buttons -->
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-			<div class="flex items-center gap-1">
+			<div class="flex items-center gap-8">
 				<button
 					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
 					onpointerdown={preventClick}
@@ -336,10 +336,10 @@
 
 		<!-- Top Bar -->
 		<div class="pointer-events-none absolute top-0 right-0 left-0">
-			<div class="flex items-center justify-between">
+			<div class="flex items-center justify-between px-8 py-4">
 				<div class="pointer-events-auto">
 					{#if backlink}
-						<a href={backlink}><ChevronLeftIcon /></a>
+						<a href={backlink}><ChevronLeftIcon size={40} /></a>
 					{/if}
 				</div>
 				<div class="pointer-events-auto">Right</div>
@@ -348,6 +348,7 @@
 
 		<!-- Bottom Bar -->
 		<div class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 py-2">
+			<!-- first bottom bar -->
 			<div class="flex items-center justify-between gap-4">
 				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(currentTime)}</div>
 				<div class="pointer-events-auto grow">
@@ -362,6 +363,7 @@
 					{/if}
 
 					<!-- Seek Bar -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
 						bind:this={seekBarEl}
 						onpointerenter={handleSeekPointerEnter}
@@ -386,6 +388,7 @@
 				</div>
 				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(duration)}</div>
 			</div>
+			<!-- second bottom bar -->
 			<div class="flex items-center justify-between">
 				<div class="pointer-events-auto">
 					<button
@@ -400,9 +403,9 @@
 						class="pointer-events-auto cursor-pointer"
 					>
 						{#if paused}
-							<PlayIcon />
+							<PlayIcon size={30} />
 						{:else}
-							<PauseIcon />
+							<PauseIcon size={30} />
 						{/if}
 					</button>
 				</div>
