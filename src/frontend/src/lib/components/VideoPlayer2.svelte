@@ -37,9 +37,10 @@
 		currentTime = $bindable(0)
 	}: Props = $props();
 
-	let showControls = $state(true);
+	let showControls = $state(false);
 	let paused = $state(true);
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
 
 	function mouseMoved() {
 		console.log('mouse moved');
@@ -75,6 +76,23 @@
 
 	function revealControls() {
 		showControls = true;
+		scheduleHideControls();
+	}
+
+	function clearHideControlsTimer() {
+		if (hideControlsTimer !== null) {
+			clearTimeout(hideControlsTimer);
+			hideControlsTimer = null;
+		}
+	}
+
+	function scheduleHideControls() {
+		clearHideControlsTimer();
+		if (paused) return;
+		hideControlsTimer = setTimeout(() => {
+			showControls = false;
+			hideControlsTimer = null;
+		}, 2000);
 	}
 </script>
 
