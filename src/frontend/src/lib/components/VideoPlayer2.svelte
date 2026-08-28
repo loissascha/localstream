@@ -1,5 +1,4 @@
 <script lang="ts">
-	import FilterIcon from '$lib/icons/FilterIcon.svelte';
 	import PauseIcon from '$lib/icons/PauseIcon.svelte';
 	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { SubtitleInfo } from '$lib/types/export_types';
@@ -44,14 +43,39 @@
 
 	function mouseMoved() {
 		console.log('mouse moved');
+		revealControls();
 	}
 
 	function mouseClicked() {
 		console.log('mouse clicked');
+		if (showControls) {
+			if (paused) {
+				play();
+			} else {
+				pause();
+			}
+		} else {
+			revealControls();
+		}
 	}
 
-	function play() {}
-	function pause() {}
+	async function play() {
+		if (!videoEl) return;
+		await videoEl.play();
+		onplay?.();
+		paused = false;
+	}
+
+	async function pause() {
+		if (!videoEl) return;
+		videoEl.pause();
+		onpause?.();
+		paused = true;
+	}
+
+	function revealControls() {
+		showControls = true;
+	}
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -87,7 +111,16 @@
 		class={`absolute top-0 right-0 bottom-0 left-0 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-			<button class="pointer-events-auto cursor-pointer">
+			<button
+				onclick={() => {
+					if (paused) {
+						play();
+					} else {
+						pause();
+					}
+				}}
+				class="pointer-events-auto cursor-pointer"
+			>
 				{#if paused}
 					<PlayIcon size={80} />
 				{:else}
