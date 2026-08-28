@@ -211,13 +211,13 @@
 		</div>
 
 		<!-- Bottom Bar -->
-		<div class="pointer-events-none absolute right-0 bottom-0 left-0">
+		<div class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 py-2">
 			<div class="flex items-center justify-between gap-4">
-				<div class="pointer-events-auto shrink-0">{formatTime(currentTime)}</div>
+				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(currentTime)}</div>
 				<div class="pointer-events-auto grow">
-					<div class="group relative h-2 w-full cursor-pointer rounded-full bg-neutral-500">
+					<div class="group relative h-2 w-full cursor-pointer rounded-full bg-neutral-600">
 						<div
-							class="absolute h-2 rounded-full bg-neutral-400"
+							class="absolute h-2 rounded-full bg-neutral-500"
 							style={`width: ${getPercentageBetween(0, seekMax, bufferedUntil)}%;`}
 						></div>
 						<div
@@ -230,10 +230,27 @@
 						></div>
 					</div>
 				</div>
-				<div class="pointer-events-auto shrink-0">{formatTime(duration)}</div>
+				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(duration)}</div>
 			</div>
 			<div class="flex items-center justify-between">
-				<div class="pointer-events-auto">Left</div>
+				<div class="pointer-events-auto">
+					<button
+						onclick={() => {
+							if (paused) {
+								play();
+							} else {
+								pause();
+							}
+						}}
+						class="pointer-events-auto cursor-pointer"
+					>
+						{#if paused}
+							<PlayIcon />
+						{:else}
+							<PauseIcon />
+						{/if}
+					</button>
+				</div>
 				<div class="pointer-events-auto">Right</div>
 			</div>
 		</div>
