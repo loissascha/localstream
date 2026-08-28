@@ -193,5 +193,22 @@
 				</button>
 			</div>
 		</div>
+
+		<!-- Top Bar -->
+		<div class="pointer-events-none absolute top-0 right-0 left-0">
+			<div class="flex items-center justify-between">
+				<div class="pointer-events-auto">Left</div>
+				<div class="pointer-events-auto">Right</div>
+			</div>
+		</div>
+
+		<!-- Bottom Bar -->
+		<div class="pointer-events-none absolute right-0 bottom-0 left-0">
+			<div class="flex items-center justify-between">
+				<div class="pointer-events-auto">Left</div>
+				<div class="pointer-events-auto">Center</div>
+				<div class="pointer-events-auto">Right</div>
+			</div>
+		</div>
 	</div>
 </div>
