@@ -1,4 +1,6 @@
 <script lang="ts">
+	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
+	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import PauseIcon from '$lib/icons/PauseIcon.svelte';
 	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { SubtitleInfo } from '$lib/types/export_types';
@@ -37,7 +39,7 @@
 		currentTime = $bindable(0)
 	}: Props = $props();
 
-	let showControls = $state(false);
+	let showControls = $state(true);
 	let paused = $state(true);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
@@ -65,6 +67,7 @@
 		await videoEl.play();
 		onplay?.();
 		paused = false;
+		scheduleHideControls();
 	}
 
 	async function pause() {
@@ -72,6 +75,7 @@
 		videoEl.pause();
 		onpause?.();
 		paused = true;
+		revealControls();
 	}
 
 	function revealControls() {
@@ -129,22 +133,30 @@
 		class={`absolute top-0 right-0 bottom-0 left-0 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
-			<button
-				onclick={() => {
-					if (paused) {
-						play();
-					} else {
-						pause();
-					}
-				}}
-				class="pointer-events-auto cursor-pointer"
-			>
-				{#if paused}
-					<PlayIcon size={80} />
-				{:else}
-					<PauseIcon size={80} />
-				{/if}
-			</button>
+			<div class="flex items-center gap-1">
+				<button>
+					<ChevronLeftIcon size={50} />
+				</button>
+				<button
+					onclick={() => {
+						if (paused) {
+							play();
+						} else {
+							pause();
+						}
+					}}
+					class="pointer-events-auto cursor-pointer"
+				>
+					{#if paused}
+						<PlayIcon size={120} />
+					{:else}
+						<PauseIcon size={120} />
+					{/if}
+				</button>
+				<button>
+					<ChevronRightIcon size={50} />
+				</button>
+			</div>
 		</div>
 	</div>
 </div>
