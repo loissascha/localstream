@@ -498,7 +498,10 @@
 						{/if}
 					</button>
 				</div>
-				<div class="pointer-events-auto flex items-center gap-4">
+				<div onpointerdown={preventClick} class="pointer-events-auto flex items-center gap-4">
+					{#if bottomrightextensions}
+						{@render bottomrightextensions()}
+					{/if}
 					{#if subtitleOptions.length > 0}
 						<div class="flex items-center gap-2">
 							<label class="sr-only" for="subtitle-selector">Subtitle</label>

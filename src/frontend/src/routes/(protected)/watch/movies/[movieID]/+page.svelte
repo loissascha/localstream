@@ -129,7 +129,18 @@
 				{subtitles}
 				bind:currentTime
 				bind:duration
-			></VideoPlayer2>
+			>
+				{#snippet bottomrightextensions()}
+					<button
+						class="cursor-pointer"
+						onclick={() => {
+							subtitleoverlayopen = true;
+						}}
+					>
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+					</button>
+				{/snippet}
+			</VideoPlayer2>
 		{:else}
 			<VideoPlayer
 				href={streamUrl}
