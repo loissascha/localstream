@@ -15,6 +15,7 @@
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
+	const backlink = page.url.searchParams.get('backlink') ?? resolve('/(protected)');
 
 	let movie = $state<MovieInfo | null>(null);
 	let loadingWatchstate = $state(true);
@@ -121,6 +122,7 @@
 		{#if tryNew}
 			<VideoPlayer2
 				href={streamUrl}
+				{backlink}
 				onplay={startPlaybackLogging}
 				onpause={stopPlaybackLogging}
 				onended={stopPlaybackLogging}
