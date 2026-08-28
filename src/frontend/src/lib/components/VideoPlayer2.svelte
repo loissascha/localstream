@@ -1,4 +1,7 @@
 <script lang="ts">
+	import FilterIcon from '$lib/icons/FilterIcon.svelte';
+	import PauseIcon from '$lib/icons/PauseIcon.svelte';
+	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { SubtitleInfo } from '$lib/types/export_types';
 	import type { Snippet } from 'svelte';
 
@@ -35,13 +38,20 @@
 		currentTime = $bindable(0)
 	}: Props = $props();
 
-	let showControls = $state(false);
+	let showControls = $state(true);
 	let paused = $state(true);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 
-	function mouseMoved() {}
+	function mouseMoved() {
+		console.log('mouse moved');
+	}
 
-	function mouseClicked() {}
+	function mouseClicked() {
+		console.log('mouse clicked');
+	}
+
+	function play() {}
+	function pause() {}
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -72,4 +82,18 @@
 			/>
 		{/each}
 	</video>
+
+	<div
+		class={`absolute top-0 right-0 bottom-0 left-0 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+	>
+		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+			<button class="pointer-events-auto cursor-pointer">
+				{#if paused}
+					<PlayIcon size={80} />
+				{:else}
+					<PauseIcon size={80} />
+				{/if}
+			</button>
+		</div>
+	</div>
 </div>
