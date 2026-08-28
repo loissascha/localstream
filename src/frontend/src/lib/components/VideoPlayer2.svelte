@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatTime } from '$lib/format';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import PauseIcon from '$lib/icons/PauseIcon.svelte';
@@ -47,6 +48,8 @@
 	let volume = $state(1);
 	let seekValue = $state(0);
 	let bufferedUntil = $state(0);
+
+	const seekMax = $derived(Math.max(duration, currentTime, seekValue, 0));
 
 	function mouseMoved() {
 		console.log('mouse moved');
@@ -124,6 +127,11 @@
 	onDestroy(() => {
 		clearHideControlsTimer();
 	});
+
+	function getPercentageBetween(start: number, end: number, value: number): number {
+		if (end <= start) return 0;
+		return ((value - start) / (end - start)) * 100;
+	}
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -204,10 +212,25 @@
 
 		<!-- Bottom Bar -->
 		<div class="pointer-events-none absolute right-0 bottom-0 left-0">
-			<div class="flex items-center justify-between">
-				<div class="pointer-events-auto">Left</div>
-				<div class="pointer-events-auto">Center</div>
-				<div class="pointer-events-auto">Right</div>
+			<div class="flex items-center justify-between gap-4">
+				<div class="pointer-events-auto shrink-0">{formatTime(currentTime)}</div>
+				<div class="pointer-events-auto grow">
+					<div class="group relative h-2 w-full cursor-pointer rounded-full bg-neutral-500">
+						<div
+							class="absolute h-2 rounded-full bg-neutral-400"
+							style={`width: ${getPercentageBetween(0, seekMax, bufferedUntil)}%;`}
+						></div>
+						<div
+							class="absolute h-2 rounded-full bg-brand"
+							style={`width: ${getPercentageBetween(0, seekMax, seekValue)}%;`}
+						></div>
+						<div
+							class="absolute top-1 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-brand bg-neutral-500 transition-all duration-300 group-hover:h-6 group-hover:w-6"
+							style={`left: calc(${getPercentageBetween(0, seekMax, seekValue)}% - 10px);`}
+						></div>
+					</div>
+				</div>
+				<div class="pointer-events-auto shrink-0">{formatTime(duration)}</div>
 			</div>
 			<div class="flex items-center justify-between">
 				<div class="pointer-events-auto">Left</div>
