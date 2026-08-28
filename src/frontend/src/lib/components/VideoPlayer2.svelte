@@ -43,6 +43,10 @@
 	let paused = $state(true);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let hideControlsTimer: ReturnType<typeof setTimeout> | null = null;
+	let muted = $state(false);
+	let volume = $state(1);
+	let seekValue = $state(0);
+	let bufferedUntil = $state(0);
 
 	function mouseMoved() {
 		console.log('mouse moved');
@@ -68,6 +72,7 @@
 		onplay?.();
 		paused = false;
 		scheduleHideControls();
+		syncState();
 	}
 
 	async function pause() {
@@ -76,6 +81,7 @@
 		onpause?.();
 		paused = true;
 		revealControls();
+		syncState();
 	}
 
 	function revealControls() {
@@ -98,6 +104,22 @@
 			hideControlsTimer = null;
 		}, 2000);
 	}
+
+	function syncState() {
+		if (!videoEl) return;
+		currentTime = videoEl.currentTime;
+		seekValue = videoEl.currentTime;
+		duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
+		syncBuffered();
+	}
+
+	function syncBuffered() {
+		if (!videoEl || videoEl.buffered.length === 0) {
+			bufferedUntil = 0;
+			return;
+		}
+		bufferedUntil = videoEl.buffered.end(videoEl.buffered.length - 1);
+	}
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
@@ -117,6 +139,13 @@
 		preload="metadata"
 		playsinline
 		src={href}
+		onloadedmetadata={syncState}
+		ondurationchange={syncState}
+		onratechange={syncState}
+		onseeked={syncState}
+		onvolumechange={syncState}
+		ontimeupdate={syncState}
+		onseeking={syncState}
 		disablepictureinpicture
 	>
 		{#each subtitles ?? [] as subtitle}
@@ -129,9 +158,11 @@
 		{/each}
 	</video>
 
+	<!-- Controls -->
 	<div
 		class={`absolute top-0 right-0 bottom-0 left-0 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
 	>
+		<!-- Display Center Buttons -->
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
 			<div class="flex items-center gap-1">
 				<button>
