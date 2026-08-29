@@ -349,7 +349,7 @@
 	}
 
 	function preventClick(e: PointerEvent) {
-		e.preventDefault();
+		// e.preventDefault();
 		e.stopPropagation();
 	}
 </script>
@@ -437,7 +437,11 @@
 		</div>
 
 		<!-- Top Bar -->
-		<div class="pointer-events-none absolute top-0 right-0 left-0">
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="pointer-events-none absolute top-0 right-0 left-0 bg-linear-to-t from-black/5 via-black/70 to-black"
+			onpointerdown={preventClick}
+		>
 			<div class="flex items-center justify-between px-8 py-4">
 				<div class="pointer-events-auto flex items-center gap-2">
 					<a
@@ -456,7 +460,11 @@
 		</div>
 
 		<!-- Bottom Bar -->
-		<div class="pointer-events-none absolute right-0 bottom-0 left-0 px-4 py-2">
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="pointer-events-auto absolute right-0 bottom-0 left-0 bg-linear-to-b from-black/5 via-black/70 to-black px-4 py-4"
+			onpointerdown={preventClick}
+		>
 			<!-- first bottom bar -->
 			<div class="flex items-center justify-between gap-4">
 				<div class="pointer-events-auto shrink-0 text-sm">{formatTime(currentTime)}</div>
