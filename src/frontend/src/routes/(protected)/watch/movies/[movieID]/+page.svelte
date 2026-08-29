@@ -123,6 +123,7 @@
 			<VideoPlayer2
 				href={streamUrl}
 				{backlink}
+				title={movie?.name}
 				onplay={startPlaybackLogging}
 				onpause={stopPlaybackLogging}
 				onended={stopPlaybackLogging}

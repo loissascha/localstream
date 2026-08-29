@@ -18,6 +18,8 @@
 	import MuteIcon from '$lib/icons/MuteIcon.svelte';
 	import VolumeIcon from '$lib/icons/VolumeIcon.svelte';
 	import { setCookie } from '$lib/cookies';
+	import { resolve } from '$app/paths';
+	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 
 	interface OverlayState {
 		currentTime: number;
@@ -29,6 +31,7 @@
 	interface Props {
 		href: string;
 		backlink?: string;
+		title?: string;
 		duration?: number;
 		currentTime?: number;
 		onplay?: () => void;
@@ -43,6 +46,7 @@
 	let {
 		href,
 		backlink,
+		title,
 		onplay,
 		onpause,
 		onended,
@@ -435,10 +439,17 @@
 		<!-- Top Bar -->
 		<div class="pointer-events-none absolute top-0 right-0 left-0">
 			<div class="flex items-center justify-between px-8 py-4">
-				<div class="pointer-events-auto">
+				<div class="pointer-events-auto flex items-center gap-2">
+					<a
+						class="p-2 text-slate-300 no-underline hover:text-white"
+						href={resolve('/(protected)')}
+					>
+						<HomeIcon size={30} />
+					</a>
 					{#if backlink}
-						<a href={backlink}><ChevronLeftIcon size={40} /></a>
+						<a href={backlink}><ChevronLeftIcon size={30} /></a>
 					{/if}
+					{title}
 				</div>
 				<div class="pointer-events-auto"></div>
 			</div>
