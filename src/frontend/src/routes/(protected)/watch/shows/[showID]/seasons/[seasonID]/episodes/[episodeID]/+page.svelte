@@ -214,7 +214,7 @@
 			<VideoPlayer2
 				href={streamUrl}
 				{backlink}
-				title={`S${seasonDetails?.number}:E${episodeDetails?.number} - ${episodeMetadataDetails?.name}`}
+				title={`${showDetails?.name} - S${seasonDetails?.number}:E${episodeDetails?.number} - ${episodeMetadataDetails?.name}`}
 				onplay={startPlaybackLogging}
 				onpause={stopPlaybackLogging}
 				onended={stopPlaybackLogging}
