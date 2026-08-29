@@ -242,6 +242,7 @@
 		currentTime = videoEl.currentTime;
 		seekValue = videoEl.currentTime;
 		duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
+		paused = videoEl.paused;
 		syncBuffered();
 	}
 
@@ -393,7 +394,10 @@
 
 	{#if overlay}
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div onpointerdown={preventClick} class={`absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]`}>
+		<div
+			onpointerdown={preventClick}
+			class={`absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]`}
+		>
 			{@render overlay({ currentTime, duration, paused, isFullscreen: fullscreened })}
 		</div>
 	{/if}
