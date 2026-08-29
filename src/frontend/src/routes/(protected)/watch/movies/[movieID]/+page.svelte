@@ -15,7 +15,7 @@
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
-	const backlink = page.url.searchParams.get('backlink') ?? resolve('/(protected)');
+	const backlink = $derived(page.url.searchParams.get('backlink') ?? resolve('/(protected)'));
 
 	let movie = $state<MovieInfo | null>(null);
 	let loadingWatchstate = $state(true);
