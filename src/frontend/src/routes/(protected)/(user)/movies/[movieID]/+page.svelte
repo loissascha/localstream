@@ -49,7 +49,9 @@
 				<div class="p-4">
 					<button
 						onclick={() => {
-							goto(resolve('/(protected)/watch/movies/[movieID]', { movieID: movieId }));
+							goto(
+								`${resolve('/(protected)/watch/movies/[movieID]', { movieID: movieId })}?backlink=${resolve('/(protected)/(user)/movies/[movieID]', { movieID: movieId })}`
+							);
 						}}
 						class="flex cursor-pointer gap-1 rounded bg-brand/80 px-4 py-2 font-semibold hover:bg-brand"
 					>
