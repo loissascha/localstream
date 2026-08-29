@@ -395,7 +395,7 @@
 		<div class="pointer-events-none absolute inset-0 flex items-center justify-center">
 			<div class="flex items-center gap-8">
 				<button
-					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-black/60"
 					onpointerdown={preventClick}
 					onclick={() => {
 						backdward10Seconds();
@@ -412,7 +412,7 @@
 							pause();
 						}
 					}}
-					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-black/60"
 				>
 					{#if paused}
 						<PlayIcon size={120} />
@@ -421,7 +421,7 @@
 					{/if}
 				</button>
 				<button
-					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-neutral-800/60"
+					class="pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-black/60"
 					onpointerdown={preventClick}
 					onclick={() => {
 						forward10Seconds();
