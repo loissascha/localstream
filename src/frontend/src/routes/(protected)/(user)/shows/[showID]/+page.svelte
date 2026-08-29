@@ -202,11 +202,14 @@
 	<div class="my-3 grid grid-cols-3 gap-4 py-5 md:flex md:flex-wrap">
 		{#each episodeData as episode (episode.id)}
 			<a
-				href={resolve('/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', {
-					showID: showId,
-					seasonID: selectedSeason!.id,
-					episodeID: episode.id
-				})}
+				href={`${resolve(
+					'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+					{
+						showID: showId,
+						seasonID: selectedSeason!.id,
+						episodeID: episode.id
+					}
+				)}?backlink=${encodeURI(`${resolve('/(protected)/(user)/shows/[showID]', { showID: showId })}?season=${selectedSeason?.id}`)}`}
 				class="relative flex aspect-video shrink-0 flex-col justify-between rounded md:w-54"
 			>
 				<div>
