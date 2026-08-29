@@ -25,7 +25,7 @@
 	const showId = $derived(page.params.showID ?? '');
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
-	const backlink = page.url.searchParams.get('backlink') ?? resolve('/(protected)');
+	const backlink = $derived(page.url.searchParams.get('backlink') ?? resolve('/(protected)'));
 
 	var loadingWatchstate = $state(true);
 	var almostDone = $state(false);
@@ -231,6 +231,23 @@
 					>
 						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
 					</button>
+				{/snippet}
+				{#snippet overlay()}
+					{#if almostDone && nextEpisode != null}
+						<a
+							href={`${resolve(
+								'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+								{
+									showID: showId,
+									seasonID: nextEpisode.season_id,
+									episodeID: nextEpisode.id
+								}
+							)}?backlink=${encodeURI(`${resolve('/(protected)/(user)/shows/[showID]', { showID: showId })}?season=${nextEpisode.season_id}`)}`}
+							class="flex h-10 w-60 items-center justify-center gap-2 rounded border border-white/20 bg-black/70 px-4 text-sm text-white backdrop-blur-sm transition hover:bg-black/85"
+						>
+							Next Episode <ChevronRightIcon />
+						</a>
+					{/if}
 				{/snippet}
 			</VideoPlayer2>
 		{:else}
