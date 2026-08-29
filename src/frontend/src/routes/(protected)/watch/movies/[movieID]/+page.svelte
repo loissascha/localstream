@@ -7,6 +7,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import MovieSubtitleSearchOverlay from '$lib/components/overlays/MovieSubtitleSearchOverlay.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
+	import VideoPlayer2 from '$lib/components/VideoPlayer2.svelte';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
 	import { setMovieWatchstate } from '$lib/movies.svelte';
@@ -14,6 +15,7 @@
 	import { onDestroy } from 'svelte';
 
 	const movieId = $derived(page.params.movieID ?? '');
+	const backlink = page.url.searchParams.get('backlink') ?? resolve('/(protected)');
 
 	let movie = $state<MovieInfo | null>(null);
 	let loadingWatchstate = $state(true);
@@ -111,44 +113,74 @@
 				alert(m);
 			});
 	}
+
+	let useNewVideoPlayer = true;
 </script>
 
 <main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
 	<section class="min-h-0">
-		<VideoPlayer
-			href={streamUrl}
-			onplay={startPlaybackLogging}
-			onpause={stopPlaybackLogging}
-			onended={stopPlaybackLogging}
-			{subtitles}
-			bind:currentTime
-			bind:duration
-		>
-			{#snippet topbar()}
-				<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
-					<HomeIcon />
-				</a>
-				<a
-					class="p-2 text-slate-300 no-underline hover:text-white"
-					href={resolve('/(protected)/(user)/movies/[movieID]', {
-						movieID: movieId
-					})}
-				>
-					<ChevronLeftIcon />
-				</a>
-				<span>{movie?.name}</span>
-			{/snippet}
-			{#snippet bottomrightextensions()}
-				<button
-					class="cursor-pointer"
-					onclick={() => {
-						subtitleoverlayopen = true;
-					}}
-				>
-					<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
-				</button>
-			{/snippet}
-		</VideoPlayer>
+		{#if useNewVideoPlayer}
+			<VideoPlayer2
+				href={streamUrl}
+				{backlink}
+				title={movie?.name}
+				onplay={startPlaybackLogging}
+				onpause={stopPlaybackLogging}
+				onended={stopPlaybackLogging}
+				{subtitles}
+				bind:currentTime
+				bind:duration
+			>
+				{#snippet bottomrightextensions()}
+					<button
+						class="cursor-pointer"
+						onclick={() => {
+							subtitleoverlayopen = true;
+						}}
+					>
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+					</button>
+				{/snippet}
+			</VideoPlayer2>
+		{:else}
+			<VideoPlayer
+				href={streamUrl}
+				onplay={startPlaybackLogging}
+				onpause={stopPlaybackLogging}
+				onended={stopPlaybackLogging}
+				{subtitles}
+				bind:currentTime
+				bind:duration
+			>
+				{#snippet topbar()}
+					<a
+						class="p-2 text-slate-300 no-underline hover:text-white"
+						href={resolve('/(protected)')}
+					>
+						<HomeIcon />
+					</a>
+					<a
+						class="p-2 text-slate-300 no-underline hover:text-white"
+						href={resolve('/(protected)/(user)/movies/[movieID]', {
+							movieID: movieId
+						})}
+					>
+						<ChevronLeftIcon />
+					</a>
+					<span>{movie?.name}</span>
+				{/snippet}
+				{#snippet bottomrightextensions()}
+					<button
+						class="cursor-pointer"
+						onclick={() => {
+							subtitleoverlayopen = true;
+						}}
+					>
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+					</button>
+				{/snippet}
+			</VideoPlayer>
+		{/if}
 	</section>
 </main>
 

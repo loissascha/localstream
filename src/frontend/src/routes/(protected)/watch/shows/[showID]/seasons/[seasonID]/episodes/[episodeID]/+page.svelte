@@ -8,6 +8,7 @@
 	import { auth } from '$lib/auth.svelte';
 	import ShowSubtitleSearchOverlay from '$lib/components/overlays/ShowSubtitleSearchOverlay.svelte';
 	import VideoPlayer from '$lib/components/VideoPlayer.svelte';
+	import VideoPlayer2 from '$lib/components/VideoPlayer2.svelte';
 	import ChevronLeftIcon from '$lib/icons/ChevronLeftIcon.svelte';
 	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 	import HomeIcon from '$lib/icons/HomeIcon.svelte';
@@ -24,6 +25,7 @@
 	const showId = $derived(page.params.showID ?? '');
 	const seasonId = $derived(page.params.seasonID ?? '');
 	const episodeId = $derived(page.params.episodeID ?? '');
+	const backlink = page.url.searchParams.get('backlink') ?? resolve('/(protected)');
 
 	var loadingWatchstate = $state(true);
 	var almostDone = $state(false);
@@ -202,65 +204,95 @@
 				alert(m);
 			});
 	}
+
+	let useNewVideoPlayer = true;
 </script>
 
 <main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
 	<section class="min-h-0">
-		<VideoPlayer
-			href={streamUrl}
-			onplay={startPlaybackLogging}
-			onpause={stopPlaybackLogging}
-			onended={stopPlaybackLogging}
-			{subtitles}
-			bind:currentTime
-			bind:duration
-		>
-			{#snippet topbar()}
-				<a class="p-2 text-slate-300 no-underline hover:text-white" href={resolve('/(protected)')}>
-					<HomeIcon />
-				</a>
-				<a
-					class="p-2 text-slate-300 no-underline hover:text-white"
-					href={resolve('/(protected)/(user)/shows/[showID]', {
-						showID: showId
-					}) +
-						'?season=' +
-						seasonId}
-				>
-					<ChevronLeftIcon />
-				</a>
-				<span>
-					S{seasonDetails?.number}:E{episodeDetails?.number} - {episodeMetadataDetails?.name}
-				</span>
-			{/snippet}
-			{#snippet bottomrightextensions()}
-				<button
-					class="cursor-pointer"
-					onclick={() => {
-						subtitleoverlayopen = true;
-					}}
-				>
-					<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
-				</button>
-			{/snippet}
-			{#snippet overlay()}
-				{#if almostDone && nextEpisode != null}
-					<a
-						href={resolve(
-							'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
-							{
-								showID: showId,
-								seasonID: nextEpisode.season_id,
-								episodeID: nextEpisode.id
-							}
-						)}
-						class="flex h-10 w-60 items-center justify-center gap-2 rounded border border-white/20 bg-black/70 px-4 text-sm text-white backdrop-blur-sm transition hover:bg-black/85"
+		{#if useNewVideoPlayer}
+			<VideoPlayer2
+				href={streamUrl}
+				{backlink}
+				title={`${showDetails?.name} - S${seasonDetails?.number}:E${episodeDetails?.number} - ${episodeMetadataDetails?.name}`}
+				onplay={startPlaybackLogging}
+				onpause={stopPlaybackLogging}
+				onended={stopPlaybackLogging}
+				{subtitles}
+				bind:currentTime
+				bind:duration
+			>
+				{#snippet bottomrightextensions()}
+					<button
+						class="cursor-pointer"
+						onclick={() => {
+							subtitleoverlayopen = true;
+						}}
 					>
-						Next Episode <ChevronRightIcon />
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+					</button>
+				{/snippet}
+			</VideoPlayer2>
+		{:else}
+			<VideoPlayer
+				href={streamUrl}
+				onplay={startPlaybackLogging}
+				onpause={stopPlaybackLogging}
+				onended={stopPlaybackLogging}
+				{subtitles}
+				bind:currentTime
+				bind:duration
+			>
+				{#snippet topbar()}
+					<a
+						class="p-2 text-slate-300 no-underline hover:text-white"
+						href={resolve('/(protected)')}
+					>
+						<HomeIcon />
 					</a>
-				{/if}
-			{/snippet}
-		</VideoPlayer>
+					<a
+						class="p-2 text-slate-300 no-underline hover:text-white"
+						href={resolve('/(protected)/(user)/shows/[showID]', {
+							showID: showId
+						}) +
+							'?season=' +
+							seasonId}
+					>
+						<ChevronLeftIcon />
+					</a>
+					<span>
+						S{seasonDetails?.number}:E{episodeDetails?.number} - {episodeMetadataDetails?.name}
+					</span>
+				{/snippet}
+				{#snippet bottomrightextensions()}
+					<button
+						class="cursor-pointer"
+						onclick={() => {
+							subtitleoverlayopen = true;
+						}}
+					>
+						<span class="rounded-full px-2 py-1 text-xs font-medium text-white/85">CC</span>
+					</button>
+				{/snippet}
+				{#snippet overlay()}
+					{#if almostDone && nextEpisode != null}
+						<a
+							href={resolve(
+								'/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]',
+								{
+									showID: showId,
+									seasonID: nextEpisode.season_id,
+									episodeID: nextEpisode.id
+								}
+							)}
+							class="flex h-10 w-60 items-center justify-center gap-2 rounded border border-white/20 bg-black/70 px-4 text-sm text-white backdrop-blur-sm transition hover:bg-black/85"
+						>
+							Next Episode <ChevronRightIcon />
+						</a>
+					{/if}
+				{/snippet}
+			</VideoPlayer>
+		{/if}
 	</section>
 </main>
 
