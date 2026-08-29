@@ -391,6 +391,13 @@
 		{/each}
 	</video>
 
+	{#if overlay}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div onpointerdown={preventClick} class={`absolute right-4 bottom-24 z-10 max-w-[min(20rem,calc(100%-2rem))]`}>
+			{@render overlay({ currentTime, duration, paused, isFullscreen: fullscreened })}
+		</div>
+	{/if}
+
 	<!-- Controls -->
 	<div
 		class={`absolute top-0 right-0 bottom-0 left-0 ${showControls ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
