@@ -114,12 +114,12 @@
 			});
 	}
 
-	let tryNew = true;
+	let useNewVideoPlayer = true;
 </script>
 
 <main class="grid h-dvh grid-rows-[1fr] overflow-hidden">
 	<section class="min-h-0">
-		{#if tryNew}
+		{#if useNewVideoPlayer}
 			<VideoPlayer2
 				href={streamUrl}
 				{backlink}
