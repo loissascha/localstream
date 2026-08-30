@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/frontend"
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	"github.com/loissascha/localstream/internal/middleware"
@@ -190,11 +193,14 @@ func main() {
 	collectionH.RegisterRoutes()
 	subtitleH.RegisterRoutes()
 
-	fs := http.FileServer(http.Dir("./static"))
-	s.GetMux().Handle("/static/", http.StripPrefix("/static/", fs))
+	fileServer := http.FileServer(http.Dir("./static"))
+	s.GetMux().Handle("/static/", http.StripPrefix("/static/", fileServer))
 
-	frontendBuildDir := os.Getenv("FRONTEND_APP_DIR")
-	frontendFileServer := http.FileServer(http.Dir(frontendBuildDir))
+	frontendFS, err := fs.Sub(frontend.FS, "build")
+	if err != nil {
+		panic(err)
+	}
+	frontendFileServer := http.FileServerFS(frontendFS)
 	s.Handle("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -206,21 +212,22 @@ func main() {
 			return
 		}
 
-		requestPath := strings.TrimPrefix(r.URL.Path, "/")
-		if requestPath != "" {
-			filePath := filepath.Join(frontendBuildDir, filepath.Clean(requestPath))
-			if info, err := os.Stat(filePath); err == nil && !info.IsDir() {
-				frontendFileServer.ServeHTTP(w, r)
-				return
-			}
-
-			if filepath.Ext(requestPath) != "" {
-				http.NotFound(w, r)
-				return
-			}
+		requestPath := strings.TrimPrefix(path.Clean(r.URL.Path), "/")
+		if requestPath == "" || requestPath == "." {
+			requestPath = "index.html"
 		}
 
-		http.ServeFile(w, r, filepath.Join(frontendBuildDir, "index.html"))
+		if fInfo, err := fs.Stat(frontendFS, requestPath); err == nil && !fInfo.IsDir() {
+			frontendFileServer.ServeHTTP(w, r)
+			return
+		}
+
+		if path.Ext(requestPath) != "" {
+			http.NotFound(w, r)
+		}
+
+		r.URL.Path = "/index.html"
+		frontendFileServer.ServeHTTP(w, r)
 	})
 
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
