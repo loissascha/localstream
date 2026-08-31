@@ -105,7 +105,7 @@
 	<section class="my-8">
 		<ItemGrid>
 			{#each visibleMovies as movie (movie.id)}
-				<MovieListItem {movie} selectable bind:selected={movies.selectedMovies[movie.id]} />
+				<MovieListItem {movie} selectable playable bind:selected={movies.selectedMovies[movie.id]} />
 			{/each}
 		</ItemGrid>
 		<div bind:this={sentinel}></div>

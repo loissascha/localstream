@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import PlayIcon from '$lib/icons/PlayIcon.svelte';
 	import type { MovieInfo } from '$lib/types/export_types';
 	import ListItemA from './ListItemA.svelte';
 	import MovieContextMenu from './MovieContextMenu.svelte';
@@ -9,12 +10,18 @@
 		movie: MovieInfo;
 		selectable?: boolean;
 		selected?: boolean;
+		playable?: boolean;
 	}
 
-	let { movie, selectable = false, selected = $bindable(false) }: Props = $props();
+	let {
+		movie,
+		selectable = false,
+		selected = $bindable(false),
+		playable = false
+	}: Props = $props();
 </script>
 
-<div class="relative">
+<div class="group relative">
 	<MovieContextMenu {movie}>
 		<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
 			<MovieInfoDisplay {movie} />
@@ -48,5 +55,15 @@
 				</svg>
 			</span>
 		</button>
+	{/if}
+
+	{#if playable}
+		<div
+			class="hidden group-hover:flex pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-10 items-center justify-center"
+		>
+			<button class="pointer-events-auto cursor-pointer">
+				<PlayIcon size={120} />
+			</button>
+		</div>
 	{/if}
 </div>
