@@ -224,6 +224,7 @@ func main() {
 
 		if path.Ext(requestPath) != "" {
 			http.NotFound(w, r)
+			return
 		}
 
 		r.URL.Path = "/index.html"
