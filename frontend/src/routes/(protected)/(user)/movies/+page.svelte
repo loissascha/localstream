@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import ItemGrid from '$lib/components/ItemGrid.svelte';
 	import MovieListItem from '$lib/components/MovieListItem.svelte';
 	import SelectCollectionOverlay from '$lib/components/overlays/SelectCollectionOverlay.svelte';
@@ -105,7 +106,13 @@
 	<section class="my-8">
 		<ItemGrid>
 			{#each visibleMovies as movie (movie.id)}
-				<MovieListItem {movie} selectable playable bind:selected={movies.selectedMovies[movie.id]} />
+				<MovieListItem
+					{movie}
+					selectable
+					playable
+					playableBacklink={resolve('/(protected)/(user)/movies')}
+					bind:selected={movies.selectedMovies[movie.id]}
+				/>
 			{/each}
 		</ItemGrid>
 		<div bind:this={sentinel}></div>

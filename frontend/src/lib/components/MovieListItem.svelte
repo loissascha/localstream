@@ -11,13 +11,15 @@
 		selectable?: boolean;
 		selected?: boolean;
 		playable?: boolean;
+		playableBacklink?: string;
 	}
 
 	let {
 		movie,
 		selectable = false,
 		selected = $bindable(false),
-		playable = false
+		playable = false,
+		playableBacklink = '/'
 	}: Props = $props();
 </script>
 
@@ -62,8 +64,8 @@
 			class="pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-10 hidden items-center justify-center group-hover:flex"
 		>
 			<a
-				href={resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}
-				class="pointer-events-auto cursor-pointer"
+				href={`${resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}?backlink=${playableBacklink}`}
+				class="pointer-events-auto cursor-pointer transition-all duration-200 hover:scale-130"
 			>
 				<PlayIcon size={120} />
 			</a>
