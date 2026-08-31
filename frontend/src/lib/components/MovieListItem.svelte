@@ -59,11 +59,14 @@
 
 	{#if playable}
 		<div
-			class="hidden group-hover:flex pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-10 items-center justify-center"
+			class="pointer-events-none absolute top-0 right-0 bottom-0 left-0 z-10 hidden items-center justify-center group-hover:flex"
 		>
-			<button class="pointer-events-auto cursor-pointer">
+			<a
+				href={resolve('/(protected)/watch/movies/[movieID]', { movieID: movie.id })}
+				class="pointer-events-auto cursor-pointer"
+			>
 				<PlayIcon size={120} />
-			</button>
+			</a>
 		</div>
 	{/if}
 </div>
