@@ -8,7 +8,7 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div>
+<div class="group-hover:scale-105 transition-all duration-200">
 	{#if movie.medium_image_url != ''}
 		<img alt={movie.name} class="w-full rounded" src={movie.medium_image_url} />
 	{/if}

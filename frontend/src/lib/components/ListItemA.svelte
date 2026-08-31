@@ -4,7 +4,7 @@
 
 <a
 	{href}
-	class="flex cursor-pointer flex-col rounded-lg transition-all duration-200 hover:scale-105 justify-between"
+	class="flex cursor-pointer flex-col rounded-lg justify-between"
 >
 	{@render children()}
 </a>
