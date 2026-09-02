@@ -88,3 +88,21 @@ export async function getWatchstateForEpisode(
 	const result = (await response.json()) as WatchstateResponse;
 	return result;
 }
+
+export async function getWatchstateForShow(
+	bearerToken: string,
+	showId: string
+): Promise<WatchstateResponse> {
+	const response = await fetch('/api/watchstate/show/' + showId, {
+		method: 'GET',
+		headers: {
+			Authorization: 'Bearer ' + bearerToken
+		}
+	});
+	if (response.status !== 200) {
+		console.error(response);
+		throw new Error('' + response.status);
+	}
+	const result = (await response.json()) as WatchstateResponse;
+	return result;
+}

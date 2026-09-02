@@ -4,11 +4,16 @@
 	import {
 		type EpisodeInfo,
 		type EpisodeListResponse,
-		type SeasonInfo
+		type SeasonInfo,
+		type WatchstateResponse
 	} from '$lib/types/export_types';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
-	import { deleteWatchstate, setWatchstateFinished } from '$lib/api/watchstate';
+	import {
+		deleteWatchstate,
+		getWatchstateForShow,
+		setWatchstateFinished
+	} from '$lib/api/watchstate';
 	import { loadSeasonsForShow } from '$lib/api/seasons';
 	import CheckIcon from '$lib/icons/CheckIcon.svelte';
 	import DOMPurify from 'dompurify';
@@ -17,6 +22,7 @@
 	import { addShowToCollection } from '$lib/api/collections';
 	import { shows } from '$lib/shows.svelte';
 	import PercentageBar from '$lib/components/ui/PercentageBar.svelte';
+	import ChevronRightIcon from '$lib/icons/ChevronRightIcon.svelte';
 
 	const showId = $derived(page.params.showID ?? '');
 
@@ -24,6 +30,7 @@
 
 	let loadingSeasons = $state(true);
 	let loadingEpisodes = $state(true);
+	let loadingWatchstate = $state(true);
 
 	let showAddToCollection = $state(false);
 
@@ -34,6 +41,7 @@
 	});
 	let seasonData = $state<SeasonInfo[] | null>(null);
 	let episodeData = $state<EpisodeInfo[] | null>(null);
+	let watchstate = $state<WatchstateResponse | null>(null);
 
 	let selectedSeason = $state<SeasonInfo | null>(null);
 
@@ -85,6 +93,19 @@
 		}
 	}
 
+	async function loadWatchstate() {
+		try {
+			if (!auth.token) return;
+			let response = await getWatchstateForShow(auth.token, showId);
+			watchstate = response;
+		} catch (error) {
+			errorMessage =
+				error instanceof Error ? error.message : 'Unknown error while loading watchstate';
+		} finally {
+			loadingWatchstate = false;
+		}
+	}
+
 	async function setWatched() {
 		if (!auth.token) return;
 		if (!episodeData) return;
@@ -115,6 +136,7 @@
 	$effect(() => {
 		if (!showId || showId == '') return;
 		loadSeasons();
+		loadWatchstate();
 	});
 
 	$effect(() => {
@@ -151,12 +173,39 @@
 			<div>
 				{@html DOMPurify.sanitize(show?.description ?? '')}
 			</div>
-			<div class="flex flex-wrap gap-4 px-4">
+			<div class="mt-4 flex flex-wrap gap-4 px-4">
+				{#if !loadingWatchstate}
+					{#if watchstate != null}
+						<button
+							onclick={() => {
+								goto(
+									`${resolve('/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', { showID: showId, seasonID: watchstate!.season_id, episodeID: watchstate!.episode_id })}?backlink=${encodeURI(resolve('/(protected)/(user)/shows/[showID]', { showID: showId }))}`
+								);
+							}}
+							class="flex cursor-pointer gap-1 rounded bg-brand/80 px-4 py-2 font-semibold hover:bg-brand"
+						>
+							Continue S:{watchstate.season_info.number} E:{watchstate.episode_info.number}
+							<ChevronRightIcon />
+						</button>
+					{:else if selectedSeason != null && episodeData != null && episodeData.length > 0}
+						<button
+							onclick={() => {
+								goto(
+									`${resolve('/(protected)/watch/shows/[showID]/seasons/[seasonID]/episodes/[episodeID]', { showID: showId, seasonID: selectedSeason!.id, episodeID: episodeData![0].id })}?backlink=${encodeURI(resolve('/(protected)/(user)/shows/[showID]', { showID: showId }))}`
+								);
+							}}
+							class="flex cursor-pointer gap-1 rounded bg-brand/80 px-4 py-2 font-semibold hover:bg-brand"
+						>
+							Watch S:{selectedSeason!.number} E:{episodeData![0].number}
+							<ChevronRightIcon />
+						</button>
+					{/if}
+				{/if}
 				<button
 					onclick={() => {
 						showAddToCollection = true;
 					}}
-					class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+					class="flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
 				>
 					<PlusIcon />
 					Add to Collection
@@ -166,7 +215,7 @@
 						onclick={() => {
 							setWatched();
 						}}
-						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+						class="flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
 					>
 						Set Watched
 					</button>
@@ -174,7 +223,7 @@
 						onclick={() => {
 							setNotWatched();
 						}}
-						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+						class="flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
 					>
 						Set not Watched
 					</button>

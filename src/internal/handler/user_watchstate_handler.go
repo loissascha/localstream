@@ -215,7 +215,25 @@ func (h *UserWatchstateHandler) getLatestWatchstateByShowID(w http.ResponseWrite
 		return
 	}
 
-	respond.JSON(w, http.StatusOK, toWatchstateResponse(*watchstate))
+	seasonId := encoders.EncodeUUID(watchstate.SeasonID)
+	episodeId := encoders.EncodeUUID(watchstate.EpisodeID)
+
+	season, err := h.seasonService.GetByID(r.Context(), seasonId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	episode, err := h.episodeService.GetByID(r.Context(), episodeId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	seasonInfo := toSeasonInfo(season)
+	episodeInfo := toEpisodeInfo(episode)
+
+	respond.JSON(w, http.StatusOK, toWatchstateResponse(*watchstate, seasonInfo, episodeInfo))
 }
 
 func (h *UserWatchstateHandler) getWatchstateByEpisodeID(w http.ResponseWriter, r *http.Request) {
