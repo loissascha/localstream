@@ -53,6 +53,25 @@ func (r *UserWatchstateRepository) Upsert(ctx context.Context, watchstate *entit
 	return nil
 }
 
+func (r *UserWatchstateRepository) GetByUserAndShowID(ctx context.Context, userId int64, showId uuid.UUID) (*entity.UserWatchstate, error) {
+	const query = `
+		SELECT * FROM user_watchstates
+		WHERE user_id = $1 AND show_id = $2
+		ORDER BY updated_at DESC
+		LIMIT 1
+		`
+
+	var watchstate entity.UserWatchstate
+	if err := r.db.GetContext(ctx, &watchstate, query, userId, showId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get user watchstate by userid and showid: %w", err)
+	}
+
+	return &watchstate, nil
+}
+
 func (r *UserWatchstateRepository) GetByUserAndEpisodeID(ctx context.Context, userId int64, episodeId uuid.UUID) (*entity.UserWatchstate, error) {
 	const query = `
 		SELECT id, user_id, show_id, season_id, episode_id, position, duration, finished, created_at, updated_at

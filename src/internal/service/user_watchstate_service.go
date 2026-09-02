@@ -79,6 +79,24 @@ func (s *UserWatchstateService) DeleteByEpisodeID(ctx context.Context, userId in
 	return err
 }
 
+func (s *UserWatchstateService) GetByShowID(ctx context.Context, userId int64, showId string) (*entity.UserWatchstate, error) {
+	if userId <= 0 {
+		return nil, ErrInvalidWatchstateInput
+	}
+
+	showUUID, err := encoders.DecodeUUID(showId)
+	if err != nil {
+		return nil, fmt.Errorf("decode show id: %w", ErrInvalidWatchstateInput)
+	}
+
+	watchstate, err := s.watchstateRepo.GetByUserAndShowID(ctx, userId, showUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	return watchstate, nil
+}
+
 func (s *UserWatchstateService) GetByEpisodeID(ctx context.Context, userId int64, episodeId string) (*entity.UserWatchstate, error) {
 	if userId <= 0 {
 		return nil, ErrInvalidWatchstateInput

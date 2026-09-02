@@ -55,6 +55,13 @@ func (h *UserWatchstateHandler) RegisterRoutes() {
 		server.WithDescription("Get the last watchstate of the episode"),
 	)
 
+	h.s.GET("/api/watchstate/show/{showID}",
+		h.getLatestWatchstateByShowID,
+		server.WithExportType[WatchstateResponse](),
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+		server.WithDescription("Get the last watchstate of the show"),
+	)
+
 	h.s.POST("/api/watchstate/episode/{episodeID}/finished",
 		h.setEpisodeWatchstateFinished,
 		server.WithExportType[WatchstateResponse](),
@@ -183,6 +190,28 @@ func (h *UserWatchstateHandler) saveWatchstate(w http.ResponseWriter, r *http.Re
 		}
 
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to save watchstate"})
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, toWatchstateResponse(*watchstate))
+}
+
+func (h *UserWatchstateHandler) getLatestWatchstateByShowID(w http.ResponseWriter, r *http.Request) {
+	userID, ok := authenticatedUserIDFromContext(r)
+	if !ok {
+		respond.JSON(w, http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+		return
+	}
+
+	showID := r.PathValue("showID")
+	watchstate, err := h.userWatchstateService.GetByShowID(r.Context(), userID, showID)
+	if err != nil {
+		if errors.Is(err, service.ErrInvalidWatchstateInput) {
+			respond.JSON(w, http.StatusBadRequest, map[string]string{"error": "invalid episode id"})
+			return
+		}
+
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to read watchstate"})
 		return
 	}
 
