@@ -46,7 +46,7 @@
 				<div class="px-2">
 					{@html DOMPurify.sanitize(movie.description)}
 				</div>
-				<div class="p-4">
+				<div class="mt-4 flex flex-wrap gap-4 px-4">
 					<button
 						onclick={() => {
 							goto(
@@ -61,16 +61,16 @@
 						onclick={() => {
 							showAddToCollection = true;
 						}}
-						class="mt-4 flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
+						class="flex cursor-pointer gap-1 rounded bg-neutral-800 px-4 py-2 font-semibold hover:bg-neutral-700"
 					>
 						<PlusIcon />
 						Add to Collection
 					</button>
-					<div class="mt-4">
-						{#if movie.percentage > 0}
-							<PercentageBar percentage={movie.percentage} />
-						{/if}
-					</div>
+				</div>
+				<div class="mt-4 px-4">
+					{#if movie.percentage > 0}
+						<PercentageBar percentage={movie.percentage} />
+					{/if}
 				</div>
 			</div>
 		</div>
