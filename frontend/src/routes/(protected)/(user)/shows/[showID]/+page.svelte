@@ -229,6 +229,13 @@
 					</button>
 				{/if}
 			</div>
+			{#if !loadingWatchstate}
+				{#if watchstate != null}
+					<div class="mt-4 px-4">
+						<PercentageBar percentage={watchstate.percentage} />
+					</div>
+				{/if}
+			{/if}
 		</div>
 	</div>
 
