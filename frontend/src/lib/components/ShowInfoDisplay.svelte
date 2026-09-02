@@ -19,7 +19,7 @@
 	} = $props();
 </script>
 
-<div>
+<div class="transition-all duration-200 group-hover:scale-105">
 	{#if show.medium_image_url != ''}
 		<img alt={show.name} class="w-full rounded" src={show.medium_image_url} />
 	{/if}

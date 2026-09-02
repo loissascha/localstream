@@ -20,7 +20,7 @@
 	}: Props = $props();
 </script>
 
-<div class="relative">
+<div class="group relative">
 	<ShowContextMenu {show}>
 		<ListItemA href={resolve('/(protected)/(user)/shows/[showID]', { showID: show.id })}>
 			<ShowInfoDisplay {show} />
