@@ -230,11 +230,13 @@
 				{/if}
 			</div>
 			{#if !loadingWatchstate}
-				{#if watchstate != null}
-					<div class="mt-4 px-4">
+				<div class="mt-4 px-4">
+					{#if watchstate != null}
 						<PercentageBar percentage={watchstate.percentage} />
-					</div>
-				{/if}
+					{:else}
+						<PercentageBar percentage={0} />
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</div>
