@@ -10,6 +10,7 @@
 	import ListItemA from './ListItemA.svelte';
 	import MovieContextMenu from './MovieContextMenu.svelte';
 	import MovieInfoDisplay from './MovieInfoDisplay.svelte';
+	import MovieListItem from './MovieListItem.svelte';
 
 	let data = $state<WatchstateMovieResponse[]>([]);
 
@@ -51,9 +52,7 @@
 								movieID: d.movie_id
 							})}
 						>
-							<div>
-								<MovieInfoDisplay movie={d.movie_info} nameLink />
-							</div>
+							<MovieListItem movie={d.movie_info} playable />
 						</ListItemA>
 					</MovieContextMenu>
 				</ItemCarouselItem>

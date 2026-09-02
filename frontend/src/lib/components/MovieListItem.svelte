@@ -26,7 +26,7 @@
 <div class="group relative">
 	<MovieContextMenu {movie}>
 		<ListItemA href={resolve('/(protected)/(user)/movies/[movieID]', { movieID: movie.id })}>
-			<MovieInfoDisplay {movie} />
+			<MovieInfoDisplay {movie} nameLink />
 		</ListItemA>
 	</MovieContextMenu>
 
