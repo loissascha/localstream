@@ -75,7 +75,7 @@
 		<ItemCarousel>
 			{#each latestMovies as movie (movie.id)}
 				<ItemCarouselItem>
-					<MovieListItem {movie} />
+					<MovieListItem {movie} playable />
 				</ItemCarouselItem>
 			{/each}
 		</ItemCarousel>
