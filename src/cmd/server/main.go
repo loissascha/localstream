@@ -227,8 +227,7 @@ func main() {
 			return
 		}
 
-		r.URL.Path = "/index.html"
-		frontendFileServer.ServeHTTP(w, r)
+		http.ServeFileFS(w, r, frontendFS, "index.html")
 	})
 
 	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
