@@ -12,7 +12,7 @@ func NewBackgroundService() *BackgroundService {
 	return &BackgroundService{}
 }
 
-func (s *BackgroundService) RunBackground() {
+func (s *BackgroundService) StartBackground() {
 	for {
 		err := s.RunOnce()
 		if err != nil {
