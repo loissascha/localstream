@@ -2,9 +2,11 @@ package background
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/parsers"
 )
 
 func (s *BackgroundService) runCataloguers() error {
@@ -69,9 +71,42 @@ func (s *BackgroundService) runLibraryCataloguer(
 }
 
 func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib *entity.Library, results []fResult, existingMovies []entity.Movie) error {
+	for _, f := range results {
+		if s.movieWithPathExistsInList(f.Path, existingMovies) {
+			continue
+		}
+		movieInfo, ok := parsers.ParseMovieFromFilename(f.Name)
+		if !ok {
+			slog.Error("Can't parse movie filename", "fName", f.Name)
+			continue
+		}
+		year := 0
+		if movieInfo.Year != nil {
+			year = *movieInfo.Year
+		}
+		movie := &entity.Movie{
+			Name:      movieInfo.Title,
+			Year:      year,
+			CreatedAt: time.Now().UTC(),
+			Path:      f.Path,
+		}
+		err := s.movieRepo.Create(ctx, movie)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 func (s *BackgroundService) runShowsLibraryCataloguer(ctx context.Context, lib *entity.Library, results []fResult, existingShows []entity.Show) error {
 	return nil
+}
+
+func (s *BackgroundService) movieWithPathExistsInList(path string, list []entity.Movie) bool {
+	for _, m := range list {
+		if m.Path == path {
+			return true
+		}
+	}
+	return false
 }
