@@ -8,20 +8,26 @@ import (
 )
 
 type BackgroundService struct {
-	showRepo  repository.ShowRepository
-	movieRepo repository.MovieRepository
-	libRepo   repository.LibraryRepository
+	showRepo    repository.ShowRepository
+	seasonRepo  repository.SeasonRepository
+	movieRepo   repository.MovieRepository
+	episodeRepo repository.EpisodeRepository
+	libRepo     repository.LibraryRepository
 }
 
 func NewBackgroundService(
 	showRepo repository.ShowRepository,
+	seasonRepo repository.SeasonRepository,
 	movieRepo repository.MovieRepository,
 	libRepo repository.LibraryRepository,
+	episodeRepo repository.EpisodeRepository,
 ) *BackgroundService {
 	return &BackgroundService{
-		libRepo:   libRepo,
-		showRepo:  showRepo,
-		movieRepo: movieRepo,
+		libRepo:     libRepo,
+		showRepo:    showRepo,
+		seasonRepo:  seasonRepo,
+		movieRepo:   movieRepo,
+		episodeRepo: episodeRepo,
 	}
 }
 
