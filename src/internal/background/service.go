@@ -23,5 +23,21 @@ func (s *BackgroundService) RunBackground() {
 }
 
 func (s *BackgroundService) RunOnce() error {
+
+	// run the cataloguers (library cataloguer)
+	err := s.runCataloguers()
+	if err != nil {
+		return err
+	}
+
+	// run metadata matchers
+
+	return nil
+}
+
+func (s *BackgroundService) runCataloguers() error {
+	// fetch all existing movies
+	// fetch all existing shows
+	// fetch all existing libraries
 	return nil
 }
