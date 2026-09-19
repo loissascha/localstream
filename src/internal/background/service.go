@@ -49,7 +49,11 @@ func (s *BackgroundService) RunOnce() error {
 		return err
 	}
 
+	// run the "uncataloguers"
+
 	// run metadata matchers
+
+	// run the stuff that deletes files that are no longer in use (because the metadata entries do not exist anymore for example)
 
 	return nil
 }
