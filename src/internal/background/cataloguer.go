@@ -75,11 +75,13 @@ func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib 
 		if s.movieWithPathExistsInList(f.Path, existingMovies) {
 			continue
 		}
+
 		movieInfo, ok := parsers.ParseMovieFromFilename(f.Name)
 		if !ok {
 			slog.Error("Can't parse movie filename", "fName", f.Name)
 			continue
 		}
+
 		year := 0
 		if movieInfo.Year != nil {
 			year = *movieInfo.Year
@@ -90,6 +92,7 @@ func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib 
 			CreatedAt: time.Now().UTC(),
 			Path:      f.Path,
 		}
+
 		err := s.movieRepo.Create(ctx, movie)
 		if err != nil {
 			return err
