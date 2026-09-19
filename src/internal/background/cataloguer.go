@@ -53,7 +53,7 @@ func (s *BackgroundService) runLibraryCataloguer(
 	existingMovies []entity.Movie,
 	existingShows []entity.Show,
 ) error {
-	results, err := getAllFilesWithPath(lib.Path, []string{"mp4"}) // "mkv" ?
+	results, err := getAllFilesWithExtensionInPath(lib.Path, []string{"mp4"}) // "mkv" ?
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (s *BackgroundService) runLibraryCataloguer(
 
 func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib *entity.Library, results []fResult, existingMovies []entity.Movie) error {
 	for _, f := range results {
-		if exists, _ := s.movieWithPathExistsInList(f.Path, existingMovies); exists {
+		if exists, _ := s.findMovieWithPathInList(f.Path, existingMovies); exists {
 			continue
 		}
 
@@ -121,7 +121,7 @@ func (s *BackgroundService) runShowsLibraryCataloguer(ctx context.Context, lib *
 		// create show if it doesn't exist yet
 		showPath := path.Join(lib.Path, showInfo.RawName)
 		var err error
-		ok, showID := s.showWithPathExistsInList(showPath, existingShows)
+		ok, showID := s.findShowWithPathInList(showPath, existingShows)
 		if !ok {
 			showID, err = s.createShow(ctx, showInfo, showPath)
 			if err != nil {
@@ -146,7 +146,7 @@ func (s *BackgroundService) runShowsLibraryCataloguer(ctx context.Context, lib *
 
 			// create season if it doesn't exist yet
 			seasonPath := path.Join(showPath, seasonInfo.RawName)
-			ok, seasonID := s.seasonWithPathExistsInList(seasonPath, existingSeasons)
+			ok, seasonID := s.findSeasonWithPathInList(seasonPath, existingSeasons)
 			if !ok {
 				seasonID, err = s.createSeason(ctx, seasonInfo, showID, seasonPath)
 				if err != nil {
@@ -168,7 +168,7 @@ func (s *BackgroundService) runShowsLibraryCataloguer(ctx context.Context, lib *
 				}
 
 				episodePath := path.Join(seasonPath, episodeInfo.RawName)
-				ok, _ = s.episodeWithPathExistsInList(episodePath, existingEpisodes)
+				ok, _ = s.findEpisodeWithPathInList(episodePath, existingEpisodes)
 				if !ok {
 					_, err = s.createEpisode(ctx, episodeInfo, seasonID, episodePath)
 					if err != nil {
@@ -261,7 +261,7 @@ func (s *BackgroundService) extractShows(basePath string, input []fResult) map[s
 	return res
 }
 
-func (s *BackgroundService) showWithPathExistsInList(path string, list []entity.Show) (bool, uuid.UUID) {
+func (s *BackgroundService) findShowWithPathInList(path string, list []entity.Show) (bool, uuid.UUID) {
 	for _, show := range list {
 		if show.Path == path {
 			return true, show.ID
@@ -270,7 +270,7 @@ func (s *BackgroundService) showWithPathExistsInList(path string, list []entity.
 	return false, uuid.Nil
 }
 
-func (s *BackgroundService) seasonWithPathExistsInList(path string, list []entity.Season) (bool, uuid.UUID) {
+func (s *BackgroundService) findSeasonWithPathInList(path string, list []entity.Season) (bool, uuid.UUID) {
 	for _, season := range list {
 		if season.Path == path {
 			return true, season.ID
@@ -279,7 +279,7 @@ func (s *BackgroundService) seasonWithPathExistsInList(path string, list []entit
 	return false, uuid.Nil
 }
 
-func (s *BackgroundService) episodeWithPathExistsInList(path string, list []entity.Episode) (bool, uuid.UUID) {
+func (s *BackgroundService) findEpisodeWithPathInList(path string, list []entity.Episode) (bool, uuid.UUID) {
 	for _, e := range list {
 		if e.Path == path {
 			return true, e.ID
@@ -288,7 +288,7 @@ func (s *BackgroundService) episodeWithPathExistsInList(path string, list []enti
 	return false, uuid.Nil
 }
 
-func (s *BackgroundService) movieWithPathExistsInList(path string, list []entity.Movie) (bool, uuid.UUID) {
+func (s *BackgroundService) findMovieWithPathInList(path string, list []entity.Movie) (bool, uuid.UUID) {
 	for _, m := range list {
 		if m.Path == path {
 			return true, m.ID
