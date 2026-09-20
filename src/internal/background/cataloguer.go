@@ -100,6 +100,11 @@ func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib 
 		if err != nil {
 			return err
 		}
+
+		err = s.fetchMetadataForMovie(ctx, movie)
+		if err != nil {
+			slog.Warn("direct metadata fetch for movie failed... will run again in the movie matcher", "err", err)
+		}
 	}
 	return nil
 }

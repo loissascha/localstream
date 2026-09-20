@@ -4,15 +4,23 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
+	"github.com/loissascha/localstream/internal/service"
 )
 
 type BackgroundService struct {
+	libRepo repository.LibraryRepository
+
 	showRepo    repository.ShowRepository
 	seasonRepo  repository.SeasonRepository
 	movieRepo   repository.MovieRepository
 	episodeRepo repository.EpisodeRepository
-	libRepo     repository.LibraryRepository
+
+	movieMetaRepo repository.MovieMetadataRepository
+
+	movieMetadataProvider provider.MovieMetadataProvider
+	movieMetaService      *service.MovieMetadataService
 }
 
 func NewBackgroundService(
@@ -21,13 +29,19 @@ func NewBackgroundService(
 	movieRepo repository.MovieRepository,
 	libRepo repository.LibraryRepository,
 	episodeRepo repository.EpisodeRepository,
+	movieMetaRepo repository.MovieMetadataRepository,
+	movieMetadataProvider provider.MovieMetadataProvider,
+	movieMetaService *service.MovieMetadataService,
 ) *BackgroundService {
 	return &BackgroundService{
-		libRepo:     libRepo,
-		showRepo:    showRepo,
-		seasonRepo:  seasonRepo,
-		movieRepo:   movieRepo,
-		episodeRepo: episodeRepo,
+		libRepo:               libRepo,
+		showRepo:              showRepo,
+		seasonRepo:            seasonRepo,
+		movieRepo:             movieRepo,
+		episodeRepo:           episodeRepo,
+		movieMetaRepo:         movieMetaRepo,
+		movieMetadataProvider: movieMetadataProvider,
+		movieMetaService:      movieMetaService,
 	}
 }
 

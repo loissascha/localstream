@@ -21,6 +21,7 @@ type MovieRepository interface {
 	All(ctx context.Context) ([]entity.Movie, error)
 	ListLatest(ctx context.Context, userID int64) ([]MovieSelectItem, error)
 	List(ctx context.Context, userID int64) ([]MovieSelectItem, error)
+	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Movie, error)
 	Search(ctx context.Context, query string, userID int64) ([]MovieSelectItem, error)
 }
 

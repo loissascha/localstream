@@ -119,6 +119,20 @@ func (r *MovieRepository) All(ctx context.Context) ([]entity.Movie, error) {
 	return movies, nil
 }
 
+func (r *MovieRepository) NecessaryForMetadataFetch(ctx context.Context) ([]entity.Movie, error) {
+	const query = `
+		SELECT * FROM movies WHERE fetch_source='none';	
+	`
+
+	var movies []entity.Movie
+	err := r.db.SelectContext(ctx, &movies, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return movies, nil
+}
+
 func (r *MovieRepository) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
 		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at

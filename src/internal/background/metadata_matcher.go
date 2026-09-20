@@ -23,11 +23,6 @@ func (s *BackgroundService) RunMetadataMatchers() error {
 	return nil
 }
 
-func (s *BackgroundService) runMoviesMatcher() error {
-	// get all the movies from the repo that have no metadata (fetchsource none)
-	return nil
-}
-
 func (s *BackgroundService) runShowsMatcher() error {
 	// get all the shows from the repo that have no metadata (fetchsource none)
 	return nil
