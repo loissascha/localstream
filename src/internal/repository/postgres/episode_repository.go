@@ -47,6 +47,20 @@ func (r *EpisodeRepository) Create(ctx context.Context, episode *entity.Episode)
 	return nil
 }
 
+func (r *EpisodeRepository) NecessaryForMetadataFetch(ctx context.Context) ([]entity.Episode, error) {
+	const query = `
+		SELECT * FROM episodes WHERE fetch_source='none';	
+	`
+
+	var episodes []entity.Episode
+	err := r.db.SelectContext(ctx, &episodes, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return episodes, nil
+}
+
 func (r *EpisodeRepository) GetByID(ctx context.Context, episodeId uuid.UUID) (*repository.EpisodeWithMetadata, error) {
 	const query = `
 		SELECT e.id, coalesce(m.name, '') as "name", coalesce(m.summary, '') as "summary", coalesce(m.medium_image_url, '') as "medium_image_url", coalesce(m.original_image_url, '') as "original_image_url", coalesce(m.fetch_id, 0) as "fetch_id", e.season_id, e.number, e.path, e.created_at, e.fetch_source

@@ -20,6 +20,7 @@ type EpisodeRepository interface {
 	DeleteByID(ctx context.Context, episodeId uuid.UUID) error
 	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*EpisodeWithMetadata, error)
 	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
+	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Episode, error)
 }
 
 type EpisodeWithMetadata struct {
