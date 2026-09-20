@@ -23,11 +23,6 @@ func (s *BackgroundService) RunMetadataMatchers() error {
 	return nil
 }
 
-func (s *BackgroundService) runSeasonsMatcher() error {
-	// get all the seasons from the repo that have a show with a valid fetch source (not none/empty/multiple)
-	return nil
-}
-
 func (s *BackgroundService) runEpisodesMatcher() error {
 	// get all the episodes from the repo that have a season with a valid fetch source
 	return nil

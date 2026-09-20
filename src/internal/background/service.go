@@ -25,8 +25,12 @@ type BackgroundService struct {
 	movieMetadataProvider provider.MovieMetadataProvider
 	tvMetadataProvider    provider.TVMetadataProvider
 
-	movieMetaService    *service.MovieMetadataService
-	showMetadataService *service.ShowMetadataService
+	movieMetaService       *service.MovieMetadataService
+	showMetadataService    *service.ShowMetadataService
+	seasonMetadataService  *service.SeasonMetadataService
+	episodeMetadataService *service.EpisodeMetadataService
+
+	seasonMetadataCache map[int]seasonMetadataCache
 }
 
 func NewBackgroundService(
@@ -47,6 +51,8 @@ func NewBackgroundService(
 
 	movieMetaService *service.MovieMetadataService,
 	showMetaServicde *service.ShowMetadataService,
+	seasonMetaService *service.SeasonMetadataService,
+	episodeMetaService *service.EpisodeMetadataService,
 ) *BackgroundService {
 	return &BackgroundService{
 		libRepo: libRepo,
@@ -64,8 +70,12 @@ func NewBackgroundService(
 		movieMetadataProvider: movieMetadataProvider,
 		tvMetadataProvider:    tvMetadataProvider,
 
-		movieMetaService:    movieMetaService,
-		showMetadataService: showMetaServicde,
+		movieMetaService:       movieMetaService,
+		showMetadataService:    showMetaServicde,
+		seasonMetadataService:  seasonMetaService,
+		episodeMetadataService: episodeMetaService,
+
+		seasonMetadataCache: map[int]seasonMetadataCache{},
 	}
 }
 

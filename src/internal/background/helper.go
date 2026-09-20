@@ -12,15 +12,19 @@ import (
 
 func (s *BackgroundService) createEpisode(ctx context.Context, episodeInfo *parsers.EpisodeInfo, seasonId uuid.UUID, episodePath string) (uuid.UUID, error) {
 
+	sid, err := uuid.NewV7()
+	if err != nil {
+		return uuid.Nil, err
+	}
 	episode := &entity.Episode{
-		ID:          uuid.New(),
+		ID:          sid,
 		SeasonID:    seasonId,
 		Number:      episodeInfo.Episode,
 		Path:        episodePath,
 		FetchSource: entity.FetchSourceNone,
 	}
 
-	err := s.episodeRepo.Create(ctx, episode)
+	err = s.episodeRepo.Create(ctx, episode)
 	if err != nil {
 		logger.Error(err, "Error creating episode")
 		return uuid.Nil, err
@@ -29,18 +33,27 @@ func (s *BackgroundService) createEpisode(ctx context.Context, episodeInfo *pars
 }
 
 func (s *BackgroundService) createSeason(ctx context.Context, seasonInfo *parsers.SeasonInfo, showId uuid.UUID, seasonPath string) (uuid.UUID, error) {
+	sid, err := uuid.NewV7()
+	if err != nil {
+		return uuid.Nil, err
+	}
 	season := &entity.Season{
-		ID:          uuid.New(),
+		ID:          sid,
 		ShowID:      showId,
 		Number:      seasonInfo.Season,
 		Path:        seasonPath,
 		FetchSource: entity.FetchSourceNone,
 	}
 
-	err := s.seasonRepo.Create(ctx, season)
+	err = s.seasonRepo.Create(ctx, season)
 	if err != nil {
 		logger.Error(err, "Error creating season")
 		return uuid.Nil, err
+	}
+
+	err = s.fetchMetadataForSeason(ctx, season, nil)
+	if err != nil {
+		slog.Warn("direct metadata fetch for season failed... will run again in the season matcher", "err", err)
 	}
 	return season.ID, nil
 }
@@ -70,9 +83,7 @@ func (s *BackgroundService) createShow(ctx context.Context, showInfo *parsers.Sh
 
 	err = s.fetchMetadataForShow(ctx, showE)
 	if err != nil {
-		if err != nil {
-			slog.Warn("direct metadata fetch for show failed... will run again in the show matcher", "err", err)
-		}
+		slog.Warn("direct metadata fetch for show failed... will run again in the show matcher", "err", err)
 	}
 	return showE.ID, nil
 }
