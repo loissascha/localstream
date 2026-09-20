@@ -11,6 +11,11 @@ type seasonMetadataCache struct {
 	metadata []provider.SeasonMetadata
 }
 
+type episodeMetadataCache struct {
+	created  time.Time
+	metadata []provider.EpisodeMetadata
+}
+
 func (s *BackgroundService) getSeasonMetadataResultLive(fetchID int) ([]provider.SeasonMetadata, error) {
 	seasonMetadataResult, err := s.tvMetadataProvider.SearchSeasons(fetchID)
 	s.seasonMetadataCache[fetchID] = seasonMetadataCache{
@@ -30,4 +35,26 @@ func (s *BackgroundService) getSeasonMetadataResultCacheOrLive(fetchID int) ([]p
 	}
 
 	return s.getSeasonMetadataResultLive(fetchID)
+}
+
+func (s *BackgroundService) getEpisodeMetadataResultLive(fetchID int) ([]provider.EpisodeMetadata, error) {
+	result, err := s.tvMetadataProvider.SearchEpisodes(fetchID)
+	s.episodeMetadataCache[fetchID] = episodeMetadataCache{
+		created:  time.Now().UTC(),
+		metadata: result,
+	}
+	return result, err
+}
+
+func (s *BackgroundService) getEpisodeMetadataResultCacheOrLive(fetchID int) ([]provider.EpisodeMetadata, error) {
+	cachefile, ok := s.episodeMetadataCache[fetchID]
+	if ok {
+		if time.Now().UTC().Sub(cachefile.created) > 24*time.Hour {
+			return s.getEpisodeMetadataResultLive(fetchID)
+		}
+		// logger.Debug(nil, "Load episode metadata from cache")
+		return cachefile.metadata, nil
+	}
+
+	return s.getEpisodeMetadataResultLive(fetchID)
 }

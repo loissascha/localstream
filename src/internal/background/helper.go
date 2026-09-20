@@ -29,6 +29,11 @@ func (s *BackgroundService) createEpisode(ctx context.Context, episodeInfo *pars
 		logger.Error(err, "Error creating episode")
 		return uuid.Nil, err
 	}
+
+	err = s.fetchMetadataForEpisode(ctx, episode)
+	if err != nil {
+		slog.Warn("direct metadata fetch for episode failed... will run again in the episode matcher", "err", err)
+	}
 	return episode.ID, nil
 }
 

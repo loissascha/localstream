@@ -30,7 +30,8 @@ type BackgroundService struct {
 	seasonMetadataService  *service.SeasonMetadataService
 	episodeMetadataService *service.EpisodeMetadataService
 
-	seasonMetadataCache map[int]seasonMetadataCache
+	seasonMetadataCache  map[int]seasonMetadataCache
+	episodeMetadataCache map[int]episodeMetadataCache
 }
 
 func NewBackgroundService(
@@ -75,7 +76,8 @@ func NewBackgroundService(
 		seasonMetadataService:  seasonMetaService,
 		episodeMetadataService: episodeMetaService,
 
-		seasonMetadataCache: map[int]seasonMetadataCache{},
+		seasonMetadataCache:  map[int]seasonMetadataCache{},
+		episodeMetadataCache: map[int]episodeMetadataCache{},
 	}
 }
 
