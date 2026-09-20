@@ -23,6 +23,7 @@ import (
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
+	backgroundservice "github.com/loissascha/localstream/internal/service/background"
 )
 
 func setupFileDirs() error {
@@ -252,8 +253,9 @@ func main() {
 	// libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
 	// libraryCataloguer.RunBackground()
 	//
-	// libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
-	// libraryUncataloguer.RunBackground()
+	// TODO: replace this in the background service
+	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
+	libraryUncataloguer.RunBackground()
 
 	logger.Info(nil, "Server starting at {addr}", listenAddr)
 	err = s.Serve(listenAddr)
