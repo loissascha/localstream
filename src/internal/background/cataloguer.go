@@ -13,6 +13,7 @@ import (
 )
 
 func (s *BackgroundService) runCataloguers() error {
+	slog.Info("starting all cataloguers")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 
@@ -41,7 +42,7 @@ func (s *BackgroundService) runCataloguers() error {
 			return err
 		}
 	}
-
+	slog.Info("finished all cataloguers without errors")
 	return nil
 }
 
