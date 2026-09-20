@@ -3,6 +3,7 @@ package background
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/loissascha/go-logger/logger"
@@ -17,6 +18,7 @@ func (s *BackgroundService) runSeasonsMatcher() error {
 	if err != nil {
 		return err
 	}
+	slog.Info("seasons matcher is testing how many seasons", "amount", len(seasons))
 
 	for _, season := range seasons {
 		err := s.fetchMetadataForSeason(ctx, &season, nil)

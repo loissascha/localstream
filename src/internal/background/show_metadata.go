@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"github.com/loissascha/go-logger/logger"
@@ -17,6 +18,7 @@ func (s *BackgroundService) runShowsMatcher() error {
 	if err != nil {
 		return err
 	}
+	slog.Info("shows matcher is testing how many shows", "amount", len(shows))
 
 	for _, show := range shows {
 		err := s.fetchMetadataForShow(ctx, &show)
