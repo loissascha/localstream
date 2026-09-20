@@ -3,13 +3,28 @@ package background
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 )
 
 func (s *BackgroundService) runSeasonsMatcher() error {
-	// get all the seasons from the repo that have a show with a valid fetch source (not none/empty/multiple)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	seasons, err := s.seasonRepo.NecessaryForMetadataFetch(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, season := range seasons {
+		err := s.fetchMetadataForSeason(ctx, &season, nil)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

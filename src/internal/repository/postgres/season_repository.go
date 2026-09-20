@@ -102,6 +102,20 @@ func (r *SeasonRepository) GetByPathAndShowID(ctx context.Context, path string, 
 	return &season, nil
 }
 
+func (r *SeasonRepository) NecessaryForMetadataFetch(ctx context.Context) ([]entity.Season, error) {
+	const query = `
+		SELECT * FROM seasons WHERE fetch_source='none';	
+	`
+
+	var seasons []entity.Season
+	err := r.db.SelectContext(ctx, &seasons, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return seasons, nil
+}
+
 func (r *SeasonRepository) ListByShowID(ctx context.Context, showId uuid.UUID) ([]entity.Season, error) {
 	const query = `
 		SELECT id, show_id, number, path, created_at, fetch_source
