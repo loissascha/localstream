@@ -44,7 +44,7 @@ func (s *BackgroundService) runCataloguers() error {
 	// run for each library
 	start = time.Now()
 	for _, lib := range libraries {
-		err := s.runLibraryCataloguer(ctx, lib, allMovies, allShows)
+		err := s.runFullLibraryCataloguer(ctx, lib, allMovies, allShows)
 		if err != nil {
 			return err
 		}
@@ -55,7 +55,7 @@ func (s *BackgroundService) runCataloguers() error {
 	return nil
 }
 
-func (s *BackgroundService) runLibraryCataloguer(
+func (s *BackgroundService) runFullLibraryCataloguer(
 	ctx context.Context,
 	lib entity.Library,
 	existingMovies []entity.Movie,
