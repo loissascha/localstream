@@ -82,13 +82,15 @@ func NewBackgroundService(
 }
 
 func (s *BackgroundService) StartBackground() {
-	for {
-		err := s.RunOnce()
-		if err != nil {
-			slog.Error("error appeared while running background service v2", "err", err)
+	go func() {
+		for {
+			err := s.RunOnce()
+			if err != nil {
+				slog.Error("error appeared while running background service v2", "err", err)
+			}
+			time.Sleep(60 * time.Second)
 		}
-		time.Sleep(60 * time.Second)
-	}
+	}()
 }
 
 func (s *BackgroundService) RunOnce() error {
