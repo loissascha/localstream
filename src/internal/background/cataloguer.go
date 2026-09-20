@@ -18,30 +18,39 @@ func (s *BackgroundService) runCataloguers() error {
 	defer cancel()
 
 	// fetch all existing shows
+	start := time.Now()
 	allShows, err := s.showRepo.All(ctx)
 	if err != nil {
 		return err
 	}
+	slog.Info("fetching all existing shows complete", "duration", time.Since(start))
 
 	// fetch all existing movies
+	start = time.Now()
 	allMovies, err := s.movieRepo.All(ctx)
 	if err != nil {
 		return err
 	}
+	slog.Info("fetching all existing movies complete", "duration", time.Since(start))
 
 	// fetch all existing libraries
+	start = time.Now()
 	libraries, err := s.libRepo.List(ctx)
 	if err != nil {
 		return err
 	}
+	slog.Info("fetching all existing libraries complete", "duration", time.Since(start))
 
 	// run for each library
+	start = time.Now()
 	for _, lib := range libraries {
 		err := s.runLibraryCataloguer(ctx, lib, allMovies, allShows)
 		if err != nil {
 			return err
 		}
 	}
+	slog.Info("running all libraries complete", "duration", time.Since(start))
+
 	slog.Info("finished all cataloguers without errors")
 	return nil
 }
@@ -52,10 +61,14 @@ func (s *BackgroundService) runLibraryCataloguer(
 	existingMovies []entity.Movie,
 	existingShows []entity.Show,
 ) error {
+
+	start := time.Now()
 	results, err := getAllFilesWithExtensionInPath(lib.Path, []string{"mp4"}) // "mkv" ?
 	if err != nil {
 		return err
 	}
+	slog.Info("get all files in library complete.", "duration", time.Since(start), "library.Name", lib.Name, "library.Path", lib.Path)
+
 	switch lib.LibraryType {
 	case entity.LibraryTypeShows:
 		err := s.runShowsLibraryCataloguer(ctx, &lib, results, existingShows)
