@@ -102,6 +102,10 @@ func (s *BackgroundService) RunOnce() error {
 	}
 
 	// run the "uncataloguers"
+	err = s.runUncataloguers()
+	if err != nil {
+		return err
+	}
 
 	// run metadata matchers
 	err = s.RunMetadataMatchers()
