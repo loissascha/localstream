@@ -14,6 +14,7 @@ import (
 	"github.com/loissascha/go-http-server/server"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/frontend"
+	"github.com/loissascha/localstream/internal/background"
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
 	"github.com/loissascha/localstream/internal/middleware"
@@ -22,7 +23,6 @@ import (
 	"github.com/loissascha/localstream/internal/provider/tvmaze"
 	repopostgres "github.com/loissascha/localstream/internal/repository/postgres"
 	"github.com/loissascha/localstream/internal/service"
-	backgroundservice "github.com/loissascha/localstream/internal/service/background"
 )
 
 func setupFileDirs() error {
@@ -230,11 +230,30 @@ func main() {
 		http.ServeFileFS(w, r, frontendFS, "index.html")
 	})
 
-	libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
-	libraryCataloguer.RunBackground()
+	bgservice := background.NewBackgroundService(
+		libraryRepo,
+		showRepo,
+		seasonRepo,
+		movieRepo,
+		episodeRepo,
+		movieMetaRepo,
+		showMetaRepo,
+		seasonMetaRepo,
+		episodeMetaRepo,
+		tmdbProvider,
+		tvMazeProvider,
+		movieMetaService,
+		showMetaService,
+		seasonMetaService,
+		episodeMetaService,
+	)
+	bgservice.StartBackground()
 
-	libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
-	libraryUncataloguer.RunBackground()
+	// libraryCataloguer := backgroundservice.NewLibraryCataloguer(libService, movieMetaService, showRepo, seasonRepo, episodeRepo, movieRepo, tvMazeProvider, tmdbProvider, showMetaRepo, movieMetaRepo, seasonMetaRepo, episodeMetaRepo, showMetaService, seasonMetaService, episodeMetaService)
+	// libraryCataloguer.RunBackground()
+	//
+	// libraryUncataloguer := backgroundservice.NewLibraryUncataloguer(showRepo, seasonRepo, episodeRepo, movieRepo)
+	// libraryUncataloguer.RunBackground()
 
 	logger.Info(nil, "Server starting at {addr}", listenAddr)
 	err = s.Serve(listenAddr)
