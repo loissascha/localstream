@@ -25,3 +25,10 @@ func (t FetchSource) IsEmpty() bool {
 func (t FetchSource) IsMultiple() bool {
 	return t == FetchSourceMultiple
 }
+
+func (t FetchSource) IsValid() bool {
+	if t.IsNone() || t.IsEmpty() || t.IsMultiple() {
+		return false
+	}
+	return true
+}

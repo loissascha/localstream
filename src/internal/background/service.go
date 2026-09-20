@@ -52,6 +52,10 @@ func (s *BackgroundService) RunOnce() error {
 	// run the "uncataloguers"
 
 	// run metadata matchers
+	err = s.RunMetadataMatchers()
+	if err != nil {
+		return err
+	}
 
 	// run the stuff that deletes files that are no longer in use (because the metadata entries do not exist anymore for example)
 
