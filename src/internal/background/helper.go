@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
@@ -45,8 +46,12 @@ func (s *BackgroundService) createSeason(ctx context.Context, seasonInfo *parser
 }
 
 func (s *BackgroundService) createShow(ctx context.Context, showInfo *parsers.ShowInfo, showPath string) (uuid.UUID, error) {
+	sid, err := uuid.NewV7()
+	if err != nil {
+		return uuid.Nil, err
+	}
 	showE := &entity.Show{
-		ID:          uuid.New(),
+		ID:          sid,
 		Name:        showInfo.Series,
 		Year:        0,
 		Path:        showPath,
@@ -57,10 +62,17 @@ func (s *BackgroundService) createShow(ctx context.Context, showInfo *parsers.Sh
 		showE.Year = *showInfo.Year
 	}
 
-	err := s.showRepo.Create(ctx, showE)
+	err = s.showRepo.Create(ctx, showE)
 	if err != nil {
 		logger.Error(err, "Error creating show")
 		return uuid.Nil, err
+	}
+
+	err = s.fetchMetadataForShow(ctx, showE)
+	if err != nil {
+		if err != nil {
+			slog.Warn("direct metadata fetch for show failed... will run again in the show matcher", "err", err)
+		}
 	}
 	return showE.ID, nil
 }

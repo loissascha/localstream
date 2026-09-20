@@ -17,31 +17,55 @@ type BackgroundService struct {
 	movieRepo   repository.MovieRepository
 	episodeRepo repository.EpisodeRepository
 
-	movieMetaRepo repository.MovieMetadataRepository
+	movieMetaRepo       repository.MovieMetadataRepository
+	showMetadataRepo    repository.ShowMetadataRepository
+	seasonMetadataRepo  repository.SeasonMetadataRepository
+	episodeMetadataRepo repository.EpisodeMetadataRepository
 
 	movieMetadataProvider provider.MovieMetadataProvider
-	movieMetaService      *service.MovieMetadataService
+	tvMetadataProvider    provider.TVMetadataProvider
+
+	movieMetaService    *service.MovieMetadataService
+	showMetadataService *service.ShowMetadataService
 }
 
 func NewBackgroundService(
+	libRepo repository.LibraryRepository,
+
 	showRepo repository.ShowRepository,
 	seasonRepo repository.SeasonRepository,
 	movieRepo repository.MovieRepository,
-	libRepo repository.LibraryRepository,
 	episodeRepo repository.EpisodeRepository,
+
 	movieMetaRepo repository.MovieMetadataRepository,
+	showMetaRepo repository.ShowMetadataRepository,
+	seasonMetaRepo repository.SeasonMetadataRepository,
+	episodeMetaRepo repository.EpisodeMetadataRepository,
+
 	movieMetadataProvider provider.MovieMetadataProvider,
+	tvMetadataProvider provider.TVMetadataProvider,
+
 	movieMetaService *service.MovieMetadataService,
+	showMetaServicde *service.ShowMetadataService,
 ) *BackgroundService {
 	return &BackgroundService{
-		libRepo:               libRepo,
-		showRepo:              showRepo,
-		seasonRepo:            seasonRepo,
-		movieRepo:             movieRepo,
-		episodeRepo:           episodeRepo,
-		movieMetaRepo:         movieMetaRepo,
+		libRepo: libRepo,
+
+		showRepo:    showRepo,
+		seasonRepo:  seasonRepo,
+		movieRepo:   movieRepo,
+		episodeRepo: episodeRepo,
+
+		movieMetaRepo:       movieMetaRepo,
+		showMetadataRepo:    showMetaRepo,
+		seasonMetadataRepo:  seasonMetaRepo,
+		episodeMetadataRepo: episodeMetaRepo,
+
 		movieMetadataProvider: movieMetadataProvider,
-		movieMetaService:      movieMetaService,
+		tvMetadataProvider:    tvMetadataProvider,
+
+		movieMetaService:    movieMetaService,
+		showMetadataService: showMetaServicde,
 	}
 }
 

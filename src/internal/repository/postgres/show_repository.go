@@ -231,4 +231,18 @@ func (r *ShowRepository) Search(ctx context.Context, query string) ([]repository
 	return shows, nil
 }
 
+func (r *ShowRepository) NecessaryForMetadataFetch(ctx context.Context) ([]entity.Show, error) {
+	const query = `
+		SELECT * FROM shows WHERE fetch_source='none';	
+	`
+
+	var shows []entity.Show
+	err := r.db.SelectContext(ctx, &shows, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return shows, nil
+}
+
 var _ repository.ShowRepository = (*ShowRepository)(nil)

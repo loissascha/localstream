@@ -22,6 +22,7 @@ type ShowRepository interface {
 	List(ctx context.Context) ([]ShowSelectItem, error)
 	ListLatest(ctx context.Context) ([]ShowSelectItem, error)
 	Search(ctx context.Context, query string) ([]ShowSelectItem, error)
+	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Show, error)
 }
 
 type ShowSelectItem struct {
