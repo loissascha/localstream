@@ -109,6 +109,8 @@ func (s *BackgroundService) RunOnce() error {
 		return err
 	}
 
+	// run some metadata matcher that checks for older metadata (especially on movies and shows) and tries to fetch new ones (for example when it's like 6 months old)
+
 	// run the stuff that deletes files that are no longer in use (because the metadata entries do not exist anymore for example)
 
 	return nil
