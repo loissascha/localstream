@@ -92,7 +92,7 @@ export async function getWatchstateForEpisode(
 export async function getWatchstateForShow(
 	bearerToken: string,
 	showId: string
-): Promise<WatchstateResponse> {
+): Promise<WatchstateResponse | null> {
 	const response = await fetch('/api/watchstate/show/' + showId, {
 		method: 'GET',
 		headers: {
@@ -100,6 +100,9 @@ export async function getWatchstateForShow(
 		}
 	});
 	if (response.status !== 200) {
+		if (response.status === 404) {
+			return null;
+		}
 		console.error(response);
 		throw new Error('' + response.status);
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -59,6 +60,10 @@ func main() {
 	godotenv.Load()
 
 	logger.Config.ShowDebug(true)
+	lgr := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+	slog.SetDefault(lgr)
 
 	port := os.Getenv("PORT")
 	if port == "" {

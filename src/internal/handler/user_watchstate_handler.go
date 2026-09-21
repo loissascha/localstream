@@ -215,6 +215,11 @@ func (h *UserWatchstateHandler) getLatestWatchstateByShowID(w http.ResponseWrite
 		return
 	}
 
+	if watchstate == nil {
+		respond.JSON(w, http.StatusNotFound, map[string]string{"error": "No watchstate found for this show."})
+		return
+	}
+
 	seasonId := encoders.EncodeUUID(watchstate.SeasonID)
 	episodeId := encoders.EncodeUUID(watchstate.EpisodeID)
 
