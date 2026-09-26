@@ -8,12 +8,28 @@ import (
 func TestParse2Fast(t *testing.T) {
 
 	fmt.Println("Test first file...")
-	parse, err := ProbeFile("./2.Fast.2.Furious.mp4")
+	parse, err := ProbeFile("Movie1.mp4")
 	if err != nil {
 		fmt.Println("error", err)
 		t.Fatal(err)
 	}
 	fmt.Println(parse)
 
+	fmt.Println("")
 	fmt.Println("Test second file...")
+	parse, err = ProbeFile("Movie2.mp4")
+	if err != nil {
+		fmt.Println("error", err)
+		t.Fatal(err)
+	}
+	fmt.Println(parse)
+
+	fmt.Println("")
+	fmt.Println("Test third file...")
+	parse, err = ProbeFile("Show1.mp4")
+	if err != nil {
+		fmt.Println("error", err)
+		t.Fatal(err)
+	}
+	fmt.Println(parse)
 }
