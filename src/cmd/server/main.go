@@ -31,8 +31,7 @@ func init() {
 	// check if ffprobe is installed
 	path, err := exec.LookPath("ffprobe")
 	if err != nil {
-		logger.Error(err, "ffprobe is not available.")
-		return
+		panic("ffprobe is not available. Please make sure it's installed and available in $PATH.")
 	}
 	fmt.Println("ffprobe found at:", path)
 }
