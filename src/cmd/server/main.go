@@ -7,6 +7,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -26,34 +27,14 @@ import (
 	"github.com/loissascha/localstream/internal/service"
 )
 
-func setupFileDirs() error {
-	baseDir := os.Getenv("STATIC_FILES_DIR")
-	if baseDir == "" {
-		return fmt.Errorf("STATIC_FILES_DIR not defined. Make sure there is a .env file or an environment variable set!")
-	}
-
-	imageMoviesPath := filepath.Join(baseDir, "images/movies")
-	imageShowsPath := filepath.Join(baseDir, "images/shows")
-	subtitelMoviesPath := filepath.Join(baseDir, "subtitles/movies")
-	subtitleShowsPath := filepath.Join(baseDir, "subtitles/shows")
-
-	err := os.MkdirAll(imageMoviesPath, os.ModePerm)
+func init() {
+	// check if ffprobe is installed
+	path, err := exec.LookPath("ffprobe")
 	if err != nil {
-		return err
+		logger.Error(err, "ffprobe is not available.")
+		return
 	}
-	err = os.MkdirAll(imageShowsPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	err = os.MkdirAll(subtitelMoviesPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	err = os.MkdirAll(subtitleShowsPath, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	return nil
+	fmt.Println("ffprobe found at:", path)
 }
 
 func main() {
@@ -259,4 +240,34 @@ func main() {
 	if err != nil {
 		logger.Error(err, "Server failed to start...")
 	}
+}
+
+func setupFileDirs() error {
+	baseDir := os.Getenv("STATIC_FILES_DIR")
+	if baseDir == "" {
+		return fmt.Errorf("STATIC_FILES_DIR not defined. Make sure there is a .env file or an environment variable set!")
+	}
+
+	imageMoviesPath := filepath.Join(baseDir, "images/movies")
+	imageShowsPath := filepath.Join(baseDir, "images/shows")
+	subtitelMoviesPath := filepath.Join(baseDir, "subtitles/movies")
+	subtitleShowsPath := filepath.Join(baseDir, "subtitles/shows")
+
+	err := os.MkdirAll(imageMoviesPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(imageShowsPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(subtitelMoviesPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(subtitleShowsPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
 }
