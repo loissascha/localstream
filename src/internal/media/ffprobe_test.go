@@ -15,7 +15,10 @@ func TestParse2Fast(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", parse)
 
-	mediaF := parse.ToMediaFile()
+	mediaF, err := parse.ToMediaFile()
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
 
 	fmt.Println("")
@@ -27,7 +30,10 @@ func TestParse2Fast(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", parse)
 
-	mediaF = parse.ToMediaFile()
+	mediaF, err = parse.ToMediaFile()
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
 
 	fmt.Println("")
@@ -39,6 +45,9 @@ func TestParse2Fast(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", parse)
 
-	mediaF = parse.ToMediaFile()
+	mediaF, err = parse.ToMediaFile()
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
 }

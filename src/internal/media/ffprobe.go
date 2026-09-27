@@ -3,6 +3,7 @@ package media
 import (
 	"encoding/json"
 	"os/exec"
+	"strconv"
 )
 
 type FFProbeParse struct {
@@ -16,6 +17,7 @@ type MediaStream struct {
 	CodecLongName string            `json:"codec_long_name"`
 	CodecType     string            `json:"codec_type"`
 	Duration      string            `json:"duration"`
+	DurationTS    int64             `json:"duration_ts"`
 	Width         int               `json:"width"`
 	Height        int               `json:"height"`
 	Tags          map[string]string `json:"tags"`
@@ -46,7 +48,7 @@ func ProbeFile(path string) (FFProbeParse, error) {
 	return result, nil
 }
 
-func (f *FFProbeParse) ToMediaFile() MediaFile {
+func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 	res := MediaFile{
 		Filename:       f.Format.Filename,
 		FormatName:     f.Format.FormatName,
@@ -58,13 +60,18 @@ func (f *FFProbeParse) ToMediaFile() MediaFile {
 	}
 
 	for _, s := range f.Streams {
+		dur, err := strconv.ParseFloat(s.Duration, 64)
+		if err != nil {
+			return MediaFile{}, err
+		}
 		switch s.CodecType {
 		case "video":
 			res.VideoStreams = append(res.VideoStreams, VideoStream{
 				Index:         s.Index,
 				CodeName:      s.CodeName,
 				CodecLongName: s.CodecLongName,
-				Duration:      s.Duration,
+				Duration:      dur,
+				DurationTS:    s.DurationTS,
 				Width:         s.Width,
 				Height:        s.Height,
 				Tags:          s.Tags,
@@ -74,11 +81,12 @@ func (f *FFProbeParse) ToMediaFile() MediaFile {
 				Index:         s.Index,
 				CodeName:      s.CodeName,
 				CodecLongName: s.CodecLongName,
-				Duration:      s.Duration,
+				Duration:      dur,
+				DurationTS:    s.DurationTS,
 				Tags:          s.Tags,
 			})
 		}
 	}
 
-	return res
+	return res, nil
 }
