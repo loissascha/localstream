@@ -15,6 +15,9 @@ func TestParse2Fast(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", parse)
 
+	mediaF := parse.ToMediaFile()
+	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
+
 	fmt.Println("")
 	fmt.Println("Test second file...")
 	parse, err = ProbeFile("Movie2.mp4")
@@ -24,6 +27,9 @@ func TestParse2Fast(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", parse)
 
+	mediaF = parse.ToMediaFile()
+	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
+
 	fmt.Println("")
 	fmt.Println("Test third file...")
 	parse, err = ProbeFile("Show1.mp4")
@@ -32,4 +38,7 @@ func TestParse2Fast(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("%+v\n", parse)
+
+	mediaF = parse.ToMediaFile()
+	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
 }

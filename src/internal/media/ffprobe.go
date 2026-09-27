@@ -30,18 +30,55 @@ type FFProbeFormat struct {
 	Tags           map[string]string `json:"tags"`
 }
 
-func ProbeFile(path string) (*FFProbeParse, error) {
+func ProbeFile(path string) (FFProbeParse, error) {
 	cmd := exec.Command("ffprobe", "-v", "error", "-print_format", "json", "-show_format", "-show_streams", path)
 	raw, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, err
+		return FFProbeParse{}, err
 	}
 
 	var result FFProbeParse
 	err = json.Unmarshal(raw, &result)
 	if err != nil {
-		return nil, err
+		return FFProbeParse{}, err
 	}
 
-	return &result, nil
+	return result, nil
+}
+
+func (f *FFProbeParse) ToMediaFile() MediaFile {
+	res := MediaFile{
+		Filename:       f.Format.Filename,
+		FormatName:     f.Format.FormatName,
+		FormatLongName: f.Format.FormatLongName,
+		StartTime:      f.Format.StartTime,
+		Duration:       f.Format.Duration,
+		VideoStreams:   []VideoStream{},
+		AudioStreams:   []AudioStream{},
+	}
+
+	for _, s := range f.Streams {
+		switch s.CodecType {
+		case "video":
+			res.VideoStreams = append(res.VideoStreams, VideoStream{
+				Index:         s.Index,
+				CodeName:      s.CodeName,
+				CodecLongName: s.CodecLongName,
+				Duration:      s.Duration,
+				Width:         s.Width,
+				Height:        s.Height,
+				Tags:          s.Tags,
+			})
+		case "audio":
+			res.AudioStreams = append(res.AudioStreams, AudioStream{
+				Index:         s.Index,
+				CodeName:      s.CodeName,
+				CodecLongName: s.CodecLongName,
+				Duration:      s.Duration,
+				Tags:          s.Tags,
+			})
+		}
+	}
+
+	return res
 }
