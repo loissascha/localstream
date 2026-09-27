@@ -13,7 +13,7 @@ func TestParse2Fast(t *testing.T) {
 		fmt.Println("error", err)
 		t.Fatal(err)
 	}
-	fmt.Println(parse)
+	fmt.Printf("%+v\n", parse)
 
 	fmt.Println("")
 	fmt.Println("Test second file...")
@@ -22,7 +22,7 @@ func TestParse2Fast(t *testing.T) {
 		fmt.Println("error", err)
 		t.Fatal(err)
 	}
-	fmt.Println(parse)
+	fmt.Printf("%+v\n", parse)
 
 	fmt.Println("")
 	fmt.Println("Test third file...")
@@ -31,5 +31,5 @@ func TestParse2Fast(t *testing.T) {
 		fmt.Println("error", err)
 		t.Fatal(err)
 	}
-	fmt.Println(parse)
+	fmt.Printf("%+v\n", parse)
 }
