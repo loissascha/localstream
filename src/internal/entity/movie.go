@@ -19,7 +19,7 @@ type Movie struct {
 type MovieVideoStream struct {
 	ID            uuid.UUID         `db:"id"`
 	MovieID       uuid.UUID         `db:"movie_id"`
-	Index         int               `db:"index"`
+	Index         int               `db:"stream_index"`
 	Profile       string            `db:"profile"`
 	Level         int               `db:"level"`
 	CodecName     string            `db:"codec_name"`
