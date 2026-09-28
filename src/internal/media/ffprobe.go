@@ -15,7 +15,7 @@ type MediaStream struct {
 	Index         int               `json:"index"`
 	Profile       string            `json:"profile"`
 	Level         int               `json:"level"`
-	CodecName      string            `json:"codec_name"`
+	CodecName     string            `json:"codec_name"`
 	CodecLongName string            `json:"codec_long_name"`
 	CodecType     string            `json:"codec_type"`
 	Duration      string            `json:"duration"`
@@ -56,15 +56,15 @@ func ProbeFile(path string) (FFProbeParse, error) {
 func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 	dur, err := strconv.ParseFloat(f.Format.Duration, 64)
 	if err != nil {
-		return MediaFile{}, err
+		dur = 0
 	}
 	bitRate, err := strconv.ParseInt(f.Format.BitRate, 10, 64)
 	if err != nil {
-		return MediaFile{}, err
+		bitRate = 0
 	}
 	size, err := strconv.ParseInt(f.Format.Size, 10, 64)
 	if err != nil {
-		return MediaFile{}, err
+		size = 0
 	}
 	res := MediaFile{
 		Filename:       f.Format.Filename,
@@ -81,11 +81,11 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 	for _, s := range f.Streams {
 		dur, err := strconv.ParseFloat(s.Duration, 64)
 		if err != nil {
-			return MediaFile{}, err
+			dur = 0
 		}
 		bitRate, err := strconv.ParseInt(s.BitRate, 10, 64)
 		if err != nil {
-			return MediaFile{}, err
+			bitRate = 0
 		}
 		switch s.CodecType {
 		case "video":
@@ -93,7 +93,7 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 				Index:         s.Index,
 				Profile:       s.Profile,
 				Level:         s.Level,
-				CodecName:      s.CodecName,
+				CodecName:     s.CodecName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
 				DurationTS:    s.DurationTS,
@@ -106,7 +106,7 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 			res.AudioStreams = append(res.AudioStreams, AudioStream{
 				Index:         s.Index,
 				Profile:       s.Profile,
-				CodecName:      s.CodecName,
+				CodecName:     s.CodecName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
 				DurationTS:    s.DurationTS,
