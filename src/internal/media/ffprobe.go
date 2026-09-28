@@ -13,6 +13,8 @@ type FFProbeParse struct {
 
 type MediaStream struct {
 	Index         int               `json:"index"`
+	Profile       string            `json:"profile"`
+	Level         int               `json:"level"`
 	CodeName      string            `json:"codec_name"`
 	CodecLongName string            `json:"codec_long_name"`
 	CodecType     string            `json:"codec_type"`
@@ -21,6 +23,7 @@ type MediaStream struct {
 	Width         int               `json:"width"`
 	Height        int               `json:"height"`
 	Tags          map[string]string `json:"tags"`
+	BitRate       string            `json:"bit_rate"`
 }
 
 type FFProbeFormat struct {
@@ -30,6 +33,8 @@ type FFProbeFormat struct {
 	StartTime      string            `json:"start_time"`
 	Duration       string            `json:"duration"`
 	Tags           map[string]string `json:"tags"`
+	BitRate        string            `json:"bit_rate"`
+	Size           string            `json:"size"`
 }
 
 func ProbeFile(path string) (FFProbeParse, error) {
@@ -49,12 +54,26 @@ func ProbeFile(path string) (FFProbeParse, error) {
 }
 
 func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
+	dur, err := strconv.ParseFloat(f.Format.Duration, 64)
+	if err != nil {
+		return MediaFile{}, err
+	}
+	bitRate, err := strconv.ParseInt(f.Format.BitRate, 10, 64)
+	if err != nil {
+		return MediaFile{}, err
+	}
+	size, err := strconv.ParseInt(f.Format.Size, 10, 64)
+	if err != nil {
+		return MediaFile{}, err
+	}
 	res := MediaFile{
 		Filename:       f.Format.Filename,
 		FormatName:     f.Format.FormatName,
 		FormatLongName: f.Format.FormatLongName,
 		StartTime:      f.Format.StartTime,
-		Duration:       f.Format.Duration,
+		Duration:       dur,
+		BitRate:        bitRate,
+		Size:           size,
 		VideoStreams:   []VideoStream{},
 		AudioStreams:   []AudioStream{},
 	}
@@ -64,10 +83,16 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 		if err != nil {
 			return MediaFile{}, err
 		}
+		bitRate, err := strconv.ParseInt(s.BitRate, 10, 64)
+		if err != nil {
+			return MediaFile{}, err
+		}
 		switch s.CodecType {
 		case "video":
 			res.VideoStreams = append(res.VideoStreams, VideoStream{
 				Index:         s.Index,
+				Profile:       s.Profile,
+				Level:         s.Level,
 				CodeName:      s.CodeName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
@@ -75,15 +100,18 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 				Width:         s.Width,
 				Height:        s.Height,
 				Tags:          s.Tags,
+				BitRate:       bitRate,
 			})
 		case "audio":
 			res.AudioStreams = append(res.AudioStreams, AudioStream{
 				Index:         s.Index,
+				Profile:       s.Profile,
 				CodeName:      s.CodeName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
 				DurationTS:    s.DurationTS,
 				Tags:          s.Tags,
+				BitRate:       bitRate,
 			})
 		}
 	}
