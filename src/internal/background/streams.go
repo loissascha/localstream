@@ -2,6 +2,7 @@ package background
 
 import (
 	"context"
+	"strings"
 
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/media"
@@ -16,14 +17,20 @@ func (s *BackgroundService) createMovieStreams(ctx context.Context, movie *entit
 	if err != nil {
 		return err
 	}
+
+	splitStr := strings.Split(mFile.Filename, ".")
+	container := splitStr[len(splitStr)-1]
+
 	for _, v := range mFile.VideoStreams {
 		vs := &entity.MovieVideoStream{
 			MovieID:       movie.ID,
 			Index:         v.Index,
+			Container:     container,
 			Profile:       v.Profile,
 			Level:         v.Level,
 			CodecName:     v.CodecName,
 			CodecLongName: v.CodecLongName,
+			PixelFormat:   v.PixelFormat,
 			Duration:      v.Duration,
 			Width:         v.Width,
 			Height:        v.Height,

@@ -16,7 +16,7 @@ type VideoStream struct {
 	Index         int
 	Profile       string
 	Level         int
-	CodecName      string
+	CodecName     string
 	CodecLongName string
 	Duration      float64 // in sekunden
 	DurationTS    int64
@@ -24,12 +24,13 @@ type VideoStream struct {
 	Height        int
 	Tags          map[string]string
 	BitRate       int64
+	PixelFormat   string
 }
 
 type AudioStream struct {
 	Index         int
 	Profile       string
-	CodecName      string
+	CodecName     string
 	CodecLongName string
 	Duration      float64 // in sekunden
 	DurationTS    int64

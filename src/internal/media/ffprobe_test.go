@@ -2,6 +2,7 @@ package media
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -50,4 +51,8 @@ func TestParse2Fast(t *testing.T) {
 		t.Fatal(err)
 	}
 	fmt.Printf("\nas mediaFile: %+v\n", mediaF)
+
+	splits := strings.Split(parse.Format.Filename, ".")
+	container := splits[len(splits)-1]
+	fmt.Println("container:", container)
 }

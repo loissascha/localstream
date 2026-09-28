@@ -35,14 +35,14 @@ func (r *MovieVideoStreamRepository) Create(ctx context.Context, stream *entity.
 	const query = `
 		INSERT INTO movie_video_streams (
 			id, movie_id, stream_index, profile, level, codec_name, codec_long_name,
-			duration, width, height, tags, bit_rate
+			duration, width, height, tags, bit_rate, container, pixel_format
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
 	`
 	_, err = r.db.ExecContext(ctx, query,
 		id, stream.MovieID, stream.Index, stream.Profile, stream.Level,
 		stream.CodecName, stream.CodecLongName, stream.Duration, stream.Width,
-		stream.Height, string(tags), stream.BitRate,
+		stream.Height, string(tags), stream.BitRate, stream.Container, stream.PixelFormat,
 	)
 	if err != nil {
 		return fmt.Errorf("create movie video stream: %w", err)
@@ -54,8 +54,7 @@ func (r *MovieVideoStreamRepository) Create(ctx context.Context, stream *entity.
 
 func (r *MovieVideoStreamRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.MovieVideoStream, error) {
 	const query = `
-		SELECT id, movie_id, stream_index, profile, level, codec_name, codec_long_name,
-			duration, width, height, tags, bit_rate
+		SELECT *
 		FROM movie_video_streams
 		WHERE id = $1
 		LIMIT 1
@@ -73,8 +72,7 @@ func (r *MovieVideoStreamRepository) GetByID(ctx context.Context, id uuid.UUID) 
 
 func (r *MovieVideoStreamRepository) ListByMovieID(ctx context.Context, movieID uuid.UUID) ([]entity.MovieVideoStream, error) {
 	const query = `
-		SELECT id, movie_id, stream_index, profile, level, codec_name, codec_long_name,
-			duration, width, height, tags, bit_rate
+		SELECT *
 		FROM movie_video_streams
 		WHERE movie_id = $1
 		ORDER BY stream_index ASC
@@ -98,37 +96,6 @@ func (r *MovieVideoStreamRepository) ListByMovieID(ctx context.Context, movieID 
 		return nil, fmt.Errorf("list movie video streams by movie id: %w", err)
 	}
 	return streams, nil
-}
-
-func (r *MovieVideoStreamRepository) Update(ctx context.Context, stream *entity.MovieVideoStream) error {
-	tags, err := marshalStreamTags(stream.Tags)
-	if err != nil {
-		return fmt.Errorf("encode movie video stream tags: %w", err)
-	}
-
-	const query = `
-		UPDATE movie_video_streams
-		SET movie_id = $1, stream_index = $2, profile = $3, level = $4,
-			codec_name = $5, codec_long_name = $6, duration = $7, width = $8,
-			height = $9, tags = $10, bit_rate = $11
-		WHERE id = $12
-	`
-	result, err := r.db.ExecContext(ctx, query,
-		stream.MovieID, stream.Index, stream.Profile, stream.Level,
-		stream.CodecName, stream.CodecLongName, stream.Duration, stream.Width,
-		stream.Height, string(tags), stream.BitRate, stream.ID,
-	)
-	if err != nil {
-		return fmt.Errorf("update movie video stream: %w", err)
-	}
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("update movie video stream rows affected: %w", err)
-	}
-	if rowsAffected == 0 {
-		return repository.ErrMovieVideoStreamNotFound
-	}
-	return nil
 }
 
 func (r *MovieVideoStreamRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {

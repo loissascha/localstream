@@ -24,6 +24,7 @@ type MediaStream struct {
 	Height        int               `json:"height"`
 	Tags          map[string]string `json:"tags"`
 	BitRate       string            `json:"bit_rate"`
+	PixelFormat   string            `json:"pix_fmt"`
 }
 
 type FFProbeFormat struct {
@@ -101,6 +102,7 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 				Height:        s.Height,
 				Tags:          s.Tags,
 				BitRate:       bitRate,
+				PixelFormat:   s.PixelFormat,
 			})
 		case "audio":
 			res.AudioStreams = append(res.AudioStreams, AudioStream{
