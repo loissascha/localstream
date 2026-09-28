@@ -15,7 +15,7 @@ type MediaStream struct {
 	Index         int               `json:"index"`
 	Profile       string            `json:"profile"`
 	Level         int               `json:"level"`
-	CodeName      string            `json:"codec_name"`
+	CodecName      string            `json:"codec_name"`
 	CodecLongName string            `json:"codec_long_name"`
 	CodecType     string            `json:"codec_type"`
 	Duration      string            `json:"duration"`
@@ -93,7 +93,7 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 				Index:         s.Index,
 				Profile:       s.Profile,
 				Level:         s.Level,
-				CodeName:      s.CodeName,
+				CodecName:      s.CodecName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
 				DurationTS:    s.DurationTS,
@@ -106,7 +106,7 @@ func (f *FFProbeParse) ToMediaFile() (MediaFile, error) {
 			res.AudioStreams = append(res.AudioStreams, AudioStream{
 				Index:         s.Index,
 				Profile:       s.Profile,
-				CodeName:      s.CodeName,
+				CodecName:      s.CodecName,
 				CodecLongName: s.CodecLongName,
 				Duration:      dur,
 				DurationTS:    s.DurationTS,
