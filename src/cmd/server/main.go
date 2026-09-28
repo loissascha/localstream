@@ -113,6 +113,8 @@ func main() {
 	movieMetaRepo := repopostgres.NewMovieMetadataRepository(db)
 	movieSubtitleRepo := repopostgres.NewMovieSubtitleRepository(db)
 	collectionRepo := repopostgres.NewCollectionRepository(db)
+	movieVideoStreamRepo := repopostgres.NewMovieVideoStreamRepository(db)
+	movieAudioStreamRepo := repopostgres.NewMovieAudioStreamRepository(db)
 
 	// providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
@@ -217,16 +219,23 @@ func main() {
 
 	bgservice := background.NewBackgroundService(
 		libraryRepo,
+
 		showRepo,
 		seasonRepo,
 		movieRepo,
 		episodeRepo,
+
 		movieMetaRepo,
 		showMetaRepo,
 		seasonMetaRepo,
 		episodeMetaRepo,
+
+		movieVideoStreamRepo,
+		movieAudioStreamRepo,
+
 		tmdbProvider,
 		tvMazeProvider,
+
 		movieMetaService,
 		showMetaService,
 		seasonMetaService,

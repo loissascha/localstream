@@ -22,6 +22,9 @@ type BackgroundService struct {
 	seasonMetadataRepo  repository.SeasonMetadataRepository
 	episodeMetadataRepo repository.EpisodeMetadataRepository
 
+	movieVideoStreamRepo repository.MovieVideoStreamRepository
+	movieAudioStreamRepo repository.MovieAudioStreamRepository
+
 	movieMetadataProvider provider.MovieMetadataProvider
 	tvMetadataProvider    provider.TVMetadataProvider
 
@@ -47,6 +50,9 @@ func NewBackgroundService(
 	seasonMetaRepo repository.SeasonMetadataRepository,
 	episodeMetaRepo repository.EpisodeMetadataRepository,
 
+	movieVideoStreamRepo repository.MovieVideoStreamRepository,
+	movieAudioStreamRepo repository.MovieAudioStreamRepository,
+
 	movieMetadataProvider provider.MovieMetadataProvider,
 	tvMetadataProvider provider.TVMetadataProvider,
 
@@ -67,6 +73,9 @@ func NewBackgroundService(
 		showMetadataRepo:    showMetaRepo,
 		seasonMetadataRepo:  seasonMetaRepo,
 		episodeMetadataRepo: episodeMetaRepo,
+
+		movieVideoStreamRepo: movieVideoStreamRepo,
+		movieAudioStreamRepo: movieAudioStreamRepo,
 
 		movieMetadataProvider: movieMetadataProvider,
 		tvMetadataProvider:    tvMetadataProvider,

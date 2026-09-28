@@ -115,6 +115,13 @@ func (s *BackgroundService) runMoviesLibraryCataloguer(ctx context.Context, lib 
 			return err
 		}
 
+		err = s.createMovieStreams(ctx, movie)
+		if err != nil {
+			slog.Error("error creating movie streams (video/audio)", "err", err)
+			s.movieRepo.DeleteByID(ctx, movie.ID)
+			return err
+		}
+
 		err = s.fetchMetadataForMovie(ctx, movie)
 		if err != nil {
 			slog.Warn("direct metadata fetch for movie failed... will run again in the movie matcher", "err", err)
