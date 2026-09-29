@@ -35,12 +35,12 @@ func (s *TranscodeService) StopTranscode(id string) error {
 		return errors.New("session not found")
 	}
 
-	err := sess.Cmd.Cancel()
+	err := sess.Cmd.Process.Kill()
 	if err != nil {
 		return err
 	}
 
-	err = os.Remove(sess.OutputDir)
+	err = os.RemoveAll(sess.OutputDir)
 	if err != nil {
 		return err
 	}
