@@ -260,6 +260,7 @@ func setupFileDirs() error {
 	imageShowsPath := filepath.Join(baseDir, "images/shows")
 	subtitelMoviesPath := filepath.Join(baseDir, "subtitles/movies")
 	subtitleShowsPath := filepath.Join(baseDir, "subtitles/shows")
+	transcodePath := filepath.Join(baseDir, "transcodes")
 
 	err := os.MkdirAll(imageMoviesPath, os.ModePerm)
 	if err != nil {
@@ -274,6 +275,10 @@ func setupFileDirs() error {
 		return err
 	}
 	err = os.MkdirAll(subtitleShowsPath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(transcodePath, os.ModePerm)
 	if err != nil {
 		return err
 	}
