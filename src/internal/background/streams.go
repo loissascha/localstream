@@ -30,6 +30,9 @@ func (s *BackgroundService) RunMediaStreamChecks() error {
 			slog.Error("error creating movie stream", "err", err, "movieID", m.ID.String())
 		}
 	}
+
+	// TODO: same for episodes
+
 	return nil
 }
 
