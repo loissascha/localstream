@@ -137,7 +137,7 @@ func (r *MovieRepository) ListWithoutVideoStream(ctx context.Context) ([]entity.
 	const query = `
 		SELECT m.* FROM movies m 
 		LEFT JOIN movie_video_streams s ON s.movie_id = m.id 
-		WHERE s.id = NULL 
+		WHERE s.id IS NULL 
 		`
 
 	var movies []entity.Movie
