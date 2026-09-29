@@ -20,8 +20,28 @@ func TestTranscodeService(t *testing.T) {
 	}
 
 	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
 
-	time.Sleep(15 * time.Second)
+	time.Sleep(3 * time.Second)
 	ts.StopTranscode(sess.ID)
+
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
+	fmt.Println("Transcoding stopped!!!!!")
 
 }
