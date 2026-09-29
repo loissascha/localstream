@@ -19,6 +19,7 @@ import (
 	"github.com/loissascha/localstream/internal/background"
 	"github.com/loissascha/localstream/internal/database"
 	"github.com/loissascha/localstream/internal/handler"
+	"github.com/loissascha/localstream/internal/media"
 	"github.com/loissascha/localstream/internal/middleware"
 	"github.com/loissascha/localstream/internal/provider/subdl"
 	"github.com/loissascha/localstream/internal/provider/tmdb"
@@ -121,6 +122,11 @@ func main() {
 	tmdbProvider := tmdb.NewTMDBProvider()
 	subdlProvider := subdl.NewSubDlProvider(subDlApiKey, movieSubtitleRepo, episodeSubtitleRepo)
 
+	// transcoding
+	staticFilesDir := os.Getenv("STATIC_FILES_DIR")
+	transcodePath := filepath.Join(staticFilesDir, "transcodes")
+	transcodingService := media.NewTranscodeService(transcodePath)
+
 	// services
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
@@ -129,7 +135,7 @@ func main() {
 	episodeService := service.NewEpisodeService(episodeRepo, seasonRepo)
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
-	movieService := service.NewMovieService(movieRepo)
+	movieService := service.NewMovieService(*transcodingService, movieRepo)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider, showSerivce)
 	showSubtitleService := service.NewShowSubtitleService(subdlProvider, episodeRepo, seasonRepo, episodeSubtitleRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)

@@ -5,16 +5,22 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/media"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
 type MovieService struct {
-	movieRepo repository.MovieRepository
+	transcodingService media.TranscodeService
+	movieRepo          repository.MovieRepository
 }
 
-func NewMovieService(movieRepo repository.MovieRepository) *MovieService {
+func NewMovieService(
+	transcodingService media.TranscodeService,
+	movieRepo repository.MovieRepository,
+) *MovieService {
 	return &MovieService{
-		movieRepo: movieRepo,
+		transcodingService: transcodingService,
+		movieRepo:          movieRepo,
 	}
 }
 
