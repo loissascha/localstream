@@ -2,11 +2,36 @@ package background
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"log/slog"
 	"strings"
+	"time"
 
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/media"
 )
+
+func (s *BackgroundService) RunMediaStreamChecks() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	movies, err := s.movieRepo.ListWithoutVideoStream(ctx)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil
+		}
+		return err
+	}
+
+	for _, m := range movies {
+		err := s.createMovieStreams(ctx, &m)
+		if err != nil {
+			slog.Error("error creating movie stream", "err", err, "movieID", m.ID.String())
+		}
+	}
+	return nil
+}
 
 func (s *BackgroundService) createMovieStreams(ctx context.Context, movie *entity.Movie) error {
 	probe, err := media.ProbeFile(movie.Path)

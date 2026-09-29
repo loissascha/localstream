@@ -133,6 +133,21 @@ func (r *MovieRepository) NecessaryForMetadataFetch(ctx context.Context) ([]enti
 	return movies, nil
 }
 
+func (r *MovieRepository) ListWithoutVideoStream(ctx context.Context) ([]entity.Movie, error) {
+	const query = `
+		SELECT m.* FROM movies m 
+		LEFT JOIN movie_video_streams s ON s.movie_id = m.id 
+		WHERE s.id = NULL 
+		`
+
+	var movies []entity.Movie
+	err := r.db.SelectContext(ctx, &movies, query)
+	if err != nil {
+		return nil, err
+	}
+	return movies, nil
+}
+
 func (r *MovieRepository) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
 	const query = `
 		SELECT m.id, coalesce(umw.position, 0) as "position", coalesce(umw.duration, 0) as "duration", coalesce(umw.finished, false) as "finished", coalesce(mm.name, m.name) as "name", coalesce(mm.release_year, m.year) as "year", coalesce(mm.description, m.description) as "description", coalesce(mm.medium_image_url, '') as "medium_image_url", coalesce(mm.backdrop_image_url, '') as "backdrop_image_url", m.fetch_source, m.created_at

@@ -124,6 +124,12 @@ func (s *BackgroundService) RunOnce() error {
 
 	// run some metadata matcher that checks for older metadata (especially on movies and shows) and tries to fetch new ones (for example when it's like 6 months old)
 
+	// check for files with no streams and create the streams (video/audio) for them -> cleanup for old stuff
+	err = s.RunMediaStreamChecks()
+	if err != nil {
+		return err
+	}
+
 	// run the stuff that deletes files that are no longer in use (because the metadata entries do not exist anymore for example)
 
 	return nil
