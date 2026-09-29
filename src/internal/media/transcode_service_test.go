@@ -14,7 +14,7 @@ func TestTranscodeService(t *testing.T) {
 		t.Error("No error on not existing file!")
 	}
 
-	sess, err := ts.StartTranscode("Movie1.mp4")
+	sess, err := ts.StartTranscode("Testfile.mp4")
 	if err != nil {
 		t.Fatal(err)
 	}

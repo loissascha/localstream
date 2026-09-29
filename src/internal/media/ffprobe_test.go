@@ -9,7 +9,7 @@ import (
 func TestParse2Fast(t *testing.T) {
 
 	fmt.Println("Test first file...")
-	parse, err := ProbeFile("Movie1.mp4")
+	parse, err := ProbeFile("Testfile.mp4")
 	if err != nil {
 		fmt.Println("error", err)
 		t.Fatal(err)
