@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 type AnyInfoStruct interface{}
@@ -78,16 +79,16 @@ type LibraryListResponse struct {
 }
 
 type SeasonMetadataInfo struct {
-	ID               string             `json:"id"`
-	SeasonID         string             `json:"season_id"`
-	Url              string             `json:"url"`
-	Number           int                `json:"number"`
-	Summary          string             `json:"summary"`
-	PremiereDate     string             `json:"premiere_date"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	OriginalImageUrl string             `json:"original_image_url"`
-	FetchID          int                `json:"fetch_id"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
+	ID               string                  `json:"id"`
+	SeasonID         string                  `json:"season_id"`
+	Url              string                  `json:"url"`
+	Number           int                     `json:"number"`
+	Summary          string                  `json:"summary"`
+	PremiereDate     string                  `json:"premiere_date"`
+	MediumImageUrl   string                  `json:"medium_image_url"`
+	OriginalImageUrl string                  `json:"original_image_url"`
+	FetchID          int                     `json:"fetch_id"`
+	FetchSource      fetchsource.FetchSource `json:"fetch_source"`
 }
 
 func toSeasonMetadataInfo(m *entity.SeasonMetadata) SeasonMetadataInfo {

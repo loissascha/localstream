@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -23,7 +24,7 @@ func NewShowRepository(db *sqlx.DB) *ShowRepository {
 func (r *ShowRepository) Create(ctx context.Context, show *entity.Show) error {
 	fetchSource := show.FetchSource
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 
 	const query = `
@@ -124,9 +125,9 @@ func (r *ShowRepository) GetByPath(ctx context.Context, path string) (*entity.Sh
 	return &show, nil
 }
 
-func (r *ShowRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+func (r *ShowRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error {
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 
 	const query = `

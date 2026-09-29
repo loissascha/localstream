@@ -1,4 +1,4 @@
-package entity
+package fetchsource
 
 type FetchSource string
 

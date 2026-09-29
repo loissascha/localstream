@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 var ErrSeasonNotFound = errors.New("season not found")
@@ -16,6 +17,6 @@ type SeasonRepository interface {
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPathAndShowID(ctx context.Context, path string, showId uuid.UUID) (*entity.Season, error)
 	ListByShowID(ctx context.Context, showId uuid.UUID) ([]entity.Season, error)
-	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
+	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error
 	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Season, error)
 }

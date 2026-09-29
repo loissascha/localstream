@@ -8,6 +8,7 @@ import (
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
@@ -101,7 +102,7 @@ func (s *MovieMetadataService) SetPrimaryForMovieIDByFetchID(ctx context.Context
 	}
 
 	// set the fetch result
-	err = s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceTMDB)
+	err = s.movieRepo.UpdateFetchSource(ctx, movie.ID, fetchsource.FetchSourceTMDB)
 	if err != nil {
 		return err
 	}
@@ -160,7 +161,7 @@ func (self *MovieMetadataService) CreateMovieMetadata(ctx context.Context, movie
 		Description:      r.Description,
 		MediumImageUrl:   posterLink,
 		BackdropImageUrl: backdropLink,
-		FetchSource:      entity.FetchSourceTMDB,
+		FetchSource:      fetchsource.FetchSourceTMDB,
 	})
 	if err != nil {
 		return err
@@ -186,7 +187,7 @@ func (s *MovieMetadataService) SetPrimaryForMovieID(ctx context.Context, movieID
 		return fmt.Errorf("get movie metadata by movie id: %w", err)
 	}
 
-	targetFetchSource := entity.FetchSourceNone
+	targetFetchSource := fetchsource.FetchSourceNone
 	for _, m := range metadata {
 		if m.ID != uuid {
 			err := s.movieMetadataRepo.DeleteOne(ctx, m.ID)

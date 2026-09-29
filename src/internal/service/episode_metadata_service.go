@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
@@ -124,7 +125,7 @@ func (self *EpisodeMetadataService) CreateEpisodeMetadata(ctx context.Context, e
 		Summary:          metadata.Summary,
 		MediumImageUrl:   mediumImage,
 		OriginalImageUrl: originalImage,
-		FetchSource:      entity.FetchSourceTVMaze,
+		FetchSource:      fetchsource.FetchSourceTVMaze,
 		FetchID:          metadata.ID,
 	}
 	err = self.episodeMetadataRepo.Create(ctx, &m)

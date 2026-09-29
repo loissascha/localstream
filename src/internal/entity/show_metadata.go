@@ -1,15 +1,18 @@
 package entity
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/loissascha/localstream/internal/fetchsource"
+)
 
 type ShowMetadata struct {
-	ID               uuid.UUID   `db:"id"`
-	ShowID           uuid.UUID   `db:"show_id"`
-	Name             string      `db:"name"`
-	Url              string      `db:"url"`
-	Description      string      `db:"description"`
-	MediumImageUrl   string      `db:"medium_image_url"`
-	OriginalImageUrl string      `db:"original_image_url"`
-	FetchID          int         `db:"fetch_id"`
-	FetchSource      FetchSource `db:"fetch_source"`
+	ID               uuid.UUID               `db:"id"`
+	ShowID           uuid.UUID               `db:"show_id"`
+	Name             string                  `db:"name"`
+	Url              string                  `db:"url"`
+	Description      string                  `db:"description"`
+	MediumImageUrl   string                  `db:"medium_image_url"`
+	OriginalImageUrl string                  `db:"original_image_url"`
+	FetchID          int                     `db:"fetch_id"`
+	FetchSource      fetchsource.FetchSource `db:"fetch_source"`
 }

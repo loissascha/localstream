@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -19,16 +20,16 @@ type EpisodeInfo struct {
 }
 
 type EpisodeMetadataInfo struct {
-	ID               string             `json:"id"`
-	EpisodeID        string             `json:"episode_id"`
-	Url              string             `json:"url"`
-	Name             string             `json:"name"`
-	Number           int                `json:"number"`
-	Summary          string             `json:"summary"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	OriginalImageUrl string             `json:"original_image_url"`
-	FetchID          int                `json:"fetch_id"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
+	ID               string                  `json:"id"`
+	EpisodeID        string                  `json:"episode_id"`
+	Url              string                  `json:"url"`
+	Name             string                  `json:"name"`
+	Number           int                     `json:"number"`
+	Summary          string                  `json:"summary"`
+	MediumImageUrl   string                  `json:"medium_image_url"`
+	OriginalImageUrl string                  `json:"original_image_url"`
+	FetchID          int                     `json:"fetch_id"`
+	FetchSource      fetchsource.FetchSource `json:"fetch_source"`
 }
 
 type EpisodeListResponse struct {

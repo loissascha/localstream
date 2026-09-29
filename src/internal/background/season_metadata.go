@@ -8,6 +8,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 func (s *BackgroundService) runSeasonsMatcher() error {
@@ -74,11 +75,11 @@ func (s *BackgroundService) fetchMetadataForSeason(ctx context.Context, season *
 
 	switch matchCount {
 	case 0:
-		season.FetchSource = entity.FetchSourceEmpty
+		season.FetchSource = fetchsource.FetchSourceEmpty
 	case 1:
-		season.FetchSource = entity.FetchSourceTVMaze
+		season.FetchSource = fetchsource.FetchSourceTVMaze
 	case 2:
-		season.FetchSource = entity.FetchSourceMultiple
+		season.FetchSource = fetchsource.FetchSourceMultiple
 	}
 
 	err = s.seasonRepo.UpdateFetchSource(ctx, season.ID, season.FetchSource)

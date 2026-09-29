@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 var ErrEpisodeNotFound = errors.New("episode not found")
@@ -19,20 +20,20 @@ type EpisodeRepository interface {
 	GetByID(ctx context.Context, episodeId uuid.UUID) (*EpisodeWithMetadata, error)
 	DeleteByID(ctx context.Context, episodeId uuid.UUID) error
 	GetBySeasonIDAndNumber(ctx context.Context, seasonId uuid.UUID, number int) (*EpisodeWithMetadata, error)
-	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
+	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error
 	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Episode, error)
 }
 
 type EpisodeWithMetadata struct {
-	ID               uuid.UUID          `db:"id"`
-	SeasonID         uuid.UUID          `db:"season_id"`
-	Number           int                `db:"number"`
-	Path             string             `db:"path"`
-	CreatedAt        time.Time          `db:"created_at"`
-	FetchSource      entity.FetchSource `db:"fetch_source"`
-	Name             string             `db:"name"`
-	Summary          string             `db:"summary"`
-	MediumImageUrl   string             `db:"medium_image_url"`
-	OriginalImageUrl string             `db:"original_image_url"`
-	FetchID          int                `db:"fetch_id"`
+	ID               uuid.UUID               `db:"id"`
+	SeasonID         uuid.UUID               `db:"season_id"`
+	Number           int                     `db:"number"`
+	Path             string                  `db:"path"`
+	CreatedAt        time.Time               `db:"created_at"`
+	FetchSource      fetchsource.FetchSource `db:"fetch_source"`
+	Name             string                  `db:"name"`
+	Summary          string                  `db:"summary"`
+	MediumImageUrl   string                  `db:"medium_image_url"`
+	OriginalImageUrl string                  `db:"original_image_url"`
+	FetchID          int                     `db:"fetch_id"`
 }

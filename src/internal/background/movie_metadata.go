@@ -6,6 +6,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/provider"
 )
 
@@ -45,7 +46,7 @@ func (s *BackgroundService) fetchMetadataForMovie(ctx context.Context, movie *en
 	exactMatches := s.movieMetadataHasExactMatches(movie, result)
 	if len(exactMatches) == 1 {
 		s.movieMetaService.CreateMovieMetadata(ctx, movie, exactMatches[0])
-		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceTMDB)
+		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, fetchsource.FetchSourceTMDB)
 		if err != nil {
 			return err
 		}
@@ -58,17 +59,17 @@ func (s *BackgroundService) fetchMetadataForMovie(ctx context.Context, movie *en
 
 	// update movie fetch source based on amount of result
 	if len(result) == 1 {
-		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceTMDB)
+		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, fetchsource.FetchSourceTMDB)
 		if err != nil {
 			return err
 		}
 	} else if len(result) > 1 {
-		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceMultiple)
+		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, fetchsource.FetchSourceMultiple)
 		if err != nil {
 			return err
 		}
 	} else {
-		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, entity.FetchSourceEmpty)
+		err := s.movieRepo.UpdateFetchSource(ctx, movie.ID, fetchsource.FetchSourceEmpty)
 		if err != nil {
 			return err
 		}

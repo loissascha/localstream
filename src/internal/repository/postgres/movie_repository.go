@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -186,9 +187,9 @@ func (r *MovieRepository) List(ctx context.Context, userID int64) ([]repository.
 	return movies, nil
 }
 
-func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+func (r *MovieRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error {
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 
 	const query = `
@@ -243,7 +244,7 @@ func (r *MovieRepository) Search(ctx context.Context, query string, userID int64
 func (r *MovieRepository) Create(ctx context.Context, movie *entity.Movie) error {
 	fetchSource := movie.FetchSource
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 	movie.FetchSource = fetchSource
 

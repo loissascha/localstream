@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -24,15 +25,15 @@ type MovieInfo struct {
 }
 
 type MovieMetadataInfo struct {
-	ID               string             `json:"id"`
-	MovieID          string             `json:"movie_id"`
-	Name             string             `json:"name"`
-	ReleaseYear      int                `json:"release_year"`
-	Url              string             `json:"url"`
-	Description      string             `json:"description"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	BackdropImageUrl string             `json:"backdrop_image_url"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
+	ID               string                  `json:"id"`
+	MovieID          string                  `json:"movie_id"`
+	Name             string                  `json:"name"`
+	ReleaseYear      int                     `json:"release_year"`
+	Url              string                  `json:"url"`
+	Description      string                  `json:"description"`
+	MediumImageUrl   string                  `json:"medium_image_url"`
+	BackdropImageUrl string                  `json:"backdrop_image_url"`
+	FetchSource      fetchsource.FetchSource `json:"fetch_source"`
 }
 
 type MovieListResponse struct {

@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 func (s *BackgroundService) runShowsMatcher() error {
@@ -48,16 +49,16 @@ func (s *BackgroundService) fetchMetadataForShow(ctx context.Context, show *enti
 	}
 
 	if len(showSearchResults) > 1 {
-		show.FetchSource = entity.FetchSourceMultiple
-		s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceMultiple)
+		show.FetchSource = fetchsource.FetchSourceMultiple
+		s.showRepo.UpdateFetchSource(ctx, show.ID, fetchsource.FetchSourceMultiple)
 		logger.Info(nil, "Found multiple results for show {Show} ({Year})", show.Name, show.Year)
 	} else if len(showSearchResults) == 1 {
-		show.FetchSource = entity.FetchSourceTVMaze
-		s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
+		show.FetchSource = fetchsource.FetchSourceTVMaze
+		s.showRepo.UpdateFetchSource(ctx, show.ID, fetchsource.FetchSourceTVMaze)
 		logger.Info(nil, "Found perfect match for show {Show} ({Year}): {Match}", show.Name, show.Year, showSearchResults[0])
 	} else {
-		show.FetchSource = entity.FetchSourceEmpty
-		s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceEmpty)
+		show.FetchSource = fetchsource.FetchSourceEmpty
+		s.showRepo.UpdateFetchSource(ctx, show.ID, fetchsource.FetchSourceEmpty)
 	}
 	return nil
 }

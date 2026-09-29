@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/parsers"
 )
 
@@ -21,7 +22,7 @@ func (s *BackgroundService) createEpisode(ctx context.Context, episodeInfo *pars
 		SeasonID:    seasonId,
 		Number:      episodeInfo.Episode,
 		Path:        episodePath,
-		FetchSource: entity.FetchSourceNone,
+		FetchSource: fetchsource.FetchSourceNone,
 	}
 
 	err = s.episodeRepo.Create(ctx, episode)
@@ -47,7 +48,7 @@ func (s *BackgroundService) createSeason(ctx context.Context, seasonInfo *parser
 		ShowID:      showId,
 		Number:      seasonInfo.Season,
 		Path:        seasonPath,
-		FetchSource: entity.FetchSourceNone,
+		FetchSource: fetchsource.FetchSourceNone,
 	}
 
 	err = s.seasonRepo.Create(ctx, season)
@@ -73,7 +74,7 @@ func (s *BackgroundService) createShow(ctx context.Context, showInfo *parsers.Sh
 		Name:        showInfo.Series,
 		Year:        0,
 		Path:        showPath,
-		FetchSource: entity.FetchSourceNone,
+		FetchSource: fetchsource.FetchSourceNone,
 	}
 
 	if showInfo.Year != nil {

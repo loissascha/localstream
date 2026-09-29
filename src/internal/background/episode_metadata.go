@@ -7,6 +7,7 @@ import (
 
 	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 func (s *BackgroundService) runEpisodesMatcher() error {
@@ -56,7 +57,7 @@ func (s *BackgroundService) fetchMetadataForEpisode(ctx context.Context, episode
 		return err
 	}
 	if seasonMetadata == nil {
-		err := s.seasonRepo.UpdateFetchSource(ctx, season.ID, entity.FetchSourceNone)
+		err := s.seasonRepo.UpdateFetchSource(ctx, season.ID, fetchsource.FetchSourceNone)
 		if err != nil {
 			return err
 		}
@@ -79,7 +80,7 @@ func (s *BackgroundService) fetchMetadataForEpisode(ctx context.Context, episode
 		}
 	}
 
-	episode.FetchSource = entity.FetchSourceTVMaze
+	episode.FetchSource = fetchsource.FetchSourceTVMaze
 	err = s.episodeRepo.UpdateFetchSource(ctx, episode.ID, episode.FetchSource)
 	if err != nil {
 		return err

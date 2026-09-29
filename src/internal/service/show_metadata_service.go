@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
@@ -67,7 +68,7 @@ func (s *ShowMetadataService) SetPrimaryForShowIDByFetchID(ctx context.Context, 
 	}
 
 	// set the fetch result
-	err = s.showRepo.UpdateFetchSource(ctx, show.ID, entity.FetchSourceTVMaze)
+	err = s.showRepo.UpdateFetchSource(ctx, show.ID, fetchsource.FetchSourceTVMaze)
 	if err != nil {
 		return err
 	}
@@ -119,7 +120,7 @@ func (s *ShowMetadataService) CreateShowMetadata(ctx context.Context, show *enti
 		MediumImageUrl:   mediumImage,
 		OriginalImageUrl: originalImage,
 		FetchID:          metadata.ID,
-		FetchSource:      entity.FetchSourceTVMaze,
+		FetchSource:      fetchsource.FetchSourceTVMaze,
 	}
 	if err := s.showMetadataRepo.Create(ctx, &m); err != nil {
 		return fmt.Errorf("create show metadata: %w", err)
@@ -172,7 +173,7 @@ func (s *ShowMetadataService) SetPrimaryForShowID(ctx context.Context, showID st
 		return fmt.Errorf("get show metadata by show id: %w", err)
 	}
 
-	targetFetchSource := entity.FetchSourceNone
+	targetFetchSource := fetchsource.FetchSourceNone
 	for _, m := range metadata {
 		if m.ID != uuid {
 			err := s.showMetadataRepo.DeleteOne(ctx, m.ID)

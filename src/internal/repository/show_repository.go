@@ -7,6 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 )
 
 var ErrShowNotFound = errors.New("show not found")
@@ -17,7 +18,7 @@ type ShowRepository interface {
 	GetByIDWithMetadata(ctx context.Context, id uuid.UUID) (*ShowSelectItem, error)
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByPath(ctx context.Context, path string) (*entity.Show, error)
-	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error
+	UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error
 	All(ctx context.Context) ([]entity.Show, error)
 	List(ctx context.Context) ([]ShowSelectItem, error)
 	ListLatest(ctx context.Context) ([]ShowSelectItem, error)
@@ -26,12 +27,12 @@ type ShowRepository interface {
 }
 
 type ShowSelectItem struct {
-	ID             uuid.UUID          `db:"id"`
-	Name           string             `db:"name"`
-	Year           int                `db:"year"`
-	FetchSource    entity.FetchSource `db:"fetch_source"`
-	Path           string             `db:"path"`
-	Description    string             `db:"description"`
-	MediumImageUrl string             `db:"medium_image_url"`
-	CreatedAt      time.Time          `db:"created_at"`
+	ID             uuid.UUID               `db:"id"`
+	Name           string                  `db:"name"`
+	Year           int                     `db:"year"`
+	FetchSource    fetchsource.FetchSource `db:"fetch_source"`
+	Path           string                  `db:"path"`
+	Description    string                  `db:"description"`
+	MediumImageUrl string                  `db:"medium_image_url"`
+	CreatedAt      time.Time               `db:"created_at"`
 }

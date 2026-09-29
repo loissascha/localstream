@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -23,7 +24,7 @@ func NewEpisodeRepository(db *sqlx.DB) *EpisodeRepository {
 func (r *EpisodeRepository) Create(ctx context.Context, episode *entity.Episode) error {
 	fetchSource := episode.FetchSource
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 
 	const query = `
@@ -176,9 +177,9 @@ func (r *EpisodeRepository) GetBySeasonIDAndNumber(ctx context.Context, seasonId
 	return &episode, nil
 }
 
-func (r *EpisodeRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource entity.FetchSource) error {
+func (r *EpisodeRepository) UpdateFetchSource(ctx context.Context, id uuid.UUID, fetchSource fetchsource.FetchSource) error {
 	if fetchSource == "" {
-		fetchSource = entity.FetchSourceNone
+		fetchSource = fetchsource.FetchSourceNone
 	}
 
 	const query = `

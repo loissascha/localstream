@@ -5,6 +5,7 @@ import (
 
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -23,14 +24,14 @@ type ShowListResponse struct {
 }
 
 type ShowMetadataInfo struct {
-	ID               string             `json:"id"`
-	ShowID           string             `json:"show_id"`
-	Name             string             `json:"name"`
-	Url              string             `json:"url"`
-	Description      string             `json:"description"`
-	MediumImageUrl   string             `json:"medium_image_url"`
-	OriginalImageUrl string             `json:"original_image_url"`
-	FetchSource      entity.FetchSource `json:"fetch_source"`
+	ID               string                  `json:"id"`
+	ShowID           string                  `json:"show_id"`
+	Name             string                  `json:"name"`
+	Url              string                  `json:"url"`
+	Description      string                  `json:"description"`
+	MediumImageUrl   string                  `json:"medium_image_url"`
+	OriginalImageUrl string                  `json:"original_image_url"`
+	FetchSource      fetchsource.FetchSource `json:"fetch_source"`
 }
 
 func toShowMetadataInfo(m *entity.ShowMetadata) ShowMetadataInfo {

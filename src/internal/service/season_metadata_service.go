@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
+	"github.com/loissascha/localstream/internal/fetchsource"
 	"github.com/loissascha/localstream/internal/helper"
 	"github.com/loissascha/localstream/internal/provider"
 	"github.com/loissascha/localstream/internal/repository"
@@ -97,7 +98,7 @@ func (self *SeasonMetadataService) CreateSeasonMetadata(ctx context.Context, sea
 		PremiereDate:     metadata.PremiereDate,
 		MediumImageUrl:   mediumImage,
 		OriginalImageUrl: originalImage,
-		FetchSource:      entity.FetchSourceTVMaze,
+		FetchSource:      fetchsource.FetchSourceTVMaze,
 		FetchID:          metadata.ID,
 	}
 	err = self.seasonMetadataRepo.Create(ctx, &m)
