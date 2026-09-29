@@ -51,3 +51,11 @@ func (s *MovieService) GetById(ctx context.Context, id string) (*entity.Movie, e
 func (s *MovieService) Search(ctx context.Context, query string, userID int64) ([]repository.MovieSelectItem, error) {
 	return s.movieRepo.Search(ctx, query, userID)
 }
+
+func (s *MovieService) StartTranscodeSession(movie *entity.Movie) (*media.TranscodeSession, error) {
+	sess, err := s.transcodingService.StartTranscode(movie.Path)
+	if err != nil {
+		return nil, err
+	}
+	return sess, nil
+}
