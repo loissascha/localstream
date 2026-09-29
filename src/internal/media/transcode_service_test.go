@@ -1,18 +1,27 @@
 package media
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+	"time"
+)
 
 func TestTranscodeService(t *testing.T) {
 	ts := NewTranscodeService("./test")
 
-	err := ts.StartTranscode("NotExistingFile.mp4")
+	_, err := ts.StartTranscode("NotExistingFile.mp4")
 	if err == nil {
 		t.Error("No error on not existing file!")
 	}
 
-	err = ts.StartTranscode("Movie1.mp4")
+	sess, err := ts.StartTranscode("Movie1.mp4")
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	fmt.Println("Transcoding running for id:", sess.ID, "output:", sess.OutputDir)
+
+	time.Sleep(15 * time.Second)
+	ts.StopTranscode(sess.ID)
 
 }
