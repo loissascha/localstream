@@ -2,6 +2,7 @@ package media
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/google/uuid"
 )
@@ -22,6 +23,11 @@ func (s *TranscodeService) StartTranscode(path string) error {
 		return err
 	}
 	slog.Info("starting new transcode", "id", id)
+
+	_, err = os.Stat(path)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
