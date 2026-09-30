@@ -1,9 +1,12 @@
 package media
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"os/exec"
 	"strconv"
+	"strings"
 )
 
 type FFProbeParse struct {
@@ -39,16 +42,19 @@ type FFProbeFormat struct {
 }
 
 func ProbeFile(path string) (FFProbeParse, error) {
+	var stderr bytes.Buffer
 	cmd := exec.Command("ffprobe", "-v", "error", "-print_format", "json", "-show_format", "-show_streams", path)
-	raw, err := cmd.CombinedOutput()
+	cmd.Stderr = &stderr
+
+	raw, err := cmd.Output()
 	if err != nil {
-		return FFProbeParse{}, err
+		return FFProbeParse{}, fmt.Errorf("ffprobe failed: %w; stderr: %s", err, strings.TrimSpace(stderr.String()))
 	}
 
 	var result FFProbeParse
 	err = json.Unmarshal(raw, &result)
 	if err != nil {
-		return FFProbeParse{}, err
+		return FFProbeParse{}, fmt.Errorf("parse ffprobe result: %w; stderr: %s", err, strings.TrimSpace(stderr.String()))
 	}
 
 	return result, nil
