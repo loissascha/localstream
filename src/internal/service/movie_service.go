@@ -64,3 +64,7 @@ func (s *MovieService) StopTranscodeSession(sessionID string) error {
 	err := s.transcodingService.StopTranscode(sessionID)
 	return err
 }
+
+func (s *MovieService) GetTranscodeSession(sessionId string) (*media.TranscodeSession, error) {
+	return s.transcodingService.Get(sessionId)
+}

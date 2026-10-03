@@ -29,6 +29,14 @@ func NewTranscodeService(baseDir string) *TranscodeService {
 	}
 }
 
+func (s *TranscodeService) Get(id string) (*TranscodeSession, error) {
+	sess, found := s.runningSessions[id]
+	if !found {
+		return nil, errors.New("session not found")
+	}
+	return sess, nil
+}
+
 func (s *TranscodeService) StopTranscode(id string) error {
 	sess, found := s.runningSessions[id]
 	if !found {

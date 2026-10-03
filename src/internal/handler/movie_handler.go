@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"mime"
 	"net/http"
 	"os"
@@ -59,6 +60,23 @@ func (h *MovieHandler) RegisterRoutes() {
 		h.streamVideo,
 		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
 	)
+
+	h.s.GET("/api/movies/{sessionID}/transcode/stream",
+		h.streamTranscodedVideo,
+		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
+	)
+}
+
+func (h *MovieHandler) streamTranscodedVideo(w http.ResponseWriter, r *http.Request) {
+	sessionId := r.PathValue("sessionID")
+	sess, err := h.movieService.GetTranscodeSession(sessionId)
+	if err != nil {
+		http.Error(w, "Transcoding session not found.", http.StatusBadRequest)
+		return
+	}
+
+	streamPath := filepath.Join(sess.OutputDir, "stream.m3u8")
+	slog.Info("stream path", "streamPath", streamPath)
 }
 
 func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
