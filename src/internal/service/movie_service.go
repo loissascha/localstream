@@ -59,3 +59,8 @@ func (s *MovieService) StartTranscodeSession(movie *entity.Movie) (*media.Transc
 	}
 	return sess, nil
 }
+
+func (s *MovieService) StopTranscodeSession(sessionID string) error {
+	err := s.transcodingService.StopTranscode(sessionID)
+	return err
+}

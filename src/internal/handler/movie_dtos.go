@@ -6,6 +6,7 @@ import (
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/fetchsource"
+	"github.com/loissascha/localstream/internal/media"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -47,6 +48,16 @@ func toSubtitleInfoMovie(m *entity.MovieSubtitle) SubtitleInfo {
 		Path:      m.Path,
 		LangShort: m.LangShort,
 		Lang:      m.Lang,
+	}
+}
+
+type TranscodeSessionResponse struct {
+	ID string
+}
+
+func toTranscodeSessionResponse(m *media.TranscodeSession) TranscodeSessionResponse {
+	return TranscodeSessionResponse{
+		ID: m.ID,
 	}
 }
 

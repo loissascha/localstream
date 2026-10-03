@@ -45,6 +45,16 @@ func (h *MovieHandler) RegisterRoutes() {
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
+	h.s.POST("/api/movies/{movieID}/transcode/start",
+		h.startTranscode,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
+	h.s.POST("/api/movies/{sessionID}/transcode/stop",
+		h.stopTranscode,
+		server.WithMiddlewares(h.authMiddleware.RequireAuth),
+	)
+
 	h.s.GET("/api/movies/stream",
 		h.streamVideo,
 		server.WithMiddlewares(h.authMiddleware.RequireAuthURLToken),
@@ -122,6 +132,32 @@ func (h *MovieHandler) streamVideo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", strconv.FormatInt(chunkSize, 10))
 	w.WriteHeader(http.StatusPartialContent)
 	_, _ = io.CopyN(w, file, chunkSize)
+}
+
+func (h *MovieHandler) stopTranscode(w http.ResponseWriter, r *http.Request) {
+	sessionId := r.PathValue("sessionID")
+	err := h.movieService.StopTranscodeSession(sessionId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to stop transcode: " + err.Error()})
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *MovieHandler) startTranscode(w http.ResponseWriter, r *http.Request) {
+	movieId := r.PathValue("movieID")
+	movie, err := h.movieService.GetById(r.Context(), movieId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to get movie: " + err.Error()})
+		return
+	}
+
+	sess, err := h.movieService.StartTranscodeSession(movie)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to start transcoding for movie: " + err.Error()})
+		return
+	}
+	respond.JSON(w, http.StatusOK, toTranscodeSessionResponse(sess))
 }
 
 func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
