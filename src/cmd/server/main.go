@@ -249,6 +249,16 @@ func main() {
 	)
 	bgservice.StartBackground()
 
+	integrityService := media.NewIntegrityCheckService(
+		libraryRepo,
+
+		showRepo,
+		seasonRepo,
+		movieRepo,
+		episodeRepo,
+	)
+	integrityService.StartBackground()
+
 	logger.Info(nil, "Server starting at {addr}", listenAddr)
 	err = s.Serve(listenAddr)
 	if err != nil {
