@@ -7,7 +7,7 @@ import (
 )
 
 func TestReencodeBrokenFile(t *testing.T) {
-	s := NewIntegrityCheckService()
+	s := NewIntegrityCheckService(nil, nil, nil, nil, nil)
 	ctx := context.Background()
 
 	err := s.ReencodeFile(ctx, "BrokenFile.mp4", "NotBrokenFile.mp4")
