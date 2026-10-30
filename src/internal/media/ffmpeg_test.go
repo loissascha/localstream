@@ -7,15 +7,14 @@ import (
 )
 
 func TestReencodeBrokenFile(t *testing.T) {
-	s := NewIntegrityCheckService(nil, nil, nil, nil, nil)
 	ctx := context.Background()
 
-	err := s.ReencodeFile(ctx, "BrokenFile.mp4", "NotBrokenFile.mp4")
+	err := ReencodeFile(ctx, "BrokenFile.mp4", "NotBrokenFile.mp4")
 	if err != nil {
 		t.Fatal("Reencoding of broken file failed", err)
 	}
 
-	result, err := s.Scan(ctx, "NotBrokenFile.mp4")
+	result, err := Scan(ctx, "NotBrokenFile.mp4")
 	if err != nil {
 		t.Fatal("Can't scan reencoded file", err)
 	}
