@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -103,7 +102,13 @@ func (s *IntegrityCheckService) ReencodeFile(ctx context.Context, path string, o
 		"-c:a", "aac", "-b:a", "192k",
 		"-movflags", "+faststart", output,
 	)
+	w := &strings.Builder{}
 	cmd.Stdout = io.Discard
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = w
+
+	str := w.String()
+	if str != "" {
+		return fmt.Errorf("command returned error(s): %s", str)
+	}
 	return cmd.Run()
 }
