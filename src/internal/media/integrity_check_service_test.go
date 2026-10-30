@@ -1,8 +1,13 @@
 package media
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func TestIntegrityFile(t *testing.T) {
 	s := NewIntegrityCheckService()
-	s.CheckFFMpegErrors("BrokenFile.mp4")
+
+	ctx := context.Background()
+	s.Scan(ctx, "BrokenFile.mp4")
 }
