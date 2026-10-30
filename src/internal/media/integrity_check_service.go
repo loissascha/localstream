@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -92,6 +93,17 @@ func (s *IntegrityCheckService) Scan(ctx context.Context, path string) (ScanResu
 	return result, nil
 }
 
-func (s *IntegrityCheckService) ReencodeFile(path string, output string) {
-
+func (s *IntegrityCheckService) ReencodeFile(ctx context.Context, path string, output string) error {
+	cmd := exec.CommandContext(ctx, "ffmpeg",
+		"-hide_banner", "-nostdin", "-n",
+		"-i", path,
+		"-map", "0:V:0", "-map", "0:a?",
+		"-c:v", "libx264", "-preset", "medium", "-crf", "20",
+		"-pix_fmt", "yuv420p",
+		"-c:a", "aac", "-b:a", "192k",
+		"-movflags", "+faststart", output,
+	)
+	cmd.Stdout = io.Discard
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
