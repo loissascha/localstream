@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/loissascha/go-logger/logger"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -49,11 +50,14 @@ func (s *IntegrityCheckService) StartBackground() {
 		for {
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 			defer cancel()
+
+			logger.Info(nil, "Starting Integrity Check")
 			err := s.RunOnce(ctx)
 			if err != nil {
-				slog.Error("error appeared while running background service v2", "err", err)
+				slog.Error("error appeared while running integrity check service", "err", err)
 			}
-			time.Sleep(60 * time.Second)
+			logger.Info(nil, "Finished Integrity Check")
+			time.Sleep(120 * time.Second)
 		}
 	}()
 }
@@ -130,6 +134,10 @@ func (s *IntegrityCheckService) runOnMovie(ctx context.Context, movie *entity.Mo
 	}
 
 	// update integrity checked on the movie
+	err = s.movieRepo.UpdateIntegrityChecked(ctx, movie.ID, true)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
