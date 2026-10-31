@@ -76,7 +76,10 @@ func (s *IntegrityCheckService) RunOnce(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		return nil
 	}
+
+	// do the same thing for an episode
 
 	// do the integrity check on that file
 
