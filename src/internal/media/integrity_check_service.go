@@ -129,7 +129,7 @@ func (s *IntegrityCheckService) runOnMovie(ctx context.Context, movie *entity.Mo
 			ID:         uid,
 			MovieID:    movie.ID,
 			IssueLevel: entity.IntegrityCheckIssueLevelWarning,
-			Issue:      fmt.Sprintf("Scan has shown %d warnings on the movie file at %s", result.Errors, movie.Path),
+			Issue:      fmt.Sprintf("Scan has shown %d warnings on the movie file at %s", result.Warnings, movie.Path),
 		})
 		if err != nil {
 			return err
