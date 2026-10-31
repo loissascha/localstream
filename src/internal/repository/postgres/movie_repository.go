@@ -87,6 +87,25 @@ func (r *MovieRepository) DeleteByID(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
+func (r *MovieRepository) FirstWithoutIntegrityChecked(ctx context.Context) (*entity.Movie, error) {
+	const query = `
+		SELECT *
+		FROM movies
+		WHERE integrity_checked = false
+		LIMIT 1
+	`
+
+	var movie entity.Movie
+	if err := r.db.GetContext(ctx, &movie, query); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("get movie by path: %w", err)
+	}
+
+	return &movie, nil
+}
+
 func (r *MovieRepository) GetByPath(ctx context.Context, path string) (*entity.Movie, error) {
 	const query = `
 		SELECT *

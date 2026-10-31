@@ -25,6 +25,7 @@ type MovieRepository interface {
 	ListWithoutVideoStream(ctx context.Context) ([]entity.Movie, error)
 	NecessaryForMetadataFetch(ctx context.Context) ([]entity.Movie, error)
 	Search(ctx context.Context, query string, userID int64) ([]MovieSelectItem, error)
+	FirstWithoutIntegrityChecked(ctx context.Context) (*entity.Movie, error)
 }
 
 type MovieSelectItem struct {
