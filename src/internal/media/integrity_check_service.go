@@ -48,7 +48,7 @@ func NewIntegrityCheckService(
 func (s *IntegrityCheckService) StartBackground() {
 	go func() {
 		for {
-			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+			ctx, cancel := context.WithTimeout(context.Background(), 120*time.Minute)
 			defer cancel()
 
 			logger.Info(nil, "Starting Integrity Check")
