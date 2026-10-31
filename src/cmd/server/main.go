@@ -116,6 +116,7 @@ func main() {
 	collectionRepo := repopostgres.NewCollectionRepository(db)
 	movieVideoStreamRepo := repopostgres.NewMovieVideoStreamRepository(db)
 	movieAudioStreamRepo := repopostgres.NewMovieAudioStreamRepository(db)
+	movieIntegrityCheckIssueRepo := repopostgres.NewMovieIntegrityCheckIssueRepository(db)
 
 	// providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
@@ -256,6 +257,8 @@ func main() {
 		seasonRepo,
 		movieRepo,
 		episodeRepo,
+
+		movieIntegrityCheckIssueRepo,
 	)
 	integrityService.StartBackground()
 

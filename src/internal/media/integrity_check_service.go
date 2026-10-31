@@ -2,9 +2,11 @@ package media
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
@@ -16,6 +18,8 @@ type IntegrityCheckService struct {
 	seasonRepo  repository.SeasonRepository
 	movieRepo   repository.MovieRepository
 	episodeRepo repository.EpisodeRepository
+
+	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository
 }
 
 func NewIntegrityCheckService(
@@ -25,6 +29,8 @@ func NewIntegrityCheckService(
 	seasonRepo repository.SeasonRepository,
 	movieRepo repository.MovieRepository,
 	episodeRepo repository.EpisodeRepository,
+
+	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository,
 ) *IntegrityCheckService {
 	return &IntegrityCheckService{
 		libRepo: libRepo,
@@ -33,6 +39,8 @@ func NewIntegrityCheckService(
 		seasonRepo:  seasonRepo,
 		movieRepo:   movieRepo,
 		episodeRepo: episodeRepo,
+
+		movieIntegrityCheckIssueRepo: movieIntegrityCheckIssueRepo,
 	}
 }
 
@@ -85,15 +93,43 @@ func (s *IntegrityCheckService) runOnMovie(ctx context.Context, movie *entity.Mo
 		return nil
 	}
 
+	// log errors
 	if result.Errors > 0 {
 		slog.WarnContext(ctx, "Scanned movie has resulted in errors.", "movie_id", movie.ID.String(), "movie_path", movie.Path, "error_count", result.Errors)
-		return nil
+		uid, err := uuid.NewV7()
+		if err != nil {
+			return err
+		}
+		err = s.movieIntegrityCheckIssueRepo.Create(ctx, &entity.MovieIntegrityCheckIssue{
+			ID:         uid,
+			MovieID:    movie.ID,
+			IssueLevel: entity.IntegrityCheckIssueLevelError,
+			Issue:      fmt.Sprintf("Scan has shown %d errors on the movie file at %s", result.Errors, movie.Path),
+		})
+		if err != nil {
+			return err
+		}
 	}
 
+	// log warnings
 	if result.Warnings > 0 {
 		slog.WarnContext(ctx, "Scanned movie has resulted in warnings.", "movie_id", movie.ID.String(), "movie_path", movie.Path, "error_count", result.Warnings)
-		return nil
+		uid, err := uuid.NewV7()
+		if err != nil {
+			return err
+		}
+		err = s.movieIntegrityCheckIssueRepo.Create(ctx, &entity.MovieIntegrityCheckIssue{
+			ID:         uid,
+			MovieID:    movie.ID,
+			IssueLevel: entity.IntegrityCheckIssueLevelWarning,
+			Issue:      fmt.Sprintf("Scan has shown %d warnings on the movie file at %s", result.Errors, movie.Path),
+		})
+		if err != nil {
+			return err
+		}
 	}
+
+	// update integrity checked on the movie
 
 	return nil
 }
