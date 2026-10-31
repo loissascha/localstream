@@ -1,9 +1,11 @@
 package media
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
+	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/repository"
 )
 
@@ -37,7 +39,9 @@ func NewIntegrityCheckService(
 func (s *IntegrityCheckService) StartBackground() {
 	go func() {
 		for {
-			err := s.RunOnce()
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+			defer cancel()
+			err := s.RunOnce(ctx)
 			if err != nil {
 				slog.Error("error appeared while running background service v2", "err", err)
 			}
@@ -46,13 +50,45 @@ func (s *IntegrityCheckService) StartBackground() {
 	}()
 }
 
-func (s *IntegrityCheckService) RunOnce() error {
+func (s *IntegrityCheckService) RunOnce(ctx context.Context) error {
 
 	// search for an episode or movie that hasn't had the integrity check yet
+	movie, err := s.movieRepo.FirstWithoutIntegrityChecked(ctx)
+	if err != nil {
+		return err
+	}
+
+	// do integrity check on movie
+	if movie != nil {
+		err := s.runOnMovie(ctx, movie)
+		if err != nil {
+			return err
+		}
+	}
 
 	// do the integrity check on that file
 
 	// record findings
+
+	return nil
+}
+
+func (s *IntegrityCheckService) runOnMovie(ctx context.Context, movie *entity.Movie) error {
+	result, err := Scan(ctx, movie.Path)
+	if err != nil {
+		return err
+	}
+
+	// log error and do nothing
+	if result.ExitCode == -1 {
+		slog.ErrorContext(ctx, "We were not able to scan the movie file for integrity check", "movie_id", movie.ID.String(), "movie_path", movie.Path)
+		return nil
+	}
+
+	if result.Errors > 0 {
+
+		return nil
+	}
 
 	return nil
 }
