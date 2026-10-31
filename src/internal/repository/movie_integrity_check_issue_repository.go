@@ -8,7 +8,7 @@ import (
 )
 
 type MovieIntegrityCheckIssueRepository interface {
-	Create(ctx context.Context, show *entity.MovieIntegrityCheckIssue) error
-	GetByMovieID(ctx context.Context, movieId uuid.UUID) (*entity.MovieIntegrityCheckIssue, error)
-	DeleteByMovieID(ctx context.Context, movieId uuid.UUID) error
+	Create(ctx context.Context, issue *entity.MovieIntegrityCheckIssue) error
+	GetByMovieID(ctx context.Context, movieID uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error)
+	DeleteByMovieID(ctx context.Context, movieID uuid.UUID) error
 }
