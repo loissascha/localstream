@@ -106,6 +106,30 @@ func (r *MovieRepository) FirstWithoutIntegrityChecked(ctx context.Context) (*en
 	return &movie, nil
 }
 
+func (r *MovieRepository) UpdateIntegrityChecked(ctx context.Context, id uuid.UUID, checked bool) error {
+	const query = `
+		UPDATE movies
+		SET integrity_checked = $1
+		WHERE id = $2
+	`
+
+	result, err := r.db.ExecContext(ctx, query, checked, id)
+	if err != nil {
+		return fmt.Errorf("update movie integrity checked: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("update movie integrity checked rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return repository.ErrMovieNotFound
+	}
+
+	return nil
+}
+
 func (r *MovieRepository) GetByPath(ctx context.Context, path string) (*entity.Movie, error) {
 	const query = `
 		SELECT *
