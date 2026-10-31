@@ -86,7 +86,12 @@ func (s *IntegrityCheckService) runOnMovie(ctx context.Context, movie *entity.Mo
 	}
 
 	if result.Errors > 0 {
+		slog.WarnContext(ctx, "Scanned movie has resulted in errors.", "movie_id", movie.ID.String(), "movie_path", movie.Path, "error_count", result.Errors)
+		return nil
+	}
 
+	if result.Warnings > 0 {
+		slog.WarnContext(ctx, "Scanned movie has resulted in warnings.", "movie_id", movie.ID.String(), "movie_path", movie.Path, "error_count", result.Warnings)
 		return nil
 	}
 
