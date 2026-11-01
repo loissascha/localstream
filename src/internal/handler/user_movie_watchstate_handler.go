@@ -145,7 +145,7 @@ func (h *UserMovieWatchstateHandler) listLatestWatchstates(w http.ResponseWriter
 			return
 		}
 
-		movieInfo := toMovieInfo(movie)
+		movieInfo := toMovieInfo(movie, nil)
 		response = append(response, toWatchstateMovieResponse(watchstate, movieInfo))
 	}
 

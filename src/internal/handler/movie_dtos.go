@@ -64,13 +64,28 @@ func toTranscodeSessionResponse(m *media.TranscodeSession) TranscodeSessionRespo
 	}
 }
 
-func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
+func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckIssue) MovieInfo {
 	percent := 0.0
 	if m.Duration > 0 {
 		percent = (100 / m.Duration) * m.Position
 	}
 	if m.Finished {
 		percent = 100
+	}
+	hadErros := false
+	hadWarnings := false
+	if len(ii) > 0 {
+		for _, i := range ii {
+			if i.MovieID != m.ID {
+				continue
+			}
+			if i.IssueLevel == entity.IntegrityCheckIssueLevelError {
+				hadErros = true
+			}
+			if i.IssueLevel == entity.IntegrityCheckIssueLevelWarning {
+				hadWarnings = true
+			}
+		}
 	}
 	return MovieInfo{
 		ID:               encoders.EncodeUUID(m.ID),
@@ -86,8 +101,8 @@ func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 		Percentage:       percent,
 		CreatedAt:        m.CreatedAt,
 		Playable:         true,
-		HadErrors:        false,
-		HadWarnings:      false,
+		HadErrors:        hadErros,
+		HadWarnings:      hadWarnings,
 	}
 }
 

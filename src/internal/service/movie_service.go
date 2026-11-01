@@ -28,15 +28,7 @@ func NewMovieService(
 	}
 }
 
-func (s *MovieService) IntegrityChecksByIDs(ctx context.Context, ids []string) ([]entity.MovieIntegrityCheckIssue, error) {
-	movieIDs := []uuid.UUID{}
-	for _, id := range ids {
-		uid, err := encoders.DecodeUUID(id)
-		if err != nil {
-			return nil, err
-		}
-		movieIDs = append(movieIDs, uid)
-	}
+func (s *MovieService) IntegrityChecksByIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error) {
 	return s.movieIntegrityCheckIssueRepo.GetByMovieIDs(ctx, movieIDs)
 }
 
