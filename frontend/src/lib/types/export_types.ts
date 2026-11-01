@@ -84,6 +84,9 @@ export interface MovieInfo {
   finished: boolean;
   percentage: number;
   created_at: string;
+  playable: boolean;
+  had_errors: boolean;
+  had_warnings: boolean;
 }
 export interface MovieListResponse {
   movies: MovieInfo[];
