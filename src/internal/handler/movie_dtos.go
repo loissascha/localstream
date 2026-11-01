@@ -23,6 +23,9 @@ type MovieInfo struct {
 	Finished         bool      `json:"finished"`
 	Percentage       float64   `json:"percentage"`
 	CreatedAt        time.Time `json:"created_at"`
+	Playable         bool      `json:"playable"`
+	HadErrors        bool      `json:"had_errors"`
+	HadWarnings      bool      `json:"had_warnings"`
 }
 
 type MovieMetadataInfo struct {
@@ -82,6 +85,9 @@ func toMovieInfo(m *repository.MovieSelectItem) MovieInfo {
 		Position:         m.Position,
 		Percentage:       percent,
 		CreatedAt:        m.CreatedAt,
+		Playable:         true,
+		HadErrors:        false,
+		HadWarnings:      false,
 	}
 }
 
