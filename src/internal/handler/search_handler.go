@@ -72,7 +72,7 @@ func (h *SearchHandler) search(w http.ResponseWriter, r *http.Request) {
 
 	movieResult := make([]MovieInfo, 0, len(movies))
 	for _, movie := range movies {
-		movieResult = append(movieResult, toMovieInfo(&movie, nil))
+		movieResult = append(movieResult, toMovieInfo(&movie, nil, nil))
 	}
 
 	sort.Slice(showResult, func(i, j int) bool {

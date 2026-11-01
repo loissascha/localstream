@@ -64,7 +64,7 @@ func toTranscodeSessionResponse(m *media.TranscodeSession) TranscodeSessionRespo
 	}
 }
 
-func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckIssue) MovieInfo {
+func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckIssue, streams []entity.MovieVideoStream) MovieInfo {
 	percent := 0.0
 	if m.Duration > 0 {
 		percent = (100 / m.Duration) * m.Position
@@ -74,6 +74,7 @@ func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckI
 	}
 	hadErros := false
 	hadWarnings := false
+	playable := false
 	if len(ii) > 0 {
 		for _, i := range ii {
 			if i.MovieID != m.ID {
@@ -86,6 +87,21 @@ func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckI
 				hadWarnings = true
 			}
 		}
+	}
+	if len(streams) > 0 {
+		for _, stream := range streams {
+			if stream.MovieID != m.ID {
+				continue
+			}
+			if stream.Container == "mp4" &&
+				stream.CodecName == "h264" &&
+				stream.Level <= 41 &&
+				stream.PixelFormat == "yuv420p" {
+				playable = true
+			}
+		}
+	} else {
+		playable = true
 	}
 	return MovieInfo{
 		ID:               encoders.EncodeUUID(m.ID),
@@ -100,7 +116,7 @@ func toMovieInfo(m *repository.MovieSelectItem, ii []entity.MovieIntegrityCheckI
 		Position:         m.Position,
 		Percentage:       percent,
 		CreatedAt:        m.CreatedAt,
-		Playable:         true,
+		Playable:         playable,
 		HadErrors:        hadErros,
 		HadWarnings:      hadWarnings,
 	}

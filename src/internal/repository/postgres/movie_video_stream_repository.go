@@ -70,6 +70,49 @@ func (r *MovieVideoStreamRepository) GetByID(ctx context.Context, id uuid.UUID) 
 	return stream, nil
 }
 
+func (r *MovieVideoStreamRepository) ListByMovieIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieVideoStream, error) {
+	result := []entity.MovieVideoStream{}
+	if len(movieIDs) == 0 {
+		return result, nil
+	}
+
+	const query = `
+		SELECT *
+		FROM movie_video_streams
+		WHERE movie_id IN (?)
+		ORDER BY stream_index ASC
+	`
+
+	queryStr, args, err := sqlx.In(query, movieIDs)
+	if err != nil {
+		return nil, fmt.Errorf("build query: %w", err)
+	}
+
+	queryStr = r.db.Rebind(queryStr)
+
+	// if err := r.db.SelectContext(ctx, &result, queryStr, args...); err != nil {
+	// 	return nil, fmt.Errorf("get movie integrity check issues by movie ids: %w", err)
+	// }
+	rows, err := r.db.QueryxContext(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("list movie video streams by movie id: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		stream, err := scanMovieVideoStream(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan movie video stream: %w", err)
+		}
+		result = append(result, *stream)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("list movie video streams by movie id: %w", err)
+	}
+
+	return result, nil
+}
+
 func (r *MovieVideoStreamRepository) ListByMovieID(ctx context.Context, movieID uuid.UUID) ([]entity.MovieVideoStream, error) {
 	const query = `
 		SELECT *

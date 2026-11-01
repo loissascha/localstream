@@ -121,7 +121,7 @@ func (h *CollectionHandler) listCollections(w http.ResponseWriter, r *http.Reque
 		showInfos := make([]ShowInfo, 0, len(shows))
 
 		for _, m := range movies {
-			movieInfos = append(movieInfos, toMovieInfo(&m, nil))
+			movieInfos = append(movieInfos, toMovieInfo(&m, nil, nil))
 		}
 		for _, s := range shows {
 			showInfos = append(showInfos, toShowInfo(&s))
@@ -196,7 +196,7 @@ func (h *CollectionHandler) getCollection(w http.ResponseWriter, r *http.Request
 
 	movieInfos := make([]MovieInfo, 0, len(movies))
 	for _, movie := range movies {
-		movieInfos = append(movieInfos, toMovieInfo(&movie, nil))
+		movieInfos = append(movieInfos, toMovieInfo(&movie, nil, nil))
 	}
 
 	showInfos := make([]ShowInfo, 0, len(shows))

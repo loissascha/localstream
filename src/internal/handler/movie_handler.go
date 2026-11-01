@@ -203,8 +203,13 @@ func (h *MovieHandler) single(w http.ResponseWriter, r *http.Request) {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed getting integrity check issues: " + err.Error()})
 		return
 	}
+	streams, err := h.movieService.VideoStreamsByMovieIDs(r.Context(), []uuid.UUID{movie.ID})
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed getting video streams: " + err.Error()})
+		return
+	}
 
-	respond.JSON(w, http.StatusOK, toMovieInfo(movie, intissues))
+	respond.JSON(w, http.StatusOK, toMovieInfo(movie, intissues, streams))
 }
 
 func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
@@ -236,10 +241,15 @@ func (h *MovieHandler) list(w http.ResponseWriter, r *http.Request) {
 		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed getting integrity check issues: " + err.Error()})
 		return
 	}
+	streams, err := h.movieService.VideoStreamsByMovieIDs(r.Context(), ids)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed getting video streams: " + err.Error()})
+		return
+	}
 
 	ml := []MovieInfo{}
 	for _, m := range movies {
-		ml = append(ml, toMovieInfo(&m, intissues))
+		ml = append(ml, toMovieInfo(&m, intissues, streams))
 	}
 
 	respond.JSON(w, http.StatusOK, MovieListResponse{Movies: ml})

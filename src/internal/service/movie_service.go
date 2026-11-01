@@ -14,22 +14,29 @@ type MovieService struct {
 	transcodingService           media.TranscodeService
 	movieRepo                    repository.MovieRepository
 	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository
+	movieVideoStreamRepo         repository.MovieVideoStreamRepository
 }
 
 func NewMovieService(
 	transcodingService media.TranscodeService,
 	movieRepo repository.MovieRepository,
 	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository,
+	movieVideoStreamRepo repository.MovieVideoStreamRepository,
 ) *MovieService {
 	return &MovieService{
 		transcodingService:           transcodingService,
 		movieRepo:                    movieRepo,
 		movieIntegrityCheckIssueRepo: movieIntegrityCheckIssueRepo,
+		movieVideoStreamRepo:         movieVideoStreamRepo,
 	}
 }
 
 func (s *MovieService) IntegrityChecksByIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error) {
 	return s.movieIntegrityCheckIssueRepo.GetByMovieIDs(ctx, movieIDs)
+}
+
+func (s *MovieService) VideoStreamsByMovieIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieVideoStream, error) {
+	return s.movieVideoStreamRepo.ListByMovieIDs(ctx, movieIDs)
 }
 
 func (s *MovieService) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
