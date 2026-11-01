@@ -54,7 +54,7 @@ func (r *MovieVideoStreamRepository) Create(ctx context.Context, stream *entity.
 
 func (r *MovieVideoStreamRepository) GetByID(ctx context.Context, id uuid.UUID) (*entity.MovieVideoStream, error) {
 	const query = `
-		SELECT *
+		SELECT id, movie_id, container, stream_index, profile, level, codec_name, codec_long_name, pixel_format, duration, width, height, tags, bit_rate
 		FROM movie_video_streams
 		WHERE id = $1
 		LIMIT 1
@@ -77,7 +77,7 @@ func (r *MovieVideoStreamRepository) ListByMovieIDs(ctx context.Context, movieID
 	}
 
 	const query = `
-		SELECT *
+		SELECT id, movie_id, container, stream_index, profile, level, codec_name, codec_long_name, pixel_format, duration, width, height, tags, bit_rate
 		FROM movie_video_streams
 		WHERE movie_id IN (?)
 		ORDER BY stream_index ASC
@@ -90,10 +90,7 @@ func (r *MovieVideoStreamRepository) ListByMovieIDs(ctx context.Context, movieID
 
 	queryStr = r.db.Rebind(queryStr)
 
-	// if err := r.db.SelectContext(ctx, &result, queryStr, args...); err != nil {
-	// 	return nil, fmt.Errorf("get movie integrity check issues by movie ids: %w", err)
-	// }
-	rows, err := r.db.QueryxContext(ctx, query, args...)
+	rows, err := r.db.QueryxContext(ctx, queryStr, args...)
 	if err != nil {
 		return nil, fmt.Errorf("list movie video streams by movie id: %w", err)
 	}
@@ -115,7 +112,7 @@ func (r *MovieVideoStreamRepository) ListByMovieIDs(ctx context.Context, movieID
 
 func (r *MovieVideoStreamRepository) ListByMovieID(ctx context.Context, movieID uuid.UUID) ([]entity.MovieVideoStream, error) {
 	const query = `
-		SELECT *
+		SELECT id, movie_id, container, stream_index, profile, level, codec_name, codec_long_name, pixel_format, duration, width, height, tags, bit_rate
 		FROM movie_video_streams
 		WHERE movie_id = $1
 		ORDER BY stream_index ASC
@@ -163,9 +160,10 @@ type movieVideoStreamRow interface {
 func scanMovieVideoStream(row movieVideoStreamRow) (*entity.MovieVideoStream, error) {
 	var stream entity.MovieVideoStream
 	var tags []byte
+
 	if err := row.Scan(
-		&stream.ID, &stream.MovieID, &stream.Index, &stream.Profile, &stream.Level,
-		&stream.CodecName, &stream.CodecLongName, &stream.Duration, &stream.Width,
+		&stream.ID, &stream.MovieID, &stream.Container, &stream.Index, &stream.Profile, &stream.Level,
+		&stream.CodecName, &stream.CodecLongName, &stream.PixelFormat, &stream.Duration, &stream.Width,
 		&stream.Height, &tags, &stream.BitRate,
 	); err != nil {
 		return nil, err
