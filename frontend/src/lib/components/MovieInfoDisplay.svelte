@@ -17,12 +17,14 @@
 			<PercentageBar percentage={movie.percentage} />
 		</div>
 	{/if}
-	{#if movie.had_warnings || movie.had_errors}
+	{#if movie.had_warnings || movie.had_errors || !movie.playable}
 		<div class="absolute top-2 right-2">
 			{#if movie.had_warnings}
 				<div class="rounded-full bg-yellow-300 px-4 py-2 text-xl font-bold text-black">!</div>
 			{:else if movie.had_errors}
 				<div class="rounded-full bg-red-500 px-4 py-2 text-xl font-bold">!</div>
+			{:else if !movie.playable}
+				<div class="rounded-full bg-red-500 px-4 py-2 text-xl font-bold">X</div>
 			{/if}
 		</div>
 	{/if}
