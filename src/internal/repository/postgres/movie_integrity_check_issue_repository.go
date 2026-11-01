@@ -31,6 +31,21 @@ func (r *MovieIntegrityCheckIssueRepository) Create(ctx context.Context, issue *
 	return nil
 }
 
+func (r *MovieIntegrityCheckIssueRepository) GetByMovieIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error) {
+	const query = `
+		SELECT *
+		FROM movie_integrity_check_issues
+		WHERE movie_id IN $1
+		ORDER BY id ASC
+	`
+
+	issues := make([]entity.MovieIntegrityCheckIssue, 0)
+	if err := r.db.GetContext(ctx, &issues, query, movieIDs); err != nil {
+		return nil, fmt.Errorf("get movie integrity check issues by movie ids: %w", err)
+	}
+	return issues, nil
+}
+
 func (r *MovieIntegrityCheckIssueRepository) GetByMovieID(ctx context.Context, movieID uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error) {
 	const query = `
 		SELECT id, movie_id, issue_level, issue

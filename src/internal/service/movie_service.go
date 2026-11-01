@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/loissascha/localstream/internal/encoders"
 	"github.com/loissascha/localstream/internal/entity"
 	"github.com/loissascha/localstream/internal/media"
@@ -10,18 +11,33 @@ import (
 )
 
 type MovieService struct {
-	transcodingService media.TranscodeService
-	movieRepo          repository.MovieRepository
+	transcodingService           media.TranscodeService
+	movieRepo                    repository.MovieRepository
+	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository
 }
 
 func NewMovieService(
 	transcodingService media.TranscodeService,
 	movieRepo repository.MovieRepository,
+	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository,
 ) *MovieService {
 	return &MovieService{
-		transcodingService: transcodingService,
-		movieRepo:          movieRepo,
+		transcodingService:           transcodingService,
+		movieRepo:                    movieRepo,
+		movieIntegrityCheckIssueRepo: movieIntegrityCheckIssueRepo,
 	}
+}
+
+func (s *MovieService) IntegrityChecksByIDs(ctx context.Context, ids []string) ([]entity.MovieIntegrityCheckIssue, error) {
+	movieIDs := []uuid.UUID{}
+	for _, id := range ids {
+		uid, err := encoders.DecodeUUID(id)
+		if err != nil {
+			return nil, err
+		}
+		movieIDs = append(movieIDs, uid)
+	}
+	return s.movieIntegrityCheckIssueRepo.GetByMovieIDs(ctx, movieIDs)
 }
 
 func (s *MovieService) ListLatest(ctx context.Context, userID int64) ([]repository.MovieSelectItem, error) {
