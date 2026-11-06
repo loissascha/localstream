@@ -18,7 +18,8 @@ type ReencodeStatus struct {
 }
 
 type ReencodingService struct {
-	movieRepo repository.MovieRepository
+	movieRepo          repository.MovieRepository
+	movieIntegrityRepo repository.MovieIntegrityCheckIssueRepository
 
 	baseDir            string
 	reencodeMovieQueue map[uuid.UUID]ReencodeStatus
@@ -27,10 +28,12 @@ type ReencodingService struct {
 func NewReencodingService(
 	baseDir string,
 	movieRepo repository.MovieRepository,
+	movieIntegrityRepo repository.MovieIntegrityCheckIssueRepository,
 ) *ReencodingService {
 	return &ReencodingService{
-		baseDir:   baseDir,
-		movieRepo: movieRepo,
+		baseDir:            baseDir,
+		movieRepo:          movieRepo,
+		movieIntegrityRepo: movieIntegrityRepo,
 
 		reencodeMovieQueue: map[uuid.UUID]ReencodeStatus{},
 	}
@@ -80,6 +83,16 @@ func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID
 	}
 
 	err = os.Rename(p, movie.Path)
+	if err != nil {
+		return err
+	}
+
+	err = s.movieRepo.UpdateIntegrityChecked(ctx, id, true)
+	if err != nil {
+		return err
+	}
+
+	err = s.movieIntegrityRepo.DeleteByMovieID(ctx, id)
 	if err != nil {
 		return err
 	}

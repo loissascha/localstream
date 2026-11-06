@@ -130,7 +130,7 @@ func main() {
 	transcodingService := media.NewTranscodeService(transcodePath)
 
 	// services
-	reencodingSerivce := media.NewReencodingService(filepath.Join(staticFilesDir, "reencodes") ,movieRepo)
+	reencodingSerivce := media.NewReencodingService(filepath.Join(staticFilesDir, "reencodes") ,movieRepo, movieIntegrityCheckIssueRepo)
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
