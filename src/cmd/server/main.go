@@ -118,7 +118,6 @@ func main() {
 	movieAudioStreamRepo := repopostgres.NewMovieAudioStreamRepository(db)
 	movieIntegrityCheckIssueRepo := repopostgres.NewMovieIntegrityCheckIssueRepository(db)
 
-
 	// providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
@@ -130,7 +129,7 @@ func main() {
 	transcodingService := media.NewTranscodeService(transcodePath)
 
 	// services
-	reencodingSerivce := media.NewReencodingService(filepath.Join(staticFilesDir, "reencodes") ,movieRepo, movieIntegrityCheckIssueRepo)
+	reencodingSerivce := media.NewReencodingService(filepath.Join(staticFilesDir, "reencodes"), movieRepo, movieIntegrityCheckIssueRepo)
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
@@ -138,7 +137,7 @@ func main() {
 	episodeService := service.NewEpisodeService(episodeRepo, seasonRepo)
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
-	movieService := service.NewMovieService(*transcodingService, movieRepo, movieIntegrityCheckIssueRepo, movieVideoStreamRepo, reencodingSerivce)
+	movieService := service.NewMovieService(*transcodingService, movieRepo, movieIntegrityCheckIssueRepo, movieVideoStreamRepo)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider, showSerivce)
 	showSubtitleService := service.NewShowSubtitleService(subdlProvider, episodeRepo, seasonRepo, episodeSubtitleRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
@@ -169,6 +168,7 @@ func main() {
 	searchH := handler.NewSearchHandler(s, authMiddleware, showSerivce, movieService)
 	collectionH := handler.NewCollectionHandler(s, authMiddleware, collectionService)
 	subtitleH := handler.NewSubtitleHandler(s, authMiddleware, subtitleService)
+	reencodingH := handler.NewReencodingHandler(s, authMiddleware, reencodingSerivce)
 
 	// register routes
 	authH.RegisterHandlers()
@@ -188,6 +188,7 @@ func main() {
 	searchH.RegisterRoutes()
 	collectionH.RegisterRoutes()
 	subtitleH.RegisterRoutes()
+	reencodingH.RegisterRoutes()
 
 	fileServer := http.FileServer(http.Dir("./static"))
 	s.GetMux().Handle("/static/", http.StripPrefix("/static/", fileServer))

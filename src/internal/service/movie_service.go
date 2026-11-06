@@ -15,7 +15,6 @@ type MovieService struct {
 	movieRepo                    repository.MovieRepository
 	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository
 	movieVideoStreamRepo         repository.MovieVideoStreamRepository
-	reencodingService            *media.ReencodingService
 }
 
 func NewMovieService(
@@ -23,24 +22,13 @@ func NewMovieService(
 	movieRepo repository.MovieRepository,
 	movieIntegrityCheckIssueRepo repository.MovieIntegrityCheckIssueRepository,
 	movieVideoStreamRepo repository.MovieVideoStreamRepository,
-	reencodingService *media.ReencodingService,
 ) *MovieService {
 	return &MovieService{
 		transcodingService:           transcodingService,
 		movieRepo:                    movieRepo,
 		movieIntegrityCheckIssueRepo: movieIntegrityCheckIssueRepo,
 		movieVideoStreamRepo:         movieVideoStreamRepo,
-		reencodingService:            reencodingService,
 	}
-}
-
-func (s *MovieService) ReencodeMovie(ctx context.Context, id string) error {
-	uid, err := encoders.DecodeUUID(id)
-	if err != nil {
-		return err
-	}
-	s.reencodingService.AddMovieToReencodeQueue(uid)
-	return nil
 }
 
 func (s *MovieService) IntegrityChecksByIDs(ctx context.Context, movieIDs []uuid.UUID) ([]entity.MovieIntegrityCheckIssue, error) {
