@@ -116,3 +116,7 @@ func (s *ReencodingService) AddMovieToReencodeQueue(movieID uuid.UUID) ReencodeS
 	s.reencodeMovieQueue[movieID] = m
 	return m
 }
+
+func (s *ReencodingService) MovieQueue() map[uuid.UUID]ReencodeStatus {
+	return s.reencodeMovieQueue
+}
