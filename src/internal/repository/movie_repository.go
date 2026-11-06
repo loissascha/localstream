@@ -27,6 +27,7 @@ type MovieRepository interface {
 	Search(ctx context.Context, query string, userID int64) ([]MovieSelectItem, error)
 	FirstWithoutIntegrityChecked(ctx context.Context) (*entity.Movie, error)
 	UpdateIntegrityChecked(ctx context.Context, id uuid.UUID, checked bool) error
+	UpdatePath(ctx context.Context, id uuid.UUID, path string) error
 }
 
 type MovieSelectItem struct {
