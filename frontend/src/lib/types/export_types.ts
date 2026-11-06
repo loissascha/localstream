@@ -111,6 +111,16 @@ export interface MovieResult {
   backdrop_path: string;
   poster_path: string;
 }
+export interface ReencodeResponse {
+  List: ReencodeStatus[];
+}
+export interface ReencodeStatus {
+  Id: string;
+  Started: boolean;
+  Finished: boolean;
+  Failed: boolean;
+  Error: string;
+}
 export interface SaveMovieWatchstateRequest {
   movie_id: string;
   position: number;
