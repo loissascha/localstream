@@ -51,7 +51,7 @@ func (s *ReencodingService) StartBackground() {
 		time.Sleep(30 * time.Second)
 		for {
 			logger.Info(nil, "Starting Reencoding run")
-			ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+			ctx := context.Background()
 
 			snapshot := s.movieQueueSnapshot()
 
@@ -73,7 +73,6 @@ func (s *ReencodingService) StartBackground() {
 				break
 			}
 			logger.Info(nil, "Finished Reencoding run")
-			cancel()
 			time.Sleep(60 * time.Second)
 		}
 	}()
