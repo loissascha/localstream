@@ -112,14 +112,14 @@ export interface MovieResult {
   poster_path: string;
 }
 export interface ReencodeResponse {
-  List: ReencodeStatus[];
+  list: ReencodeStatus[];
 }
 export interface ReencodeStatus {
-  Id: string;
-  Started: boolean;
-  Finished: boolean;
-  Failed: boolean;
-  Error: string;
+  id: string;
+  started: boolean;
+  finished: boolean;
+  failed: boolean;
+  error: string;
 }
 export interface SaveMovieWatchstateRequest {
   movie_id: string;

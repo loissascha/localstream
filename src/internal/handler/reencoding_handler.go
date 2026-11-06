@@ -11,15 +11,15 @@ import (
 )
 
 type ReencodeStatus struct {
-	Id       string
-	Started  bool
-	Finished bool
-	Failed   bool
-	Error    string
+	Id       string `json:"id"`
+	Started  bool   `json:"started"`
+	Finished bool   `json:"finished"`
+	Failed   bool   `json:"failed"`
+	Error    string `json:"error"`
 }
 
 type ReencodeResponse struct {
-	List []ReencodeStatus
+	List []ReencodeStatus `json:"list"`
 }
 
 type ReencodingHandler struct {
