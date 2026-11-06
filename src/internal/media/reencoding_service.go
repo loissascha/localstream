@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"sync"
 	"time"
 
@@ -25,19 +24,15 @@ type ReencodingService struct {
 	movieRepo          repository.MovieRepository
 	movieIntegrityRepo repository.MovieIntegrityCheckIssueRepository
 
-	baseDir string
-
 	movieQueueMutex    sync.Mutex
 	reencodeMovieQueue map[uuid.UUID]ReencodeStatus
 }
 
 func NewReencodingService(
-	baseDir string,
 	movieRepo repository.MovieRepository,
 	movieIntegrityRepo repository.MovieIntegrityCheckIssueRepository,
 ) *ReencodingService {
 	return &ReencodingService{
-		baseDir:            baseDir,
 		movieRepo:          movieRepo,
 		movieIntegrityRepo: movieIntegrityRepo,
 
@@ -87,7 +82,9 @@ func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID
 		return err
 	}
 
-	p := filepath.Join(s.baseDir, fmt.Sprintf("%s.mp4", movie.ID.String()))
+	p := fmt.Sprintf("%s-reencode.mp4", movie.Path)
+	os.Remove(p)
+
 	err = ReencodeFile(ctx, movie.Path, p)
 	if err != nil {
 		return err
