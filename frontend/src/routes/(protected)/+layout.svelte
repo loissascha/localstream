@@ -28,4 +28,6 @@
 	});
 </script>
 
-{@render children()}
+{#if auth.initialized}
+	{@render children()}
+{/if}
