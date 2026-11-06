@@ -74,7 +74,7 @@
 </div>
 
 {#if moviesWithErrorsWithStatus.length > 0}
-	<div class="rounded border border-red-500">
+	<div class="rounded border border-red-500 mt-4">
 		<div class="rounded-t bg-red-500 p-2">Movies with errors</div>
 		<div class="flex flex-col gap-2 p-2">
 			{#each moviesWithErrorsWithStatus as movie (movie.mi.id)}
@@ -103,7 +103,7 @@
 {/if}
 
 {#if moviesWithWarnings.length > 0}
-	<div class="rounded border border-yellow-500">
+	<div class="rounded border border-yellow-500 mt-4">
 		<div class="rounded-t bg-yellow-500 p-2">Movies with warnings</div>
 		<div class="flex flex-col gap-2 p-2">
 			{#each moviesWithWarnings as movie (movie.id)}
