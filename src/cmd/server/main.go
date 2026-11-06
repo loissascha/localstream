@@ -118,6 +118,7 @@ func main() {
 	movieAudioStreamRepo := repopostgres.NewMovieAudioStreamRepository(db)
 	movieIntegrityCheckIssueRepo := repopostgres.NewMovieIntegrityCheckIssueRepository(db)
 
+
 	// providers
 	tvMazeProvider := tvmaze.NewTVMazeProvider()
 	tmdbProvider := tmdb.NewTMDBProvider()
@@ -129,6 +130,7 @@ func main() {
 	transcodingService := media.NewTranscodeService(transcodePath)
 
 	// services
+	reencodingSerivce := media.NewReencodingService()
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
@@ -136,7 +138,7 @@ func main() {
 	episodeService := service.NewEpisodeService(episodeRepo, seasonRepo)
 	userWatchstateService := service.NewUserWatchstateService(userWatchstateRepo)
 	userMovieWatchstateServiced := service.NewUserMovieWatchstateService(userMovieWatchstateRepo)
-	movieService := service.NewMovieService(*transcodingService, movieRepo, movieIntegrityCheckIssueRepo, movieVideoStreamRepo)
+	movieService := service.NewMovieService(*transcodingService, movieRepo, movieIntegrityCheckIssueRepo, movieVideoStreamRepo, reencodingSerivce)
 	showMetaService := service.NewShowMetadataService(showMetaRepo, showRepo, tvMazeProvider, showSerivce)
 	showSubtitleService := service.NewShowSubtitleService(subdlProvider, episodeRepo, seasonRepo, episodeSubtitleRepo)
 	seasonMetaService := service.NewSeasonMetadataService(seasonMetaRepo)
