@@ -28,6 +28,7 @@ func (s *ReencodingService) StartBackground() {
 	go func() {
 		time.Sleep(30 * time.Second)
 		for {
+			logger.Info(nil, "Starting Reencoding run")
 			for id, st := range s.reencodeMovieQueue {
 				if st.Started {
 					continue
@@ -38,6 +39,7 @@ func (s *ReencodingService) StartBackground() {
 				}
 				break
 			}
+			logger.Info(nil, "Finished Reencoding run")
 			time.Sleep(60 * time.Second)
 		}
 	}()
