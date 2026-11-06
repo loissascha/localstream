@@ -13,8 +13,11 @@ import (
 )
 
 type ReencodeStatus struct {
-	Id      uuid.UUID
-	Started bool
+	Id       uuid.UUID
+	Started  bool
+	Finished bool
+	Failed   bool
+	Error    string
 }
 
 type ReencodingService struct {
@@ -54,7 +57,13 @@ func (s *ReencodingService) StartBackground() {
 				err := s.startMovieReencode(ctx, id)
 				if err != nil {
 					logger.Error(err, "Error running movie reencoding")
+					st.Failed = true
+					st.Error = st.Error
+					s.reencodeMovieQueue[id] = st
+					continue
 				}
+				st.Finished = true
+				s.reencodeMovieQueue[id] = st
 				break
 			}
 			logger.Info(nil, "Finished Reencoding run")
@@ -83,11 +92,6 @@ func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID
 	}
 
 	err = os.Rename(p, movie.Path)
-	if err != nil {
-		return err
-	}
-
-	err = s.movieRepo.UpdateIntegrityChecked(ctx, id, true)
 	if err != nil {
 		return err
 	}
