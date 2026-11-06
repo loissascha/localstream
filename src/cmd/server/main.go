@@ -265,6 +265,8 @@ func main() {
 	)
 	integrityService.StartBackground()
 
+	reencodingSerivce.StartBackground()
+
 	logger.Info(nil, "Server starting at {addr}", listenAddr)
 	err = s.Serve(listenAddr)
 	if err != nil {
