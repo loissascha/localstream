@@ -1,11 +1,14 @@
 package media
 
 import (
+	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/loissascha/go-logger/logger"
+	"github.com/loissascha/localstream/internal/repository"
 )
 
 type ReencodeStatus struct {
@@ -14,11 +17,20 @@ type ReencodeStatus struct {
 }
 
 type ReencodingService struct {
+	movieRepo repository.MovieRepository
+
+	baseDir            string
 	reencodeMovieQueue map[uuid.UUID]ReencodeStatus
 }
 
-func NewReencodingService() *ReencodingService {
+func NewReencodingService(
+	baseDir string,
+	movieRepo repository.MovieRepository,
+) *ReencodingService {
 	return &ReencodingService{
+		baseDir:   baseDir,
+		movieRepo: movieRepo,
+
 		reencodeMovieQueue: map[uuid.UUID]ReencodeStatus{},
 	}
 }
@@ -29,11 +41,13 @@ func (s *ReencodingService) StartBackground() {
 		time.Sleep(30 * time.Second)
 		for {
 			logger.Info(nil, "Starting Reencoding run")
+			ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
+			defer cancel()
 			for id, st := range s.reencodeMovieQueue {
 				if st.Started {
 					continue
 				}
-				err := s.startMovieReencode(id)
+				err := s.startMovieReencode(ctx, id)
 				if err != nil {
 					logger.Error(err, "Error running movie reencoding")
 				}
@@ -45,13 +59,24 @@ func (s *ReencodingService) StartBackground() {
 	}()
 }
 
-func (s *ReencodingService) startMovieReencode(id uuid.UUID) error {
+func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID) error {
 	st, found := s.reencodeMovieQueue[id]
 	if !found {
 		return fmt.Errorf("movie not found")
 	}
 	st.Started = true
 	s.reencodeMovieQueue[id] = st
+
+	movie, err := s.movieRepo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	p := filepath.Join(s.baseDir, fmt.Sprintf("%s.mp4", movie.ID.String()))
+	err = ReencodeFile(ctx, movie.Path, p)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

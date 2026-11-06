@@ -130,7 +130,7 @@ func main() {
 	transcodingService := media.NewTranscodeService(transcodePath)
 
 	// services
-	reencodingSerivce := media.NewReencodingService()
+	reencodingSerivce := media.NewReencodingService(filepath.Join(staticFilesDir, "reencodes") ,movieRepo)
 	authService := service.NewAuthService(userRepo, os.Getenv("JWT_SECRET"))
 	libService := service.NewLibraryService(libraryRepo)
 	showSerivce := service.NewShowService(showRepo)
@@ -282,6 +282,7 @@ func setupFileDirs() error {
 	subtitelMoviesPath := filepath.Join(baseDir, "subtitles/movies")
 	subtitleShowsPath := filepath.Join(baseDir, "subtitles/shows")
 	transcodePath := filepath.Join(baseDir, "transcodes")
+	reencodesPath := filepath.Join(baseDir, "reencodes")
 
 	err := os.MkdirAll(imageMoviesPath, os.ModePerm)
 	if err != nil {
@@ -300,6 +301,10 @@ func setupFileDirs() error {
 		return err
 	}
 	err = os.MkdirAll(transcodePath, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	err = os.MkdirAll(reencodesPath, os.ModePerm)
 	if err != nil {
 		return err
 	}
