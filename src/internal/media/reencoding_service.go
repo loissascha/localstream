@@ -52,21 +52,24 @@ func (s *ReencodingService) StartBackground() {
 		for {
 			logger.Info(nil, "Starting Reencoding run")
 			ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
-			for id, st := range s.reencodeMovieQueue {
+
+			snapshot := s.movieQueueSnapshot()
+
+			for id, st := range snapshot {
 				if st.Started {
 					continue
 				}
 				st.Started = true
-				err := s.startMovieReencode(ctx, id)
+				err := s.startMovieReencode(ctx, id, st)
 				if err != nil {
 					logger.Error(err, "Error running movie reencoding")
 					st.Failed = true
 					st.Error = err.Error()
-					s.reencodeMovieQueue[id] = st
+					s.updateMovieQueueItem(id, st)
 					continue
 				}
 				st.Finished = true
-				s.reencodeMovieQueue[id] = st
+				s.updateMovieQueueItem(id, st)
 				break
 			}
 			logger.Info(nil, "Finished Reencoding run")
@@ -76,13 +79,9 @@ func (s *ReencodingService) StartBackground() {
 	}()
 }
 
-func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID) error {
-	st, found := s.reencodeMovieQueue[id]
-	if !found {
-		return fmt.Errorf("movie not found")
-	}
+func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID, st ReencodeStatus) error {
 	st.Started = true
-	s.reencodeMovieQueue[id] = st
+	s.updateMovieQueueItem(id, st)
 
 	movie, err := s.movieRepo.GetByID(ctx, id)
 	if err != nil {
@@ -129,7 +128,7 @@ func (s *ReencodingService) AddMovieToReencodeQueue(movieID uuid.UUID) ReencodeS
 	return m
 }
 
-func (s *ReencodingService) MovieQueue() map[uuid.UUID]ReencodeStatus {
+func (s *ReencodingService) movieQueueSnapshot() map[uuid.UUID]ReencodeStatus {
 	s.movieQueueMutex.Lock()
 	defer s.movieQueueMutex.Unlock()
 
@@ -139,4 +138,15 @@ func (s *ReencodingService) MovieQueue() map[uuid.UUID]ReencodeStatus {
 	}
 
 	return snapshot
+}
+
+func (s *ReencodingService) updateMovieQueueItem(id uuid.UUID, rs ReencodeStatus) {
+	s.movieQueueMutex.Lock()
+	defer s.movieQueueMutex.Unlock()
+
+	s.reencodeMovieQueue[id] = rs
+}
+
+func (s *ReencodingService) MovieQueue() map[uuid.UUID]ReencodeStatus {
+	return s.movieQueueSnapshot()
 }
