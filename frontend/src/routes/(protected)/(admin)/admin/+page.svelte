@@ -78,7 +78,7 @@
 		<div class="rounded-t bg-red-500 p-2">Movies with errors</div>
 		<div class="flex flex-col">
 			{#each moviesWithErrorsWithStatus as movie (movie.mi.id)}
-				<div class="flex justify-between p-2 odd:bg-neutral-800">
+				<div class="flex justify-between p-2 even:bg-neutral-800">
 					<div>
 						{movie.mi.name}
 					</div>
@@ -105,9 +105,9 @@
 {#if moviesWithWarnings.length > 0}
 	<div class="mt-4 rounded border border-yellow-500">
 		<div class="rounded-t bg-yellow-500 p-2">Movies with warnings</div>
-		<div class="flex flex-col gap-2 p-2">
+		<div class="flex flex-col">
 			{#each moviesWithWarnings as movie (movie.id)}
-				<div class="flex justify-between p-2 odd:bg-neutral-800">
+				<div class="flex justify-between p-2 even:bg-neutral-800">
 					<div>
 						{movie.name}
 					</div>
