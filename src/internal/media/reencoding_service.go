@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,7 +25,9 @@ type ReencodingService struct {
 	movieRepo          repository.MovieRepository
 	movieIntegrityRepo repository.MovieIntegrityCheckIssueRepository
 
-	baseDir            string
+	baseDir string
+
+	movieQueueMutex    sync.Mutex
 	reencodeMovieQueue map[uuid.UUID]ReencodeStatus
 }
 
@@ -49,16 +52,16 @@ func (s *ReencodingService) StartBackground() {
 		for {
 			logger.Info(nil, "Starting Reencoding run")
 			ctx, cancel := context.WithTimeout(context.Background(), 240*time.Minute)
-			defer cancel()
 			for id, st := range s.reencodeMovieQueue {
 				if st.Started {
 					continue
 				}
+				st.Started = true
 				err := s.startMovieReencode(ctx, id)
 				if err != nil {
 					logger.Error(err, "Error running movie reencoding")
 					st.Failed = true
-					st.Error = st.Error
+					st.Error = err.Error()
 					s.reencodeMovieQueue[id] = st
 					continue
 				}
@@ -67,6 +70,7 @@ func (s *ReencodingService) StartBackground() {
 				break
 			}
 			logger.Info(nil, "Finished Reencoding run")
+			cancel()
 			time.Sleep(60 * time.Second)
 		}
 	}()
@@ -101,10 +105,18 @@ func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID
 		return err
 	}
 
+	err = s.movieRepo.UpdateIntegrityChecked(ctx, id, false)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s *ReencodingService) AddMovieToReencodeQueue(movieID uuid.UUID) ReencodeStatus {
+	s.movieQueueMutex.Lock()
+	defer s.movieQueueMutex.Unlock()
+
 	m, found := s.reencodeMovieQueue[movieID]
 	if found {
 		return m
@@ -118,5 +130,13 @@ func (s *ReencodingService) AddMovieToReencodeQueue(movieID uuid.UUID) ReencodeS
 }
 
 func (s *ReencodingService) MovieQueue() map[uuid.UUID]ReencodeStatus {
-	return s.reencodeMovieQueue
+	s.movieQueueMutex.Lock()
+	defer s.movieQueueMutex.Unlock()
+
+	snapshot := make(map[uuid.UUID]ReencodeStatus, len(s.reencodeMovieQueue))
+	for id, st := range s.reencodeMovieQueue {
+		snapshot[id] = st
+	}
+
+	return snapshot
 }
