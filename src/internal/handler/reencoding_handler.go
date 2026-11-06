@@ -41,20 +41,38 @@ func NewReencodingHandler(
 }
 
 func (h *ReencodingHandler) RegisterRoutes() {
-	h.s.GETI("/api/v1/movies/reencodings",
+	h.s.GETI("/api/v1/reencoding/movies",
 		h.listMovies,
 		server.WithExportType[ReencodeResponse](),
 		server.WithExportType[ReencodeStatus](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 
-	h.s.POSTI("/api/v1/movies/reencoding",
+	h.s.POSTI("/api/v1/reencoding/movie/{movieID}",
 		h.startMovie,
+		server.WithExportType[ReencodeStatus](),
 		server.WithMiddlewares(h.authMiddleware.RequireAuth),
 	)
 }
 
 func (h *ReencodingHandler) startMovie(w http.ResponseWriter, r *http.Request) {
+	movieId := r.PathValue("movieID")
+
+	mid, err := encoders.DecodeUUID(movieId)
+	if err != nil {
+		respond.JSON(w, http.StatusInternalServerError, map[string]string{"error": "failed to convert id: " + err.Error()})
+		return
+	}
+
+	q := h.reencodingService.AddMovieToReencodeQueue(mid)
+	result := ReencodeStatus{
+		Id:       encoders.EncodeUUID(q.Id),
+		Started:  q.Started,
+		Finished: q.Finished,
+		Failed:   q.Failed,
+		Error:    q.Error,
+	}
+	respond.JSON(w, http.StatusOK, result)
 }
 
 func (h *ReencodingHandler) listMovies(w http.ResponseWriter, r *http.Request) {
