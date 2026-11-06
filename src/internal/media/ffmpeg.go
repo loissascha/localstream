@@ -99,9 +99,8 @@ func ReencodeFile(ctx context.Context, path string, output string) error {
 	cmd.Stdout = io.Discard
 	cmd.Stderr = w
 
-	str := w.String()
-	if str != "" {
-		return fmt.Errorf("command returned error(s): %s", str)
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("ffmpeg reencode failed: %w: %s", err, w.String())
 	}
-	return cmd.Run()
+	return nil
 }
