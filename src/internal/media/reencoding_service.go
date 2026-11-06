@@ -3,6 +3,7 @@ package media
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -74,6 +75,11 @@ func (s *ReencodingService) startMovieReencode(ctx context.Context, id uuid.UUID
 
 	p := filepath.Join(s.baseDir, fmt.Sprintf("%s.mp4", movie.ID.String()))
 	err = ReencodeFile(ctx, movie.Path, p)
+	if err != nil {
+		return err
+	}
+
+	err = os.Rename(p, movie.Path)
 	if err != nil {
 		return err
 	}
